@@ -6,45 +6,58 @@ import { ButtonContainer, Button } from './Button';
 import { Variable } from './Variable';
 
 interface CanvasProps {
-  variableArray: JSX.Element[]
+  variableArray: VariableInfo[]
+}
+
+export interface VariableInfo {
+  currentX: number;
+  currentY: number;
+  initialX: number;
+  initialY: number;
+  xOffset:number;
+  yOffset:number;
 }
 
 const Canvas: FunctionComponent<CanvasProps> = ({ variableArray = []}) => {
   let active = false;
-  let currentX: number;
-  let currentY: number;
-  let initialX: number;
-  let initialY: number;
-  let xOffset:number = 0;
-  let yOffset:number = 0;
   let selectedItem: any = null;
+  let itemData: any = null
 
   const dragStart = (event: any): void => {
     // gather all instances of variables and starts drag functionality
     let vars = document.getElementsByClassName(varStyles.variable)
     let varsSet = new Set(vars)
-    initialX = event.clientX - xOffset;
-    initialY = event.clientY - yOffset;
+    //every variable should have their own x and y properties, now find a way to access them
     if (varsSet.has(event.target)) {
       active = true;
+      // does selected item have the meta data i need? Yes, in a data- prop
       selectedItem = event.target;
+      itemData = JSON.parse(selectedItem.dataset.varinfo)
+      let { xOffset, yOffset } = itemData;
+      itemData.initialX = event.clientX - xOffset;
+      itemData.initialY = event.clientY - yOffset;
     }
   }
 
   const dragEnd = (event: React.MouseEvent): void => {
-    initialX = currentX;
-    initialY = currentY;
-    active = false
+    if (active) {
+      let { currentX, currentY } = itemData;
+      itemData.initialX = currentX;
+      itemData.initialY = currentY;
+      selectedItem.dataset.varinfo = JSON.stringify(itemData)
+      active = false
+    }
   }
 
   const drag = (event: React.MouseEvent): void => {
     if (active) {
+      let { initialX, initialY } = itemData;
       event.preventDefault();
-      currentX = event.clientX - initialX;
-      currentY = event.clientY - initialY;
-      xOffset = currentX;
-      yOffset = currentY;
-      setTranslate(currentX, currentY, selectedItem)
+      itemData.currentX = event.clientX - initialX;
+      itemData.currentY = event.clientY - initialY;
+      itemData.xOffset = itemData.currentX;
+      itemData.yOffset = itemData.currentY;
+      setTranslate(itemData.currentX, itemData.currentY, selectedItem)
     }
   }
 
@@ -58,17 +71,25 @@ const Canvas: FunctionComponent<CanvasProps> = ({ variableArray = []}) => {
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
       onMouseMove={drag}>
-      {variableArray.map(variable => variable)}
+      {variableArray.map((variableInfo, i) => <Variable variableInfo={variableInfo} key={i.toString()}/>)}
     </div>
   )
 }
 
 export const Editor = (): JSX.Element => {
-  let initialVarState: JSX.Element[] = []
+  let initialVarState: VariableInfo[] = []
   const [variables, setVariables] = useState(initialVarState)
 
   const clickVariable = (): void => {
-    let newVarArray: JSX.Element[] = [...variables, <Variable />]
+    let newVarInfo = {
+      currentX: 0, 
+      currentY: 0,
+      initialX: 0,
+      initialY: 0,
+      xOffset: 0,
+      yOffset: 0,
+    }
+    let newVarArray: VariableInfo[] = [...variables, newVarInfo]
     setVariables(newVarArray)
   }
 

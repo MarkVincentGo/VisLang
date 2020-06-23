@@ -1,15 +1,16 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Variable.module.css';
+import { VariableInfo } from './Editor';
 
 /*
 This module defines the component rendered when a variable is declared
 Current Features: 
   - Styling
   - Input boxes
+  - pressing enter to confirm bind, converting input to text
 In Progress:
   - binding to javascript
   - binding inputs to values in state
-  - pressing enter to confirm bind, converting input to text
 */
 interface InputComponentProps {
   value: string,
@@ -52,20 +53,23 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, onChange
   )
 }
 
+interface VariableProps {
+  variableInfo: VariableInfo
+}
 
-export const Variable = (): JSX.Element => {
+export const Variable: FunctionComponent<VariableProps> = ({ variableInfo }): JSX.Element => {
   const [varName, setVarName] = useState('');
   const [valName, setValName] = useState('');
   const [active, setActive] = useState(false);
 
-  const mouseDown = (event: React.SyntheticEvent): void => {
+  const mouseIn = (event: React.SyntheticEvent): void => {
     let target = event.target as HTMLInputElement;
     if (target.tagName !== 'INPUT') {
       setActive(true)
     }
   }
 
-  const mouseUp = (): void => {
+  const mouseOut = (): void => {
     setActive(false)
   }
   
@@ -73,8 +77,9 @@ export const Variable = (): JSX.Element => {
   return (
     <div 
       className={[styles.variable, active ? styles.active : ''].join(' ')}
-      onMouseDown={mouseDown}
-      onMouseUp={mouseUp}>
+      onMouseEnter={mouseIn}
+      onMouseLeave={mouseOut}
+      data-varinfo={JSON.stringify(variableInfo)}>
       <InputComponent 
         onChange={setVarName}
         value={varName}/>
