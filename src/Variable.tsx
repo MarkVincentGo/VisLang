@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Variable.module.css';
-import { VariableInfo } from './Editor';
 
 /*
 This module defines the component rendered when a variable is declared
@@ -53,11 +52,16 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, onChange
   )
 }
 
-interface VariableProps {
-  variableInfo: VariableInfo
+interface VariableInfo {
+  currentX: number;
+  currentY: number;
+  initialX: number;
+  initialY: number;
+  xOffset:number;
+  yOffset:number;
 }
 
-export const Variable: FunctionComponent<VariableProps> = ({ variableInfo }): JSX.Element => {
+export const Variable: FunctionComponent = (): JSX.Element => {
   const [varName, setVarName] = useState('');
   const [valName, setValName] = useState('');
   const [active, setActive] = useState(false);
@@ -67,6 +71,15 @@ export const Variable: FunctionComponent<VariableProps> = ({ variableInfo }): JS
     if (target.tagName !== 'INPUT') {
       setActive(true)
     }
+  }
+
+  let variableInfo: VariableInfo = {
+    currentX: 0, 
+    currentY: 0,
+    initialX: 0,
+    initialY: 0,
+    xOffset: 0,
+    yOffset: 0,
   }
 
   const mouseOut = (): void => {

@@ -33,7 +33,7 @@ export const Button: FunctionComponent<ButtonProps> = (
     onClick = function(){},
     ddClick = function(){},
     dropDown = false,
-    dropDownList = ['123'],
+    dropDownList = [],
   }
   ): JSX.Element => {
   const [outerHover, setOuterHover] = useState(false)

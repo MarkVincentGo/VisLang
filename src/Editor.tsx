@@ -6,16 +6,7 @@ import { ButtonContainer, Button } from './Button';
 import { Variable } from './Variable';
 
 interface CanvasProps {
-  variableArray: VariableInfo[]
-}
-
-export interface VariableInfo {
-  currentX: number;
-  currentY: number;
-  initialX: number;
-  initialY: number;
-  xOffset:number;
-  yOffset:number;
+  variableArray: number[]
 }
 
 const Canvas: FunctionComponent<CanvasProps> = ({ variableArray = []}) => {
@@ -71,25 +62,17 @@ const Canvas: FunctionComponent<CanvasProps> = ({ variableArray = []}) => {
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
       onMouseMove={drag}>
-      {variableArray.map((variableInfo, i) => <Variable variableInfo={variableInfo} key={i.toString()}/>)}
+      {variableArray.map((name, i) => <Variable key={i.toString()}/>)}
     </div>
   )
 }
 
 export const Editor = (): JSX.Element => {
-  let initialVarState: VariableInfo[] = []
+  let initialVarState: number[] = []
   const [variables, setVariables] = useState(initialVarState)
 
   const clickVariable = (): void => {
-    let newVarInfo = {
-      currentX: 0, 
-      currentY: 0,
-      initialX: 0,
-      initialY: 0,
-      xOffset: 0,
-      yOffset: 0,
-    }
-    let newVarArray: VariableInfo[] = [...variables, newVarInfo]
+    let newVarArray: number[] = [...variables, 1]
     setVariables(newVarArray)
   }
 
