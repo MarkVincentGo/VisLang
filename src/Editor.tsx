@@ -96,8 +96,12 @@ export const Editor = (): JSX.Element => {
   return (
     <Panel windowName="Editor">
       <ButtonContainer>
-        <Button name="Variables" onClick={clickVariable}/>
-        <Button name="Loops"/>
+        <Button 
+          name="Variables"
+          ddClick={clickVariable}
+          dropDown
+          dropDownList={['number', 'string', 'boolean', 'null']}/>
+        <Button name="Loops" dropDown/>
         <Button name="Operations"/>
         <Button name="Function"/>
         <Button name="Log to Console"/>
