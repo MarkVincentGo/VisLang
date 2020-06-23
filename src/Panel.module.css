@@ -1,0 +1,17 @@
+.container {
+  width: 48vw;
+  height: 95vh;
+  border: 1px solid grey;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    height: 46vh;
+    width: 95vw;
+  }
+}

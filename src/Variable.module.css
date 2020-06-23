@@ -1,0 +1,22 @@
+.variable {
+  width: max-content;
+  padding: 5px 10px;
+  border: 2px solid blueviolet;
+  border-radius: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: rgba(157, 83, 226, 0.329);
+  cursor: pointer;
+}
+
+.active {
+  background-color: rgba(157, 83, 226, 0.429);
+  border-width: 4px;
+}
+
+.varInput {
+  width: 20px;
+}
+
+.varConfirmed {
+  display: inline-block;
+}
