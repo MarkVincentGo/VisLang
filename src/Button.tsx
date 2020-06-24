@@ -41,18 +41,16 @@ export const Button: FunctionComponent<ButtonProps> = (
 
   const mouseEnter = (event: any): void => {
     let target = event.currentTarget;
-    target.children[0].style.color = 'black'
     target.style.backgroundColor = hoverColor
     setOuterHover(true)
   }
   const mouseLeave = (event: any): void => {
     let target = event.currentTarget
-    target.children[0].style.color = color;
     target.style.backgroundColor = backgroundColor;
     setOuterHover(false)
   }
 
-  const clickDropDown = (): void => {
+  const clickDropDown = (event: any): void => {
     ddClick();
     setOuterHover(false)
   }
@@ -65,7 +63,7 @@ export const Button: FunctionComponent<ButtonProps> = (
       <div
         className={styles.wrapper}
         onClick={onClick}
-        style={{color, backgroundColor}}>
+        style={{color: outerHover ? 'black' : color, backgroundColor}}>
         {name}
         <svg height="3" width={width}>
           <line
@@ -80,8 +78,8 @@ export const Button: FunctionComponent<ButtonProps> = (
       </div>
       {(dropDown && outerHover && dropDownList.length) ? 
         <div className={styles.dropDown}>
-          {dropDownList.map(option => (
-            <div className={styles.dropDownOptionContainer}>
+          {dropDownList.map((option, i) => (
+            <div className={styles.dropDownOptionContainer} key={i.toString()}>
                 <div 
                   onClick={clickDropDown}
                   className={styles.dropDownOption}>

@@ -8,20 +8,9 @@
   border: 2px solid blueviolet;
   border-radius: 10px;
   font-family: 'Courier New', Courier, monospace;
-  background-color: rgba(157, 83, 226, 0.329);
   cursor: pointer;
 }
 
 .active {
   box-sizing: border-box;
-  background-color: rgba(157, 83, 226, 0.429);
-  box-shadow: 0px 0px 0px 1px blueviolet;
-}
-
-.varInput {
-  width: 20px;
-}
-
-.varConfirmed {
-  display: inline-block;
 }

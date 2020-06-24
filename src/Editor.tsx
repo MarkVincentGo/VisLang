@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Editor.module.css';
-import varStyles from './Variable.module.css';
 import { Panel } from './Panel';
 import { ButtonContainer, Button } from './Button';
 import { Variable } from './Variable';
@@ -9,17 +8,17 @@ interface CanvasProps {
   variableArray: number[]
 }
 
-const Canvas: FunctionComponent<CanvasProps> = ({ variableArray = []}) => {
+const Canvas: FunctionComponent<CanvasProps> = ({ variableArray = [] }) => {
   let active = false;
   let selectedItem: any = null;
   let itemData: any = null
 
   const dragStart = (event: any): void => {
     // gather all instances of variables and starts drag functionality
-    let vars = document.getElementsByClassName(varStyles.variable)
-    let varsSet = new Set(vars)
+    let draggables = document.getElementsByClassName('draggable');
+    let dragSet = new Set(draggables)
     //every variable should have their own x and y properties, now find a way to access them
-    if (varsSet.has(event.target)) {
+    if (dragSet.has(event.target)) {
       active = true;
       // does selected item have the meta data i need? Yes, in a data- prop
       selectedItem = event.target;
