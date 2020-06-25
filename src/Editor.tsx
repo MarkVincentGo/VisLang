@@ -33,6 +33,7 @@ interface CanvasProps {
   operationsArray: IOperatorInfo[],
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
   handleVariableDropDown(option: string, varData?: IVariableInfo): void,
+  handleReferenceDropDown(option: string, refData: IVarReference): void,
   pressPlay(): void
 }
 
@@ -42,6 +43,7 @@ const Canvas: FunctionComponent<CanvasProps> = (
     operationsArray = [],
     editVariable,
     handleVariableDropDown,
+    handleReferenceDropDown,
     pressPlay }
   ) => {
   let active = false;
@@ -112,7 +114,8 @@ const Canvas: FunctionComponent<CanvasProps> = (
       {referenceArray.map((data, i) => (
         <VarReference
           key={i.toString()}
-          data={data}/>
+          data={data}
+          handleReferenceDropDown={handleReferenceDropDown}/>
       ))}
       {operationsArray.map((operator, i) => (
         <Operator
@@ -178,7 +181,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
         and its references might move positions in the array and change their
         positions in the DOM. Workaround was to keep the variables and references
         in the array and just add a 'deleted property which renders nothing if true */
-        const newVarReferences = [...varReferences].map(el => {
+        const newVarReferences = varReferences.map(el => {
           if (el.variableReferenced === varData) {
             el.deleted = true
           }
@@ -187,17 +190,41 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
         setVarReferences(newVarReferences);
         /* does a full delete of the vairable properties, interpreter SHOULD ignore
         var names of empty string*/
-        const newVariables = [...variables].map(data => {
-          if (data === varData) {
-            data.deleted = true;
-            data.name = '';
-            data.value = null
+        const newVariables = variables.map(el => {
+          if (el === varData) {
+            el.deleted = true;
+            el.name = '';
+            el.value = null
           }
-          return data
+          return el;
         });
         setVariables(newVariables);
         break;
       }
+      default:
+        break;
+    }
+  }
+
+  const handleReferenceDropDown = (option: string, refData: IVarReference): void => {
+    switch (option) {
+      case 'Copy Reference': {
+        const newReference = {...refData, referenceId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) }
+        const newVarReferences = [...varReferences, newReference];
+        setVarReferences(newVarReferences)
+        break;
+      }
+      case 'Delete Reference': {
+        const newVarReferences = varReferences.map(el => {
+          if (el === refData) {
+            el.deleted = true;
+          }
+          return el;
+        });
+        setVarReferences(newVarReferences);
+        break;
+      }
+        
       default:
         break;
     }
@@ -246,6 +273,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
         editVariable={editVariable}
         operationsArray={operations}
         handleVariableDropDown={handleVariableDropDown}
+        handleReferenceDropDown={handleReferenceDropDown}
         pressPlay={pressPlay}/>
     </Panel>
   )

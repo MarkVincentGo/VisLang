@@ -1,12 +1,12 @@
 .variable {
   position: absolute;
-  
   width: max-content;
   padding: 5px 10px;
   border: 2px solid blueviolet;
   border-radius: 5px;
   font-family: 'Courier New', Courier, monospace;
   cursor: pointer;
+  z-index: 20;
 }
 
 .active {

@@ -78,6 +78,7 @@ export const Draggable: FunctionComponent<DraggableProps> = (
         boxShadow: active ? `0px 0px 0px 1px ${borderColor}` : 'none',
         left,
         top,
+        zIndex: active ? 200 : 20,
         ...style
       }}
       data-varinfo={JSON.stringify(dragInfo)}

@@ -89,11 +89,6 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
     }
   }
 
-  const rightClick = (event: React.MouseEvent): void => {
-    event.preventDefault();
-    console.log('hi')
-  }
-
   const handleDropDown = (option: string): void => {
     handleVariableDropDown(option, data)
   }
@@ -101,7 +96,7 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
 
   return ( !data.deleted ?
     <Draggable
-      onContextMenu={rightClick}
+      onContextMenu={e => e.preventDefault()}
       contextMenu={['Add Reference', 'Delete Variable']}
       contextMenuClick={handleDropDown}>
       <InputComponent 
