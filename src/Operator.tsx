@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import { Draggable } from './Draggable'
-import { OperationInfo } from './Editor';
+import { IOperatorInfo } from './Editor';
 
 interface OperatorProps {
-  operator: OperationInfo
+  operator: IOperatorInfo
 }
 
 export const Operator: FunctionComponent<OperatorProps> = ({ operator }): JSX.Element => {

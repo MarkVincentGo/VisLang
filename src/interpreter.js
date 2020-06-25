@@ -1,5 +1,7 @@
 export default function(metaData) {
   const { variables } = metaData;
+  /* LOOP through variable dictionaries and store them in a scope variable
+    with the scope variable being the global scope by default */
   function getVariables(variables, scope = {}) {
     for (let variable of variables) {
       if (variable.type === 'Number') {
@@ -12,8 +14,9 @@ export default function(metaData) {
       scope = {...scope, [variable.name]: variable}
     }
     console.log(scope)
+    return scope
   }
-  getVariables(variables);
+  const globalScope = getVariables(variables);
 
 
 

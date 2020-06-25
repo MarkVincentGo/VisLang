@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Variable.module.css';
 import { Draggable } from './Draggable';
-import { VariableInfo } from './Editor';
+import { IVariableInfo } from './Editor';
 
 /*
 This module defines the component rendered when a variable is declared
@@ -17,7 +17,7 @@ interface InputComponentProps {
   value: string,
   name?: string,
   onChange(text: string): any,
-  confirmFn?(): void,
+  confirmFn?(): void
 }
 
 const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '', onChange, confirmFn = function(){}}): JSX.Element => {
@@ -72,11 +72,12 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '
 */
 
 interface VariableProps {
-  data: VariableInfo,
-  edit(varData: VariableInfo, name: string, value?: string): void
+  data: IVariableInfo,
+  edit(varData: IVariableInfo, name: string, value?: string): void,
+  clickAddReference(varInfo: IVariableInfo): void
 }
 
-export const Variable: FunctionComponent<VariableProps> = ({ data, edit }): JSX.Element => {
+export const Variable: FunctionComponent<VariableProps> = ({ data, edit, clickAddReference }): JSX.Element => {
   const [varName, setVarName] = useState('');
   const [valName, setValName] = useState('');
 
@@ -92,10 +93,25 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit }): JSX.
     event.preventDefault();
     console.log('hi')
   }
+
+  const handleDropDown = (option: string): void => {
+    console.log(option)
+    switch (option) {
+      case 'Add Reference':
+        clickAddReference(data);
+        break;
+
+      default:
+        break;
+    }
+  }
   
 
   return (
-    <Draggable onContextMenu={rightClick}>
+    <Draggable
+      onContextMenu={rightClick}
+      contextMenu={['Add Reference', 'Delete Reference', 'Delete Variable']}
+      contextMenuClick={handleDropDown}>
       <InputComponent 
         onChange={setVarName}
         value={varName}

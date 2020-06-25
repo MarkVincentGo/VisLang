@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Draggable.module.css';
+import ddStyles from './Button.module.css'
 
 interface DraggableProps {
   color?: string,
@@ -7,6 +8,8 @@ interface DraggableProps {
   borderColor?: string,
   style?: any,
   onContextMenu?(event: React.MouseEvent): any,
+  contextMenu?: any[],
+  contextMenuClick?(option?: string): any,
   children?: any
 }
 
@@ -19,13 +22,16 @@ interface DragInfo {
   yOffset:number;
 }
 
+
 export const Draggable: FunctionComponent<DraggableProps> = (
   { color = 'rgba(157, 83, 226, 0.329)', 
     activeColor = 'rgba(157, 83, 226, 0.429)',
     borderColor = 'blueviolet',
     children,
     style,
-    onContextMenu },
+    onContextMenu = function(){},
+    contextMenuClick = function(){},
+    contextMenu = [] },
   ) => {
   const [active, setActive] = useState(false);
   let dragInfo: DragInfo = {
@@ -46,8 +52,17 @@ export const Draggable: FunctionComponent<DraggableProps> = (
 
   const mouseOut = (): void => {
     setActive(false)
+    setRightClicked(false)
   }
 
+  const clickDropDown = (option?: string): void => {
+    setRightClicked(false);
+    setActive(false);
+    contextMenuClick(option);
+  }
+
+
+  const [rightClicked, setRightClicked] = useState(false);
   return (
     <div 
       className={[styles.variable, active ? styles.active : '', 'draggable'].join(' ')}
@@ -60,8 +75,24 @@ export const Draggable: FunctionComponent<DraggableProps> = (
         ...style
       }}
       data-varinfo={JSON.stringify(dragInfo)}
-      onContextMenu={onContextMenu}>
+      onContextMenu={e => { onContextMenu(e); setRightClicked(true)}}>
         {children}
+        {rightClicked ? 
+          <div className={ddStyles.dropDown}>
+          {contextMenu.map((option, i) => (
+            <div className={ddStyles.dropDownOptionContainer} key={i.toString()} style={{fontFamily: 'Arial'}}>
+                <div 
+                  // REFACTOR
+                  onClick={() => clickDropDown(option)}
+                  className={ddStyles.dropDownOption}>
+                  {option}
+                </div>
+            </div>
+          ))}
+          </div> 
+          :
+          <></>
+        }
     </div>
   )
 }

@@ -4,15 +4,21 @@ import { Panel } from './Panel';
 import { ButtonContainer, Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
+import { VarReference } from './VarReference'
 
-export interface VariableInfo {
+export interface IVariableInfo {
   readonly id: number,
   type: string,
   name: string,
   value?: any,
 }
 
-export interface OperationInfo {
+export interface IVarReference {
+  readonly referenceId: number,
+  readonly variableReferenced: IVariableInfo
+}
+
+export interface IOperatorInfo {
   readonly id: number,
   type: string,
   arg1: string,
@@ -20,16 +26,20 @@ export interface OperationInfo {
 }
 
 interface CanvasProps {
-  variableArray: VariableInfo[],
-  operationsArray: OperationInfo[],
-  editVariable(varData: VariableInfo, name: string, value?: string): void
+  variableArray: IVariableInfo[],
+  referenceArray: IVarReference[],
+  operationsArray: IOperatorInfo[],
+  editVariable(varData: IVariableInfo, name: string, value?: string): void,
+  clickAddReference(varData: IVariableInfo): void,
   pressPlay(): void
 }
 
 const Canvas: FunctionComponent<CanvasProps> = (
   { variableArray = [],
+    referenceArray = [],
     operationsArray = [],
     editVariable,
+    clickAddReference,
     pressPlay }
   ) => {
   let active = false;
@@ -90,8 +100,24 @@ const Canvas: FunctionComponent<CanvasProps> = (
         color="black"
         onClick={pressPlay}
         style={{ height: 'auto', borderRadius: 0 }}/>
-      {variableArray.map((data, i) => <Variable data={data} key={i.toString()} edit={editVariable}/>)}
-      {operationsArray.map((operator, i) => <Operator operator={operator} key={i.toString()}/>)}
+      {variableArray.map((data, i) => (
+        <Variable
+          data={data}
+          key={i.toString()}
+          edit={editVariable}
+          clickAddReference={clickAddReference}/>
+      ))}
+      {referenceArray.map(({referenceId, variableReferenced}, i) => (
+        <VarReference
+          key={i.toString()}
+          referenceId={referenceId}
+          variableReferenced={variableReferenced}/>
+      ))}
+      {operationsArray.map((operator, i) => (
+        <Operator
+          operator={operator}
+          key={i.toString()}/>
+      ))}
     </div>
   )
 }
@@ -102,8 +128,9 @@ interface EditorProps {
 }
 
 export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.Element => {
-  const [variables, setVariables] = useState<VariableInfo[]>([]);
-  const [operations, setOperations] = useState<OperationInfo[]>([])
+  const [variables, setVariables] = useState<IVariableInfo[]>([]);
+  const [varReferences, setVarReferences] = useState<IVarReference[]>([])
+  const [operations, setOperations] = useState<IOperatorInfo[]>([])
 
 
   /* when a type is clicked from the dropdown, this function creates new variable
@@ -116,12 +143,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
       name: '',
       value: undefined
     }
-    let newVarArray: VariableInfo[] = [...variables, newVarInfo]
+    let newVarArray: IVariableInfo[] = [...variables, newVarInfo]
     setVariables(newVarArray)
   }
 
   /* edits variable info based on the variable id given on instantiation */
-  const editVariable = (varData: VariableInfo, name: string, value: string = ''): void => {
+  const editVariable = (varData: IVariableInfo, name: string, value: string = ''): void => {
     const newVariables = [...variables];
     let editedVar = newVariables.find(variable => variable.id === varData.id);
     if (editedVar) {
@@ -131,6 +158,15 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
     setVariables(newVariables);
   }
 
+  const clickAddReference = (varData: IVariableInfo): void => {
+    let newReference: IVarReference = {
+      referenceId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+      variableReferenced: varData
+    }
+    const newVarReferences = [...varReferences, newReference]
+    setVarReferences(newVarReferences)
+  }
+
   const clickOperations = (type: string): void => {
     let newOperatorInfo = {
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
@@ -138,7 +174,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
       arg1: '',
       arg2: ''
     }
-    const newOperations: OperationInfo[] = [...operations, newOperatorInfo];
+    const newOperations: IOperatorInfo[] = [...operations, newOperatorInfo];
     setOperations(newOperations);
   }
 
@@ -170,8 +206,10 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
       </ButtonContainer>
       <Canvas
         variableArray={variables}
+        referenceArray={varReferences}
         editVariable={editVariable}
         operationsArray={operations}
+        clickAddReference={clickAddReference}
         pressPlay={pressPlay}/>
     </Panel>
   )
