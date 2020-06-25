@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Variable.module.css';
-import { Draggable } from './Draggable'
+import { Draggable } from './Draggable';
+import { VariableInfo } from './Editor';
 
 /*
 This module defines the component rendered when a variable is declared
@@ -40,7 +41,7 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '
   }
 
   const clickConfirmed = (event: React.SyntheticEvent): void => {
-    event.stopPropagation()
+    event.stopPropagation();
     setVarConfirmed(false);
   }
 
@@ -62,30 +63,31 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '
   )
 }
 
-interface VariableInfo {
-  currentX: number;
-  currentY: number;
-  initialX: number;
-  initialY: number;
-  xOffset:number;
-  yOffset:number;
+interface VariableProps {
+  data: VariableInfo,
+  edit(varData: VariableInfo, name: string, value?: string): void
 }
 
-export const Variable: FunctionComponent = (): JSX.Element => {
+export const Variable: FunctionComponent<VariableProps> = ({ data, edit }): JSX.Element => {
   const [varName, setVarName] = useState('');
   const [valName, setValName] = useState('');
 
   const confirmVarDeclaration = (): void => {
     if (varName.length && valName.length) {
-      console.log(`${varName} = ${valName}`);
+      edit(data, varName, valName)
     } else if (varName.length && !valName.length) {
-      console.log(`${varName}`)
+      edit(data, varName)
     }
+  }
+
+  const rightClick = (event: React.MouseEvent): void => {
+    event.preventDefault();
+    console.log('hi')
   }
   
 
   return (
-    <Draggable>
+    <Draggable onContextMenu={rightClick}>
       <InputComponent 
         onChange={setVarName}
         value={varName}

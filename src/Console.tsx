@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Panel } from './Panel';
+import styles from './Console.module.css'
 
-const backgroundColor = '#180027'
+const backgroundColor = '#180027';
 
-export const Console = (): JSX.Element => (
-  <Panel windowName="Console" backgroundColor={backgroundColor}/>
+interface ConsoleProps {
+  output: string[]
+}
+
+export const Console:FunctionComponent<ConsoleProps> = ({ output }): JSX.Element => (
+  <Panel
+    windowName="Console"
+    backgroundColor={backgroundColor}
+    style={{justifyContent: 'flex-start'}}>
+    {output.map(text => (
+      <p className={styles.output}>{text}</p>
+    ))}
+  </Panel>
 )

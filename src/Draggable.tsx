@@ -5,10 +5,12 @@ interface DraggableProps {
   color?: string,
   activeColor?: string,
   borderColor?: string,
+  style?: any,
+  onContextMenu?(event: React.MouseEvent): any,
   children?: any
 }
 
-interface VariableInfo {
+interface DragInfo {
   currentX: number;
   currentY: number;
   initialX: number;
@@ -20,10 +22,13 @@ interface VariableInfo {
 export const Draggable: FunctionComponent<DraggableProps> = (
   { color = 'rgba(157, 83, 226, 0.329)', 
     activeColor = 'rgba(157, 83, 226, 0.429)',
-    borderColor = 'blueviolet', children }
+    borderColor = 'blueviolet',
+    children,
+    style,
+    onContextMenu },
   ) => {
   const [active, setActive] = useState(false);
-  let variableInfo: VariableInfo = {
+  let dragInfo: DragInfo = {
     currentX: 0, 
     currentY: 0,
     initialX: 0,
@@ -49,11 +54,13 @@ export const Draggable: FunctionComponent<DraggableProps> = (
     onMouseEnter={mouseIn}
     onMouseLeave={mouseOut}
     style={{
-      backgroundColor: active ? color : activeColor,
+      backgroundColor: active ? activeColor : color,
       borderColor,
-      boxShadow: `0px 0px 0px 1px ${borderColor}`
+      boxShadow: active ? `0px 0px 0px 1px ${borderColor}` : 'none',
+      ...style
     }}
-    data-varinfo={JSON.stringify(variableInfo)}>
+    data-varinfo={JSON.stringify(dragInfo)}
+    onContextMenu={onContextMenu}>
       {children}
     </div>
   )

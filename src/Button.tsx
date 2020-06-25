@@ -22,7 +22,7 @@ interface ButtonProps {
   dropDown?: boolean,
   dropDownList?: string[];
   onClick?(): void;
-  ddClick?(): void;
+  ddClick?(option: string): void;
 }
 
 export const Button: FunctionComponent<ButtonProps> = (
@@ -39,25 +39,25 @@ export const Button: FunctionComponent<ButtonProps> = (
   const [outerHover, setOuterHover] = useState(false)
   let width = name.length * 8;
 
-  const mouseEnter = (event: any): void => {
-    let target = event.currentTarget;
+  const mouseEnter = (event: React.SyntheticEvent): void => {
+    let target = event.currentTarget as HTMLFormElement;
     target.style.backgroundColor = hoverColor
     setOuterHover(true)
   }
-  const mouseLeave = (event: any): void => {
-    let target = event.currentTarget
+  const mouseLeave = (event: React.SyntheticEvent): void => {
+    let target = event.currentTarget as HTMLFormElement;
     target.style.backgroundColor = backgroundColor;
     setOuterHover(false)
   }
 
-  const clickDropDown = (event: any): void => {
-    ddClick();
+  const clickDropDown = (option: string): void => {
+    ddClick(option);
     setOuterHover(false)
   }
 
   return (
     <div 
-      style={{position: 'relative'}}
+      style={{position: 'relative', width: 'max-content', borderRadius: 5}}
       onMouseEnter={mouseEnter}
       onMouseLeave={mouseLeave}>
       <div
@@ -81,7 +81,7 @@ export const Button: FunctionComponent<ButtonProps> = (
           {dropDownList.map((option, i) => (
             <div className={styles.dropDownOptionContainer} key={i.toString()}>
                 <div 
-                  onClick={clickDropDown}
+                  onClick={() => clickDropDown(option)}
                   className={styles.dropDownOption}>
                   {option}
                 </div>
