@@ -84,16 +84,21 @@ const Canvas: FunctionComponent<CanvasProps> = (
       onMouseDown={dragStart}
       onMouseUp={dragEnd}
       onMouseMove={drag}>
+      <Button
+        name="Play"
+        backgroundColor="yellowgreen"
+        color="black"
+        onClick={pressPlay}
+        style={{ height: 'auto', borderRadius: 0 }}/>
       {variableArray.map((data, i) => <Variable data={data} key={i.toString()} edit={editVariable}/>)}
       {operationsArray.map((operator, i) => <Operator operator={operator} key={i.toString()}/>)}
-      <Button name="Play" backgroundColor="red" onClick={pressPlay}/>
     </div>
   )
 }
 
 
 interface EditorProps {
-  printToConsole(text:string): void
+  printToConsole(data: any): void
 }
 
 export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.Element => {
@@ -112,10 +117,10 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
       value: undefined
     }
     let newVarArray: VariableInfo[] = [...variables, newVarInfo]
-    console.log(newVarArray)
     setVariables(newVarArray)
   }
 
+  /* edits variable info based on the variable id given on instantiation */
   const editVariable = (varData: VariableInfo, name: string, value: string = ''): void => {
     const newVariables = [...variables];
     let editedVar = newVariables.find(variable => variable.id === varData.id);
@@ -139,10 +144,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
 
   const pressPlay = (): void => {
     let i: string = variables.map(({name, value}) => `var ${name} = ${value}`).join('; ');
-    (function() {
-      console.log(i)
-      eval(`${i}; printToConsole(x + y)`)
-    })()
+    printToConsole({ variables })
 
   }
 

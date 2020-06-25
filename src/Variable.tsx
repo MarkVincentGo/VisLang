@@ -63,6 +63,14 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '
   )
 }
 
+/* 
+  variable should be able to have a drop down menu on right click to offer 
+  options on what you can do with the variable
+  Ex: - create reference
+      - delete reference
+      - delete variable
+*/
+
 interface VariableProps {
   data: VariableInfo,
   edit(varData: VariableInfo, name: string, value?: string): void

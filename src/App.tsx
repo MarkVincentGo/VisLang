@@ -3,14 +3,16 @@ import './App.css';
 
 import { Editor } from './Editor';
 import { Console } from './Console'
+import Interpreter from './interpreter'
 
 
 function App(): JSX.Element {
   const [consoleText, setConsoleText] = useState<string[]>([]);
 
-  const showOutputToConsole = (text: string):void => {
-    let newConsoleText = [...consoleText, text];
-    setConsoleText(newConsoleText)
+  const showOutputToConsole = (data: any):void => {
+    Interpreter(data)
+    // let newConsoleText = [...consoleText, text];
+    // setConsoleText(newConsoleText)
   }
 
   return (

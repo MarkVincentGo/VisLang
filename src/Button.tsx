@@ -21,6 +21,7 @@ interface ButtonProps {
   hoverColor?: string,
   dropDown?: boolean,
   dropDownList?: string[];
+  style?: any,
   onClick?(): void;
   ddClick?(option: string): void;
 }
@@ -32,6 +33,7 @@ export const Button: FunctionComponent<ButtonProps> = (
     hoverColor  = 'white',
     onClick = function(){},
     ddClick = function(){},
+    style,
     dropDown = false,
     dropDownList = [],
   }
@@ -57,13 +59,13 @@ export const Button: FunctionComponent<ButtonProps> = (
 
   return (
     <div 
-      style={{position: 'relative', width: 'max-content', borderRadius: 5}}
+      style={{position: 'relative', width: 'max-content', borderRadius: 5 }}
       onMouseEnter={mouseEnter}
       onMouseLeave={mouseLeave}>
       <div
         className={styles.wrapper}
         onClick={onClick}
-        style={{color: outerHover ? 'black' : color, backgroundColor}}>
+        style={{color: outerHover ? 'black' : color, backgroundColor, ...style}}>
         {name}
         <svg height="3" width={width}>
           <line

@@ -50,18 +50,18 @@ export const Draggable: FunctionComponent<DraggableProps> = (
 
   return (
     <div 
-    className={[styles.variable, active ? styles.active : '', 'draggable'].join(' ')}
-    onMouseEnter={mouseIn}
-    onMouseLeave={mouseOut}
-    style={{
-      backgroundColor: active ? activeColor : color,
-      borderColor,
-      boxShadow: active ? `0px 0px 0px 1px ${borderColor}` : 'none',
-      ...style
-    }}
-    data-varinfo={JSON.stringify(dragInfo)}
-    onContextMenu={onContextMenu}>
-      {children}
+      className={[styles.variable, active ? styles.active : '', 'draggable'].join(' ')}
+      onMouseEnter={mouseIn}
+      onMouseLeave={mouseOut}
+      style={{
+        backgroundColor: active ? activeColor : color,
+        borderColor,
+        boxShadow: active ? `0px 0px 0px 1px ${borderColor}` : 'none',
+        ...style
+      }}
+      data-varinfo={JSON.stringify(dragInfo)}
+      onContextMenu={onContextMenu}>
+        {children}
     </div>
   )
 }
