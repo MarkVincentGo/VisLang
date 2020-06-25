@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useRef } from 'react';
 import styles from './Draggable.module.css';
 import ddStyles from './Button.module.css'
 
@@ -33,7 +33,11 @@ export const Draggable: FunctionComponent<DraggableProps> = (
     contextMenuClick = function(){},
     contextMenu = [] },
   ) => {
+
   const [active, setActive] = useState(false);
+  const left = useRef(Math.random() * 400 + 100).current;
+  const top = useRef(Math.random() * 50).current;
+
   let dragInfo: DragInfo = {
     currentX: 0, 
     currentY: 0,
@@ -72,6 +76,8 @@ export const Draggable: FunctionComponent<DraggableProps> = (
         backgroundColor: active ? activeColor : color,
         borderColor,
         boxShadow: active ? `0px 0px 0px 1px ${borderColor}` : 'none',
+        left,
+        top,
         ...style
       }}
       data-varinfo={JSON.stringify(dragInfo)}

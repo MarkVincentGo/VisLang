@@ -74,10 +74,10 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '
 interface VariableProps {
   data: IVariableInfo,
   edit(varData: IVariableInfo, name: string, value?: string): void,
-  clickAddReference(varInfo: IVariableInfo): void
+  handleVariableDropDown(option?: string, varInfo?: IVariableInfo): void
 }
 
-export const Variable: FunctionComponent<VariableProps> = ({ data, edit, clickAddReference }): JSX.Element => {
+export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleVariableDropDown }): JSX.Element => {
   const [varName, setVarName] = useState('');
   const [valName, setValName] = useState('');
 
@@ -95,22 +95,14 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, clickAd
   }
 
   const handleDropDown = (option: string): void => {
-    console.log(option)
-    switch (option) {
-      case 'Add Reference':
-        clickAddReference(data);
-        break;
-
-      default:
-        break;
-    }
+    handleVariableDropDown(option, data)
   }
   
 
-  return (
+  return ( !data.deleted ?
     <Draggable
       onContextMenu={rightClick}
-      contextMenu={['Add Reference', 'Delete Reference', 'Delete Variable']}
+      contextMenu={['Add Reference', 'Delete Variable']}
       contextMenuClick={handleDropDown}>
       <InputComponent 
         onChange={setVarName}
@@ -123,5 +115,7 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, clickAd
         value={valName}
         confirmFn={confirmVarDeclaration}/>
     </Draggable>
+    :
+    <></>
   )
 }

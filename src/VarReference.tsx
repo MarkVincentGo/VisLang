@@ -1,18 +1,17 @@
 import React, { FunctionComponent } from 'react';
 import { Draggable } from './Draggable';
-import { IVariableInfo } from './Editor';
+import { IVarReference  } from './Editor';
 
 interface VarReferenceProps {
-  // this is the id for the REFERENCE, not for the variable information
-  readonly referenceId: number,
-  // this is the object for the variable information
-  readonly variableReferenced: IVariableInfo
+  data: IVarReference
 }
 
-export const VarReference: FunctionComponent<VarReferenceProps> = ({ referenceId, variableReferenced }) => {
-  return (
+export const VarReference: FunctionComponent<VarReferenceProps> = ({ data }) => {
+  return ( !data.deleted ?
     <Draggable>
-      {variableReferenced.name}
+      {data.variableReferenced.name}
     </Draggable>
+    :
+    <></>
   )
 }

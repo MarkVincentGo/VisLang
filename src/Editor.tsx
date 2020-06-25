@@ -11,11 +11,13 @@ export interface IVariableInfo {
   type: string,
   name: string,
   value?: any,
+  deleted: boolean,
 }
 
 export interface IVarReference {
   readonly referenceId: number,
-  readonly variableReferenced: IVariableInfo
+  readonly variableReferenced: IVariableInfo,
+  deleted: boolean,
 }
 
 export interface IOperatorInfo {
@@ -30,7 +32,7 @@ interface CanvasProps {
   referenceArray: IVarReference[],
   operationsArray: IOperatorInfo[],
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
-  clickAddReference(varData: IVariableInfo): void,
+  handleVariableDropDown(option: string, varData?: IVariableInfo): void,
   pressPlay(): void
 }
 
@@ -39,7 +41,7 @@ const Canvas: FunctionComponent<CanvasProps> = (
     referenceArray = [],
     operationsArray = [],
     editVariable,
-    clickAddReference,
+    handleVariableDropDown,
     pressPlay }
   ) => {
   let active = false;
@@ -105,13 +107,12 @@ const Canvas: FunctionComponent<CanvasProps> = (
           data={data}
           key={i.toString()}
           edit={editVariable}
-          clickAddReference={clickAddReference}/>
+          handleVariableDropDown={handleVariableDropDown}/>
       ))}
-      {referenceArray.map(({referenceId, variableReferenced}, i) => (
+      {referenceArray.map((data, i) => (
         <VarReference
           key={i.toString()}
-          referenceId={referenceId}
-          variableReferenced={variableReferenced}/>
+          data={data}/>
       ))}
       {operationsArray.map((operator, i) => (
         <Operator
@@ -141,7 +142,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
       type,
       name: '',
-      value: undefined
+      value: undefined,
+      deleted: false
     }
     let newVarArray: IVariableInfo[] = [...variables, newVarInfo]
     setVariables(newVarArray)
@@ -158,13 +160,47 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
     setVariables(newVariables);
   }
 
-  const clickAddReference = (varData: IVariableInfo): void => {
-    let newReference: IVarReference = {
-      referenceId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      variableReferenced: varData
+  const handleVariableDropDown = ( option: string, varData: IVariableInfo ): void => {
+    switch (option) {
+      case 'Add Reference': {
+        const newReference: IVarReference = {
+          referenceId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+          variableReferenced: varData,
+          deleted: false
+        }
+        const newVarReferences = [...varReferences, newReference]
+        setVarReferences(newVarReferences)
+        break;
+
+      }
+      case 'Delete Variable': {
+        /* this method does not filter because on rerender, a deleted variable 
+        and its references might move positions in the array and change their
+        positions in the DOM. Workaround was to keep the variables and references
+        in the array and just add a 'deleted property which renders nothing if true */
+        const newVarReferences = [...varReferences].map(el => {
+          if (el.variableReferenced === varData) {
+            el.deleted = true
+          }
+          return el;
+        });
+        setVarReferences(newVarReferences);
+        /* does a full delete of the vairable properties, interpreter SHOULD ignore
+        var names of empty string*/
+        const newVariables = [...variables].map(data => {
+          if (data === varData) {
+            data.deleted = true;
+            data.name = '';
+            data.value = null
+          }
+          return data
+        });
+        setVariables(newVariables);
+        break;
+      }
+      default:
+        break;
     }
-    const newVarReferences = [...varReferences, newReference]
-    setVarReferences(newVarReferences)
   }
 
   const clickOperations = (type: string): void => {
@@ -209,7 +245,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
         referenceArray={varReferences}
         editVariable={editVariable}
         operationsArray={operations}
-        clickAddReference={clickAddReference}
+        handleVariableDropDown={handleVariableDropDown}
         pressPlay={pressPlay}/>
     </Panel>
   )
