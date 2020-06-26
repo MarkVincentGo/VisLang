@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { Draggable } from './Draggable';
+import { DataNode } from './Operator';
 import { IVarReference  } from './Editor';
 
 interface VarReferenceProps {
@@ -11,13 +12,14 @@ export const VarReference: FunctionComponent<VarReferenceProps> = ({ data, handl
   const handleDropDown = (option: string):void => {
     handleReferenceDropDown(option, data)
   }
-  
+
   return ( !data.deleted ?
     <Draggable
       contextMenu={['Copy Reference', 'Delete Reference']}
       onContextMenu={e => e.preventDefault()}
       contextMenuClick={handleDropDown}>
       {data.variableReferenced.name}
+      <DataNode position="bottom" nodes={1}/>
     </Draggable>
     :
     <></>

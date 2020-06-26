@@ -6,10 +6,14 @@ import styles from './Operator.module.css'
 
 interface DataNodesProps {
   position: string,
-  nodes: number
+  nodes: number,
+  mousedDown?(event: React.MouseEvent): void, 
+  mousedUp?(event: React.MouseEvent): void
 }
 
-const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes }): JSX.Element => {
+export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp }): JSX.Element => {
+  const [nodeData, setNodeData] = useState<any[]>(new Array(nodes).fill(null))
+
   let nodePosition = position === 'top' ? {top: -5} : {bottom: -1.5}
 
   const mouseEnter = (event: React.MouseEvent): void => {
@@ -19,31 +23,51 @@ const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes }): JSX.E
     event.stopPropagation()
   }
 
+  const mouseDown = (i: number, event: React.MouseEvent): void => {
+    if (mousedDown) {
+      mousedDown(event)
+    }
+  }
+
+  const mouseUp = (i: number, event: React.MouseEvent): void => {
+    const newNodeData = [...nodeData];
+    newNodeData[i] = {data: ''}
+    setNodeData(newNodeData);
+    if (mousedUp) {
+      mousedUp(event)
+    }
+  }
+
   return (
     <div 
       className={styles.nodeContainer}
-      style={nodePosition}>
+      style={nodePosition}
+      >
       {(new Array(nodes).fill(0)).map((el, i) => (
         <div
           key={i.toString()}
-          className={styles.node}
+          className={[styles.node, 'dataNode'].join(' ')}
           onMouseOver={mouseEnter}
-          onMouseLeave={mouseLeave}/>
+          onMouseOut={mouseLeave}
+          onMouseDown={(e) => {mouseDown(i, e)}}
+          onMouseUp={(e) => mouseUp(i, e)}/>
       ))}
     </div>
   )
 }
 
 interface OperatorProps {
-  operator: IOperatorInfo
+  operator: IOperatorInfo,
+  mousedDown?(event: React.MouseEvent): void, 
+  mousedUp?(event: React.MouseEvent): void
 }
 
-export const Operator: FunctionComponent<OperatorProps> = ({ operator }): JSX.Element => {
+export const Operator: FunctionComponent<OperatorProps> = ({ operator, mousedDown, mousedUp }): JSX.Element => {
   return (
     <Draggable color="#FCBB5B" activeColor="#FDAD29" borderColor="#FF5000">
-      <DataNode position="top" nodes={2}/>
+      <DataNode position="top" nodes={2} mousedDown={mousedDown} mousedUp={mousedUp}/>
         {operator.type}
-      <DataNode position="bottom" nodes={1}/>
+      <DataNode position="bottom" nodes={1} mousedDown={mousedDown} mousedUp={mousedUp}/>
     </Draggable>
   )
 }

@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import styles from './Variable.module.css';
 import { Draggable } from './Draggable';
 import { IVariableInfo } from './Editor';
+import { DataNode } from './Operator'
 
 /*
 This module defines the component rendered when a variable is declared
@@ -109,6 +110,7 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
         onChange={setValName}
         value={valName}
         confirmFn={confirmVarDeclaration}/>
+        <DataNode position="bottom" nodes={1}/>
     </Draggable>
     :
     <></>
