@@ -70,8 +70,8 @@ export const Draggable: FunctionComponent<DraggableProps> = (
   return (
     <div 
       className={[styles.variable, active ? styles.active : '', 'draggable'].join(' ')}
-      onMouseEnter={mouseIn}
-      onMouseLeave={mouseOut}
+      onMouseOver={mouseIn}
+      onMouseOut={mouseOut}
       style={{
         backgroundColor: active ? activeColor : color,
         borderColor,

@@ -1,0 +1,19 @@
+.nodeContainer {
+  height: 5%;
+  width: 100%; 
+  position: absolute;
+  left: 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.node {
+  height: 5px;
+  width: 5px;
+  background-color: black;
+  position: relative;
+}
+
+.node:hover {
+  box-shadow: 0px 0px 0px 1px black;
+}
