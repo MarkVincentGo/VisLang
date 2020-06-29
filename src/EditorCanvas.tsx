@@ -1,5 +1,7 @@
-import React, { FunctionComponent, useState, useCallback, useEffect, useRef } from 'react';
+import React, { FunctionComponent, useState, useCallback, useEffect, useRef, Fragment } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './Editor.module.css';
+import ddStyles from './Button.module.css'
 import { Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
@@ -22,12 +24,17 @@ interface DrawLinesProps {
   children?: any,
   lines: DataSVGLine[],
   mouseDown: boolean,
-  currentLine: DataSVGLine
+  currentLine: DataSVGLine,
+  deleteLine(lineId: number): void,
 }
 
 
-const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine }): JSX.Element => {
-  const svgBox = useRef<any>(<div></div>)
+const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine, deleteLine}): JSX.Element => {
+  const [rightClicked, setRightClicked] = useState<boolean>(false);
+  const [mousePos, setMousePos] = useState<number[]>([0,0]);
+  const [selectedLine, setSelectedLine] = useState<number>(0)
+  const svgBox = useRef<any>(<div></div>);
+
   useEffect(() => {
     let {left, top} = svgBox.current.getBoundingClientRect();
     svgBox.current.setAttribute('viewBox', `${left} ${top} ${canvasInfo[1]} ${canvasInfo[0]}`)
@@ -36,15 +43,53 @@ const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lin
     }
   }, [canvasInfo])
 
+  const handleRightClick = (event: React.MouseEvent, lineInfo: DataSVGLine):void => {
+    event.preventDefault();
+    let {left, top} = svgBox.current.getBoundingClientRect();
+    setMousePos([event.clientX - left, event.clientY - top])
+    setSelectedLine(lineInfo.id)
+    setRightClicked(true)
+  }
+
+  const clickOption = (event: React.SyntheticEvent): void => {
+    console.log(selectedLine)
+    deleteLine(selectedLine);
+  }
+
   return (
     <svg
-      className="canvas"
       ref={svgBox}
       viewBox={`0 0 ${canvasInfo[1]} ${canvasInfo[0]}`}
+      onClick={() => setRightClicked(false)}
       style={{border: '1px solid black', width: canvasInfo[1], height: canvasInfo[0]}}>
       {mouseDown ? <line x1={currentLine.x1} x2={currentLine.x2} y1={currentLine.y1} y2={currentLine.y2} stroke="black"/> : <></>}
       {lines.map((el, i) => (
-        <line key={i.toString()} x1={el.x1} x2={el.x2} y1={el.y1} y2={el.y2} stroke="black" />
+        <Fragment>
+          <line
+            key={i.toString()}
+            x1={el.x1}
+            x2={el.x2}
+            y1={el.y1}
+            y2={el.y2}
+            className={styles.line}
+            onContextMenu={e => handleRightClick(e, el)}
+          />
+          {rightClicked ?
+            createPortal((
+              <div className={ddStyles.dropDown} style={{top: mousePos[1], left: mousePos[0]}}>
+                <div className={ddStyles.dropDownOptionContainer}>
+                  <div 
+                    className={ddStyles.dropDownOption}
+                    onClick={clickOption}>
+                    Delete Line
+                  </div>
+                </div>
+              </div>
+            ), document.getElementsByClassName(styles.canvas)[0])
+            :
+            <></>
+          }
+        </Fragment>
       ))}
       {children}
     </svg>
@@ -55,6 +100,8 @@ interface CanvasProps {
   variableArray: IVariableInfo[],
   referenceArray: IVarReference[],
   operationsArray: IOperatorInfo[],
+  linesArray: DataSVGLine[],
+  updateLines(newLines: DataSVGLine[]): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
   handleVariableDropDown(option: string, varData?: IVariableInfo): void,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
@@ -62,11 +109,12 @@ interface CanvasProps {
 }
 
 
-
 export const Canvas: FunctionComponent<CanvasProps> = (
-  { variableArray = [],
-    referenceArray = [],
-    operationsArray = [],
+  { variableArray,
+    referenceArray,
+    operationsArray,
+    linesArray,
+    updateLines,
     editVariable,
     handleVariableDropDown,
     handleReferenceDropDown,
@@ -80,7 +128,6 @@ export const Canvas: FunctionComponent<CanvasProps> = (
   // this is attempt to get the height and width of the canvas component
   const [dimensions, setDimensions] = useState<number[]>([0,0]);
   const [mousedDownInNode, setmousedDownInNode] = useState<boolean>(false);
-  const [lines, setLines] = useState<DataSVGLine[]>([])
   const [currentLine, setcurrentLine] = useState<DataSVGLine>(
     {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null}
     );
@@ -127,7 +174,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       // if this is an el1, change all of the x1, y1
       // if this is an el2, change the x2, y2
       // make the change relative to the bound client rect of canvas
-      let newLines = lines.map(el => {
+      let newLines = linesArray.map(el => {
         let newEl = {...el}
         if (newEl.el1 === itemData.componentId) {
           newEl.x1 = newEl.x1 + (event.clientX - startX);
@@ -138,8 +185,8 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         }
         return newEl;
       })
-      if (lines.length) {
-        setLines(newLines)
+      if (linesArray.length) {
+        updateLines(newLines)
       }
     }
     if (mousedDownInNode) {
@@ -206,9 +253,14 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     } else if (position === 'top') {
       newLine.el2 = nodeId
     }
-    let newLines = [...lines, newLine];
-    setLines(newLines);
+    let newLines = [...linesArray, newLine];
+    updateLines(newLines);
     setmousedDownInNode(false)
+  }
+
+  const deleteLine = (lineId: number): void => {
+    let newLines = linesArray.filter(line => line.id !== lineId);
+    updateLines(newLines)
   }
 
   return (
@@ -253,7 +305,8 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         canvasInfo={dimensions}
         currentLine={currentLine}
         mouseDown={mousedDownInNode}
-        lines={lines}/>
+        lines={linesArray}
+        deleteLine={deleteLine}/>
     </div>
   )
 }

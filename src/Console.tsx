@@ -14,7 +14,7 @@ export const Console:FunctionComponent<ConsoleProps> = ({ output }): JSX.Element
     backgroundColor={backgroundColor}
     style={{justifyContent: 'flex-start'}}>
     {output.map(text => (
-      <p className={styles.output}>{text}</p>
+      <p key={text} className={styles.output}>{text}</p>
     ))}
   </Panel>
 )

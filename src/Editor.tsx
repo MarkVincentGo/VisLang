@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
+import { DataSVGLine } from './EditorCanvas';
 
 export interface IVariableInfo {
   readonly id: number,
@@ -30,8 +31,9 @@ interface EditorProps {
 
 export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.Element => {
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
-  const [varReferences, setVarReferences] = useState<IVarReference[]>([])
-  const [operations, setOperations] = useState<IOperatorInfo[]>([])
+  const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
+  const [operations, setOperations] = useState<IOperatorInfo[]>([]);
+  const [lines, setLines] = useState<DataSVGLine[]>([])
 
 
   /* when a type is clicked from the dropdown, this function creates new variable
@@ -84,6 +86,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
           }
           return el;
         });
+
+        let newLines = lines.filter(line => line.el1 !== varData.id);
+        newLines = newLines.filter(line => line.el2 !== varData.id);
+        setLines(newLines)
+
+
         setVarReferences(newVarReferences);
         /* does a full delete of the vairable properties, interpreter SHOULD ignore
         var names of empty string*/
@@ -96,6 +104,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
           return el;
         });
         setVariables(newVariables);
+
         break;
       }
       default:
@@ -142,6 +151,11 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
     printToConsole({ variables })
   }
 
+  const updateLines = (newLines: DataSVGLine[]):void => {
+    setLines(newLines)
+  }
+
+
   return (
     <Panel windowName="Editor">
       <ButtonContainer>
@@ -169,7 +183,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
         operationsArray={operations}
         handleVariableDropDown={handleVariableDropDown}
         handleReferenceDropDown={handleReferenceDropDown}
-        pressPlay={pressPlay}/>
+        pressPlay={pressPlay}
+        linesArray={lines}
+        updateLines={updateLines}/>
     </Panel>
   )
 }

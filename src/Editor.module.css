@@ -5,3 +5,13 @@
   position: relative;
   overflow: hidden;
 }
+
+.line {
+  stroke: #444;
+  stroke-width: 2;
+}
+
+.line:hover {
+  stroke-width: 3;
+  stroke: black;
+}
