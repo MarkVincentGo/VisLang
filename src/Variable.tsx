@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import styles from './Variable.module.css';
 import { Draggable } from './Draggable';
 import { IVariableInfo } from './Editor';
-import { DataNode } from './Operator'
+import { DataNode } from './DataNode';
 
 /*
 This module defines the component rendered when a variable is declared
@@ -75,10 +75,12 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '
 interface VariableProps {
   data: IVariableInfo,
   edit(varData: IVariableInfo, name: string, value?: string): void,
-  handleVariableDropDown(option?: string, varInfo?: IVariableInfo): void
+  handleVariableDropDown(option?: string, varInfo?: IVariableInfo): void,
+  mousedDown(event: React.MouseEvent, dragInfo: any): void, 
+  mousedUp(event: React.MouseEvent, dragInfo: any): void
 }
 
-export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleVariableDropDown }): JSX.Element => {
+export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleVariableDropDown, mousedDown, mousedUp }): JSX.Element => {
   const [varName, setVarName] = useState('');
   const [valName, setValName] = useState('');
 
@@ -111,7 +113,7 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
         onChange={setValName}
         value={valName}
         confirmFn={confirmVarDeclaration}/>
-        <DataNode position="bottom" nodes={1}/>
+        <DataNode position="bottom" nodes={1} mousedDown={mousedDown} mousedUp={mousedUp} dragInfo={data}/>
     </Draggable>
     :
     <></>

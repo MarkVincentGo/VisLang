@@ -36,10 +36,6 @@ const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lin
     }
   }, [canvasInfo])
 
-  useEffect(() => {
-    console.log('changed')
-  }, [lines])
-
   return (
     <svg
       className="canvas"
@@ -175,6 +171,9 @@ export const Canvas: FunctionComponent<CanvasProps> = (
   // when one node is clicked client mouse data passed to line data
   const nodeMouseDown = (event: React.MouseEvent,  nodeInfo: any): void => {
     let { position, id: nodeId } = nodeInfo
+    if (!nodeId) {
+      nodeId = nodeInfo.referenceId
+    }
     setmousedDownInNode(true)
     let newLine: DataSVGLine = {
       data: null,
@@ -231,12 +230,16 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           data={data}
           key={i.toString()}
           edit={editVariable}
+          mousedDown={nodeMouseDown}
+          mousedUp={nodeMouseUp}
           handleVariableDropDown={handleVariableDropDown}/>
       ))}
       {referenceArray.map((data, i) => (
         <VarReference
           key={i.toString()}
           data={data}
+          mousedDown={nodeMouseDown}
+          mousedUp={nodeMouseUp}
           handleReferenceDropDown={handleReferenceDropDown}/>
       ))}
       {operationsArray.map((operator, i) => (
