@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
-import { DataSVGLine } from './EditorCanvas';
+
 
 export interface IVariableInfo {
   readonly id: number,
@@ -23,6 +23,17 @@ export interface IOperatorInfo {
   type: string,
   arg1: string,
   arg2: string
+}
+
+export interface DataSVGLine {
+  id: number,
+  x1: number,
+  x2: number,
+  y1: number,
+  y2: number,
+  data: any,
+  el1: any,
+  el2: any,
 }
 
 interface EditorProps {

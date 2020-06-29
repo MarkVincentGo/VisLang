@@ -1,100 +1,13 @@
-import React, { FunctionComponent, useState, useCallback, useEffect, useRef, Fragment } from 'react';
-import { createPortal } from 'react-dom';
+import React, { FunctionComponent, useState, useCallback } from 'react';
+import { DrawLines } from './DrawLines';
 import styles from './Editor.module.css';
-import ddStyles from './Button.module.css'
 import { Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
 import { VarReference } from './VarReference'
 import { IVariableInfo, IVarReference, IOperatorInfo } from './Editor';
+import { DataSVGLine } from './Editor';
 
-export interface DataSVGLine {
-  id: number,
-  x1: number,
-  x2: number,
-  y1: number,
-  y2: number,
-  data: any,
-  el1: any,
-  el2: any,
-}
-
-interface DrawLinesProps {
-  canvasInfo: number[],
-  children?: any,
-  lines: DataSVGLine[],
-  mouseDown: boolean,
-  currentLine: DataSVGLine,
-  deleteLine(lineId: number): void,
-}
-
-
-const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine, deleteLine}): JSX.Element => {
-  const [rightClicked, setRightClicked] = useState<boolean>(false);
-  const [mousePos, setMousePos] = useState<number[]>([0,0]);
-  const [selectedLine, setSelectedLine] = useState<number>(0)
-  const svgBox = useRef<any>(<div></div>);
-
-  useEffect(() => {
-    let {left, top} = svgBox.current.getBoundingClientRect();
-    svgBox.current.setAttribute('viewBox', `${left} ${top} ${canvasInfo[1]} ${canvasInfo[0]}`)
-    console.log(svgBox.current.getAttribute('viewBox'))
-    return () => {
-    }
-  }, [canvasInfo])
-
-  const handleRightClick = (event: React.MouseEvent, lineInfo: DataSVGLine):void => {
-    event.preventDefault();
-    let {left, top} = svgBox.current.getBoundingClientRect();
-    setMousePos([event.clientX - left, event.clientY - top])
-    setSelectedLine(lineInfo.id)
-    setRightClicked(true)
-  }
-
-  const clickOption = (event: React.SyntheticEvent): void => {
-    console.log(selectedLine)
-    deleteLine(selectedLine);
-  }
-
-  return (
-    <svg
-      ref={svgBox}
-      viewBox={`0 0 ${canvasInfo[1]} ${canvasInfo[0]}`}
-      onClick={() => setRightClicked(false)}
-      style={{border: '1px solid black', width: canvasInfo[1], height: canvasInfo[0]}}>
-      {mouseDown ? <line x1={currentLine.x1} x2={currentLine.x2} y1={currentLine.y1} y2={currentLine.y2} stroke="black"/> : <></>}
-      {lines.map((el, i) => (
-        <Fragment>
-          <line
-            key={i.toString()}
-            x1={el.x1}
-            x2={el.x2}
-            y1={el.y1}
-            y2={el.y2}
-            className={styles.line}
-            onContextMenu={e => handleRightClick(e, el)}
-          />
-          {rightClicked ?
-            createPortal((
-              <div className={ddStyles.dropDown} style={{top: mousePos[1], left: mousePos[0]}}>
-                <div className={ddStyles.dropDownOptionContainer}>
-                  <div 
-                    className={ddStyles.dropDownOption}
-                    onClick={clickOption}>
-                    Delete Line
-                  </div>
-                </div>
-              </div>
-            ), document.getElementsByClassName(styles.canvas)[0])
-            :
-            <></>
-          }
-        </Fragment>
-      ))}
-      {children}
-    </svg>
-  )
-}
 
 interface CanvasProps {
   variableArray: IVariableInfo[],
