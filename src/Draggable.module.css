@@ -6,7 +6,8 @@
   border-radius: 5px;
   font-family: 'Courier New', Courier, monospace;
   cursor: pointer;
-  z-index: 20;
+  z-index: 20; 
+  user-select: none;
 }
 
 .active {

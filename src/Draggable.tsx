@@ -10,16 +10,18 @@ interface DraggableProps {
   onContextMenu?(event: React.MouseEvent): any,
   contextMenu?: any[],
   contextMenuClick?(option?: string): any,
-  children?: any
+  children?: any,
+  componentId: number
 }
 
 interface DragInfo {
-  currentX: number;
-  currentY: number;
-  initialX: number;
-  initialY: number;
-  xOffset:number;
-  yOffset:number;
+  currentX: number,
+  currentY: number,
+  initialX: number,
+  initialY: number,
+  xOffset:number,
+  yOffset:number,
+  componentId: number;
 }
 
 
@@ -31,7 +33,8 @@ export const Draggable: FunctionComponent<DraggableProps> = (
     style,
     onContextMenu = function(){},
     contextMenuClick = function(){},
-    contextMenu = [] },
+    contextMenu = [],
+    componentId },
   ) => {
 
   const [active, setActive] = useState(false);
@@ -45,6 +48,7 @@ export const Draggable: FunctionComponent<DraggableProps> = (
     initialY: 0,
     xOffset: 0,
     yOffset: 0,
+    componentId,
   }  
 
   const mouseIn = (event: React.SyntheticEvent): void => {
@@ -82,14 +86,13 @@ export const Draggable: FunctionComponent<DraggableProps> = (
         ...style
       }}
       data-varinfo={JSON.stringify(dragInfo)}
-      onContextMenu={e => { onContextMenu(e); setRightClicked(true)}}>
+      onContextMenu={e => {onContextMenu(e); setRightClicked(true)}}>
         {children}
         {rightClicked ? 
           <div className={ddStyles.dropDown}>
           {contextMenu.map((option, i) => (
             <div className={ddStyles.dropDownOptionContainer} key={i.toString()} style={{fontFamily: 'Arial'}}>
                 <div 
-                  // REFACTOR
                   onClick={() => clickDropDown(option)}
                   className={ddStyles.dropDownOption}>
                   {option}

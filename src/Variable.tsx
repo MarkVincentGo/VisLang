@@ -99,7 +99,8 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
     <Draggable
       onContextMenu={e => e.preventDefault()}
       contextMenu={['Add Reference', 'Delete Variable']}
-      contextMenuClick={handleDropDown}>
+      contextMenuClick={handleDropDown}
+      componentId={data.id}>
       <InputComponent 
         onChange={setVarName}
         value={varName}

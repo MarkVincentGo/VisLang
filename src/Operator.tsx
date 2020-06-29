@@ -7,11 +7,12 @@ import styles from './Operator.module.css'
 interface DataNodesProps {
   position: string,
   nodes: number,
-  mousedDown?(event: React.MouseEvent): void, 
-  mousedUp?(event: React.MouseEvent): void
+  mousedDown?(event: React.MouseEvent, dragInfo: any): void, 
+  mousedUp?(event: React.MouseEvent, dragInfo: any): void,
+  dragInfo?: IOperatorInfo,
 }
 
-export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp }): JSX.Element => {
+export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo }): JSX.Element => {
   const [nodeData, setNodeData] = useState<any[]>(new Array(nodes).fill(null))
 
   let nodePosition = position === 'top' ? {top: -5} : {bottom: -1.5}
@@ -24,8 +25,8 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
   }
 
   const mouseDown = (i: number, event: React.MouseEvent): void => {
-    if (mousedDown) {
-      mousedDown(event)
+    if (mousedDown && dragInfo) {
+      mousedDown(event, {...dragInfo, position})
     }
   }
 
@@ -34,7 +35,7 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
     newNodeData[i] = {data: ''}
     setNodeData(newNodeData);
     if (mousedUp) {
-      mousedUp(event)
+      mousedUp(event, {...dragInfo, position})
     }
   }
 
@@ -58,16 +59,16 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
 
 interface OperatorProps {
   operator: IOperatorInfo,
-  mousedDown?(event: React.MouseEvent): void, 
-  mousedUp?(event: React.MouseEvent): void
+  mousedDown?(event: React.MouseEvent, dragInfo: any): void, 
+  mousedUp?(event: React.MouseEvent, dragInfo: any): void
 }
 
 export const Operator: FunctionComponent<OperatorProps> = ({ operator, mousedDown, mousedUp }): JSX.Element => {
   return (
-    <Draggable color="#FCBB5B" activeColor="#FDAD29" borderColor="#FF5000">
-      <DataNode position="top" nodes={2} mousedDown={mousedDown} mousedUp={mousedUp}/>
+    <Draggable color="#FCBB5B" activeColor="#FDAD29" borderColor="#FF5000" componentId={operator.id}>
+      <DataNode position="top" nodes={2} mousedDown={mousedDown} mousedUp={mousedUp} dragInfo={operator}/>
         {operator.type}
-      <DataNode position="bottom" nodes={1} mousedDown={mousedDown} mousedUp={mousedUp}/>
+      <DataNode position="bottom" nodes={1} mousedDown={mousedDown} mousedUp={mousedUp} dragInfo={operator}/>
     </Draggable>
   )
 }

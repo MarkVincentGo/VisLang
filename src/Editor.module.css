@@ -3,5 +3,5 @@
   width: 100%;
   background-color: #e1e1e1;
   position: relative;
-  overflow: scroll;
+  overflow: hidden;
 }

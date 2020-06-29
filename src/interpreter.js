@@ -17,6 +17,7 @@ export default function(metaData) {
     return scope
   }
   const globalScope = getVariables(variables);
+  console.log(globalScope)
 
 
 
