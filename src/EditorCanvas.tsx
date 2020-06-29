@@ -5,8 +5,10 @@ import { Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
 import { VarReference } from './VarReference'
-import { IVariableInfo, IVarReference, IOperatorInfo } from './Editor';
+import { IVariableInfo, IVarReference, IOperatorInfo, IConsoleLog } from './Editor';
 import { DataSVGLine } from './Editor';
+import { ConsoleLog } from './SimpleFunctions';
+import { End } from './End';
 
 
 interface CanvasProps {
@@ -14,6 +16,8 @@ interface CanvasProps {
   referenceArray: IVarReference[],
   operationsArray: IOperatorInfo[],
   linesArray: DataSVGLine[],
+  logsArray: IConsoleLog[],
+  endsArray:any[],
   updateLines(newLines: DataSVGLine[]): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
   handleVariableDropDown(option: string, varData?: IVariableInfo): void,
@@ -27,6 +31,8 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     referenceArray,
     operationsArray,
     linesArray,
+    logsArray,
+    endsArray,
     updateLines,
     editVariable,
     handleVariableDropDown,
@@ -214,6 +220,21 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           mousedDown={nodeMouseDown}
           mousedUp={nodeMouseUp}/>
       ))}
+      {logsArray.map((log, i) => (
+        <ConsoleLog
+          key={i.toString()}
+          mousedDown={nodeMouseDown}
+          mousedUp={nodeMouseUp}
+          data={log}/>
+      ))}
+      {endsArray.map((end, i) => (
+        <End
+          key={i.toString()}
+          mousedDown={nodeMouseDown}
+          mousedUp={nodeMouseUp}
+          data={end}/>
+      ))}
+
       <DrawLines
         canvasInfo={dimensions}
         currentLine={currentLine}

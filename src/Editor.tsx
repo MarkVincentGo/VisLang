@@ -26,7 +26,7 @@ export interface IOperatorInfo {
 }
 
 export interface DataSVGLine {
-  id: number,
+  readonly id: number,
   x1: number,
   x2: number,
   y1: number,
@@ -34,6 +34,11 @@ export interface DataSVGLine {
   data: any,
   el1: any,
   el2: any,
+}
+
+export interface IConsoleLog {
+  readonly id: number,
+  arg1: any
 }
 
 interface EditorProps {
@@ -44,7 +49,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
   const [operations, setOperations] = useState<IOperatorInfo[]>([]);
-  const [lines, setLines] = useState<DataSVGLine[]>([])
+  const [lines, setLines] = useState<DataSVGLine[]>([]);
+  const [logs, setLogs] = useState<IConsoleLog[]>([]);
+  const [ends, setEnds] = useState<any[]>([]);
 
 
   /* when a type is clicked from the dropdown, this function creates new variable
@@ -158,6 +165,19 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
     setOperations(newOperations);
   }
 
+  const clickConsoleLog = ():void => {
+    let newLog = {
+      id: Math.floor(Math.random()* Number.MAX_SAFE_INTEGER),
+      arg1: 0
+    };
+    let newLogs = [...logs, newLog];
+    setLogs(newLogs);
+  }
+
+  const clickEnding = ():void => {
+    setEnds([...ends, {id: -(Math.floor(Math.random() * 1000 + 1))}]);
+  }
+
   const pressPlay = (): void => { 
     printToConsole({ variables })
   }
@@ -185,13 +205,20 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
           dropDown
           dropDownList={['For', 'While']}/>
         <Button name="Function"/>
-        <Button name="Log to Console"/>
+        <Button
+          name="Log to Console"
+          onClick={clickConsoleLog}/>
+        <Button 
+          name="End"
+          onClick={clickEnding}/>
       </ButtonContainer>
       <Canvas
         variableArray={variables}
         referenceArray={varReferences}
         editVariable={editVariable}
         operationsArray={operations}
+        logsArray={logs}
+        endsArray={ends}
         handleVariableDropDown={handleVariableDropDown}
         handleReferenceDropDown={handleReferenceDropDown}
         pressPlay={pressPlay}

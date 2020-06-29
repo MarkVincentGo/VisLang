@@ -22,22 +22,18 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
 
   useEffect(() => {
     let {left, top} = svgBox.current.getBoundingClientRect();
-    svgBox.current.setAttribute('viewBox', `${left} ${top} ${canvasInfo[1]} ${canvasInfo[0]}`)
-    console.log(svgBox.current.getAttribute('viewBox'))
-    return () => {
-    }
+    svgBox.current.setAttribute('viewBox', `${left} ${top} ${canvasInfo[1]} ${canvasInfo[0]}`);
   }, [canvasInfo])
 
   const handleRightClick = (event: React.MouseEvent, lineInfo: DataSVGLine):void => {
     event.preventDefault();
     let {left, top} = svgBox.current.getBoundingClientRect();
-    setMousePos([event.clientX - left, event.clientY - top])
-    setSelectedLine(lineInfo.id)
+    setMousePos([event.clientX - left, event.clientY - top]);
+    setSelectedLine(lineInfo.id);
     setRightClicked(true)
   }
 
   const clickOption = (event: React.SyntheticEvent): void => {
-    console.log(selectedLine)
     deleteLine(selectedLine);
   }
 
@@ -46,10 +42,10 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
       ref={svgBox}
       viewBox={`0 0 ${canvasInfo[1]} ${canvasInfo[0]}`}
       onClick={() => setRightClicked(false)}
-      style={{border: '1px solid black', width: canvasInfo[1], height: canvasInfo[0]}}>
+      style={{width: canvasInfo[1], height: canvasInfo[0]}}>
       {mouseDown ? <line x1={currentLine.x1} x2={currentLine.x2} y1={currentLine.y1} y2={currentLine.y2} stroke="black"/> : <></>}
       {lines.map((el, i) => (
-        <Fragment>
+        <Fragment key={i.toString()}>
           <line
             key={i.toString()}
             x1={el.x1}
