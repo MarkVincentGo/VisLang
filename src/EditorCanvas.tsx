@@ -5,7 +5,7 @@ import { Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
 import { VarReference } from './VarReference'
-import { IVariableInfo, IVarReference, IOperatorInfo, IConsoleLog } from './Editor';
+import { IVariableInfo, IVarReference, IFunctionInfo } from './Editor';
 import { DataSVGLine } from './Editor';
 import { ConsoleLog } from './SimpleFunctions';
 import { End } from './End';
@@ -14,9 +14,9 @@ import { End } from './End';
 interface CanvasProps {
   variableArray: IVariableInfo[],
   referenceArray: IVarReference[],
-  operationsArray: IOperatorInfo[],
+  operationsArray: IFunctionInfo[],
   linesArray: DataSVGLine[],
-  logsArray: IConsoleLog[],
+  logsArray: IFunctionInfo[],
   endsArray:any[],
   updateLines(newLines: DataSVGLine[]): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,

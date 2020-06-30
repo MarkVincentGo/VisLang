@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useState } from 'react';
+import * as R from 'ramda';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
-import R from 'ramda';
 
 
 export interface IVariableInfo {
@@ -20,11 +20,12 @@ export interface IVarReference {
   deleted: boolean,
 }
 
-export interface IOperatorInfo {
+export interface IFunctionInfo {
   readonly id: number,
   type: string,
+  opType: string,
   arguments: number,
-  func(): void,
+  func(...args: any[]): void,
   returnValue: number | string | boolean,
 }
 
@@ -39,11 +40,6 @@ export interface DataSVGLine {
   el2: any,
 }
 
-export interface IConsoleLog {
-  readonly id: number,
-  arg1: any
-}
-
 interface EditorProps {
   interpret(data: any): void
 }
@@ -51,9 +47,9 @@ interface EditorProps {
 export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Element => {
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
-  const [operations, setOperations] = useState<IOperatorInfo[]>([]);
+  const [operations, setOperations] = useState<IFunctionInfo[]>([]);
   const [lines, setLines] = useState<DataSVGLine[]>([]);
-  const [logs, setLogs] = useState<IConsoleLog[]>([]);
+  const [logs, setLogs] = useState<IFunctionInfo[]>([]);
   const [ends, setEnds] = useState<any[]>([]);
 
 
@@ -176,18 +172,24 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
 
     let newOperatorInfo = {
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      type,
+      type: 'Function',
+      opType: '+',
       arguments: 2,
-      func: R.curryN(2, opFunc)
+      func: R.curryN(2, opFunc),
+      returnValue: 0
     }
-    const newOperations: IOperatorInfo[] = [...operations, newOperatorInfo];
+    const newOperations: IFunctionInfo[] = [...operations, newOperatorInfo];
     setOperations(newOperations);
   }
 
   const clickConsoleLog = ():void => {
     let newLog = {
       id: Math.floor(Math.random()* Number.MAX_SAFE_INTEGER),
-      arg1: 0
+      type: 'Function',
+      opType: '+',
+      arguments: 1,
+      func: function(x: any) {console.log(x); return x},
+      returnValue: 0
     };
     let newLogs = [...logs, newLog];
     setLogs(newLogs);
