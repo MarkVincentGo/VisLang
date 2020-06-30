@@ -2,11 +2,13 @@ import React, { FunctionComponent, useState } from 'react';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
+import R from 'ramda';
 
 
 export interface IVariableInfo {
   readonly id: number,
   type: string,
+  valueType: string,
   name: string,
   value?: any,
   deleted: boolean,
@@ -21,8 +23,9 @@ export interface IVarReference {
 export interface IOperatorInfo {
   readonly id: number,
   type: string,
-  arg1: string,
-  arg2: string
+  arguments: number,
+  func(): void,
+  returnValue: number | string | boolean,
 }
 
 export interface DataSVGLine {
@@ -60,7 +63,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const clickVariable = (type: string): void => {
     let newVarInfo = {
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      type,
+      type: 'Value',
+      valueType: type,
       name: '',
       value: undefined,
       deleted: false
@@ -155,11 +159,26 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   const clickOperations = (type: string): void => {
+    let opFunc = null
+    if (type === '+') {
+      opFunc = (a: number, b: number): number => a + b;
+    } else if (type === '-') {
+      opFunc = (a: number, b: number): number => a - b;
+    } else if (type === '*') {
+      opFunc = (a: number, b: number): number => a * b;
+    } else if (type === '/') {
+      opFunc = (a: number, b: number): number => a / b;
+    } else if (type === '%') {
+      opFunc = (a: number, b: number): number => a % b;
+    } else { 
+      opFunc = (): number => 0
+    }
+
     let newOperatorInfo = {
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
       type,
-      arg1: '',
-      arg2: ''
+      arguments: 2,
+      func: R.curryN(2, opFunc)
     }
     const newOperations: IOperatorInfo[] = [...operations, newOperatorInfo];
     setOperations(newOperations);
