@@ -7,9 +7,9 @@ import { IFunctionInfo, IVariableInfo, IVarReference } from './Editor';
 interface DataNodesProps {
   position: string,
   nodes: number,
-  mousedDown(event: React.MouseEvent, dragInfo: any): void, 
-  mousedUp(event: React.MouseEvent, dragInfo: any): void,
-  dragInfo: IFunctionInfo | IVariableInfo | IVarReference
+  mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
+  mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void,
+  dragInfo: IFunctionInfo | IVariableInfo | IVarReference,
 }
 
 export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo }): JSX.Element => {
@@ -27,16 +27,16 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
 
   const mouseDown = (i: number, event: React.MouseEvent): void => {
     if (mousedDown && dragInfo) {
-      mousedDown(event, {...dragInfo, position});
+      mousedDown(event, {...dragInfo, position}, i);
     }
   }
 
   const mouseUp = (i: number, event: React.MouseEvent): void => {
     const newNodeData = [...nodeData];
-    newNodeData[i] = {data: ''}
+    newNodeData[i] = {data: ''};
     setNodeData(newNodeData);
     if (mousedUp) {
-      mousedUp(event, {...dragInfo, position})
+      mousedUp(event, {...dragInfo, position}, i);
     }
   }
 

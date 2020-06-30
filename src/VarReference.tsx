@@ -6,8 +6,8 @@ import { IVarReference  } from './Editor';
 interface VarReferenceProps {
   data: IVarReference,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
-  mousedDown(event: React.MouseEvent, dragInfo: any): void, 
-  mousedUp(event: React.MouseEvent, dragInfo: any): void
+  mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
+  mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void
 }
 
 export const VarReference: FunctionComponent<VarReferenceProps> = ({ data, handleReferenceDropDown, mousedDown, mousedUp }) => {

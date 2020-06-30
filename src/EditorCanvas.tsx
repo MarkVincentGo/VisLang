@@ -20,8 +20,10 @@ interface CanvasProps {
   endsArray:any[],
   updateLines(newLines: DataSVGLine[]): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
-  handleVariableDropDown(option: string, varData?: IVariableInfo): void,
+  editOperator(operatorId: number, key: string, value: any): void,
+  handleVariableDropDown(option: string, varData: IVariableInfo): void,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
+  handleOperatorDropDown(option: string, opData: IFunctionInfo): void,
   pressPlay(): void
 }
 
@@ -35,8 +37,10 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     endsArray,
     updateLines,
     editVariable,
+    editOperator,
     handleVariableDropDown,
     handleReferenceDropDown,
+    handleOperatorDropDown,
     pressPlay }
   ) => {
   let active = false;
@@ -135,8 +139,8 @@ export const Canvas: FunctionComponent<CanvasProps> = (
 
   // line-making logic
   // when one node is clicked client mouse data passed to line data
-  const nodeMouseDown = (event: React.MouseEvent,  nodeInfo: any): void => {
-    let { position, id: nodeId } = nodeInfo
+  const nodeMouseDown = (event: React.MouseEvent,  nodeInfo: any, index: number): void => {
+    let { position, id: nodeId, args } = nodeInfo
     if (!nodeId) {
       nodeId = nodeInfo.referenceId
     }
@@ -151,6 +155,13 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       el1: position === "bottom" ? nodeId : null,
       el2: position === "bottom" ? null : nodeId,
     }
+
+    if (position === 'top') {
+      let newArgs = [...args];
+      newArgs[index] = newLine.id;
+      nodeInfo.args = newArgs;
+    }
+
     setcurrentLine(newLine)
   }
 
@@ -164,14 +175,22 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     setcurrentLine(newLine)
   }
 
-  const nodeMouseUp = (event: React.MouseEvent, nodeInfo: any):void => {
-    let { position, id: nodeId } = nodeInfo;
+  const nodeMouseUp = (event: React.MouseEvent, nodeInfo: any, index: number):void => {
+    let { position, id: nodeId, args } = nodeInfo;
     let newLine = {...currentLine}
     if (position === 'bottom') {
       newLine.el1 = nodeId
     } else if (position === 'top') {
       newLine.el2 = nodeId
     }
+    
+    if (position === 'top') {
+      let newArgs = [...args];
+      newArgs[index] = newLine.id;
+      editOperator(nodeInfo.id, 'args', newArgs)
+
+    }
+
     let newLines = [...linesArray, newLine];
     updateLines(newLines);
     setmousedDownInNode(false)
@@ -180,6 +199,17 @@ export const Canvas: FunctionComponent<CanvasProps> = (
   const deleteLine = (lineId: number): void => {
     let newLines = linesArray.filter(line => line.id !== lineId);
     updateLines(newLines)
+
+    for (let op of operationsArray) {
+      let indexOfLineId = op.args.indexOf(lineId);
+      if (indexOfLineId > -1 ) {
+        let argsCopy = [...op.args]
+        argsCopy[indexOfLineId] = null;
+        editOperator(op.id, 'args', argsCopy);
+      }
+    }
+
+
   }
 
   return (
@@ -218,7 +248,8 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           operator={operator}
           key={i.toString()}
           mousedDown={nodeMouseDown}
-          mousedUp={nodeMouseUp}/>
+          mousedUp={nodeMouseUp}
+          handleOperatorDropDown={handleOperatorDropDown}/>
       ))}
       {logsArray.map((log, i) => (
         <ConsoleLog

@@ -10,6 +10,7 @@ export interface IVariableInfo {
   type: string,
   valueType: string,
   name: string,
+  args?: any[],
   value?: any,
   deleted: boolean,
 }
@@ -18,15 +19,18 @@ export interface IVarReference {
   readonly id: number,
   readonly variableReferenced: IVariableInfo,
   deleted: boolean,
+  args?: any[],
 }
 
 export interface IFunctionInfo {
+  [key: string]: any,
   readonly id: number,
   type: string,
   opType: string,
-  arguments: number,
+  args: any[],
   func(...args: any[]): void,
   value: number | string | boolean,
+  deleted: boolean
 }
 
 export interface DataSVGLine {
@@ -154,7 +158,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     }
   }
 
-  const clickOperations = (type: string): void => {
+  const clickOperator = (type: string): void => {
     let opFunc = null
     if (type === '+') {
       opFunc = (a: number, b: number): number => a + b;
@@ -174,12 +178,61 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
       type: 'Function',
       opType: type,
-      arguments: 2,
+      args: [null, null],
       func: R.curryN(2, opFunc),
-      value: 0
+      value: 0,
+      deleted: false
     }
     const newOperations: IFunctionInfo[] = [...operations, newOperatorInfo];
     setOperations(newOperations);
+  }
+
+  const editOperator = (operatorId: number, key: string, value: any): void => {
+    let newOperations = operations.map(el => {
+      let newEl:IFunctionInfo = {...el}
+      if (newEl.id === operatorId) {
+        newEl[key] = value;
+      }
+      return newEl;
+    });
+    console.log(newOperations)
+    setOperations(newOperations)
+  }
+
+  const handleOperatorDropDown = (option: string, opData: IFunctionInfo) => {
+    switch (option) {
+      case 'Delete Operation': {
+        let { id } = opData;
+        let newLines = lines.filter(line => line.el1 !== id);
+        newLines = newLines.filter(line => line.el2 !== id);
+        setLines(newLines);
+
+        let newOperations = operations.map(op => {
+          if (op.id === id) {
+            op.deleted = true;
+          }
+          return op
+        });
+        setOperations(newOperations);
+        
+        break;
+      }
+      case 'Copy Operation': {
+        let opCopy = operations.find(op => op.id === opData.id)
+        if (opCopy) {
+          let newOperations = [...operations,
+            {...opCopy,
+              id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+              args: [null, null],
+            }
+          ];
+          setOperations(newOperations);
+        }
+        break;
+      }
+      default:
+        break;
+    }
   }
 
   const clickConsoleLog = ():void => {
@@ -187,9 +240,10 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       id: Math.floor(Math.random()* Number.MAX_SAFE_INTEGER),
       type: 'Function',
       opType: 'Console Log',
-      arguments: 1,
+      args: [null],
       func: function(x: any) {console.log(x); return x},
-      value: 0
+      value: 0,
+      deleted: false
     };
     let newLogs = [...logs, newLog];
     setLogs(newLogs);
@@ -199,7 +253,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     let newEnd = {
       id: -(Math.floor(Math.random() * 1000 + 1)),
       type: 'End',
-      arguments: 1,
+      args: [null],
       func: function(a: any) {return a},
       value: 1
     }
@@ -232,7 +286,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           dropDownList={['Number', 'String', 'Boolean', 'Null']}/>
         <Button
           name="Operations"
-          ddClick={clickOperations}
+          ddClick={clickOperator}
           dropDown
           dropDownList={['+', '-', '*', '/', '%']}/>
         <Button
@@ -252,10 +306,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         referenceArray={varReferences}
         editVariable={editVariable}
         operationsArray={operations}
+        editOperator={editOperator}
         logsArray={logs}
         endsArray={ends}
         handleVariableDropDown={handleVariableDropDown}
         handleReferenceDropDown={handleReferenceDropDown}
+        handleOperatorDropDown={handleOperatorDropDown}
         pressPlay={pressPlay}
         linesArray={lines}
         updateLines={updateLines}/>

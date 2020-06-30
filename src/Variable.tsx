@@ -76,8 +76,8 @@ interface VariableProps {
   data: IVariableInfo,
   edit(varData: IVariableInfo, name: string, value?: string): void,
   handleVariableDropDown(option?: string, varInfo?: IVariableInfo): void,
-  mousedDown(event: React.MouseEvent, dragInfo: any): void, 
-  mousedUp(event: React.MouseEvent, dragInfo: any): void
+  mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
+  mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void
 }
 
 export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleVariableDropDown, mousedDown, mousedUp }): JSX.Element => {
