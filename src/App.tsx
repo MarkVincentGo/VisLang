@@ -10,8 +10,8 @@ function App(): JSX.Element {
   const [consoleText, setConsoleText] = useState<string[]>([]);
   
   const showOutputToConsole = (data: any):void => {
-    Interpreter(data)
-    setConsoleText(['YOU CAN DO THIS'])
+    setConsoleText(Interpreter(data))
+    // setConsoleText(['YOU CAN DO THIS'])
     // let newConsoleText = [...consoleText, text];
     // setConsoleText(newConsoleText)
   }

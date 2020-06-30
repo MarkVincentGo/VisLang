@@ -26,7 +26,7 @@ export interface IFunctionInfo {
   opType: string,
   arguments: number,
   func(...args: any[]): void,
-  returnValue: number | string | boolean,
+  value: number | string | boolean,
 }
 
 export interface DataSVGLine {
@@ -173,10 +173,10 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     let newOperatorInfo = {
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
       type: 'Function',
-      opType: '+',
+      opType: type,
       arguments: 2,
       func: R.curryN(2, opFunc),
-      returnValue: 0
+      value: 0
     }
     const newOperations: IFunctionInfo[] = [...operations, newOperatorInfo];
     setOperations(newOperations);
@@ -186,17 +186,24 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     let newLog = {
       id: Math.floor(Math.random()* Number.MAX_SAFE_INTEGER),
       type: 'Function',
-      opType: '+',
+      opType: 'Console Log',
       arguments: 1,
       func: function(x: any) {console.log(x); return x},
-      returnValue: 0
+      value: 0
     };
     let newLogs = [...logs, newLog];
     setLogs(newLogs);
   }
 
   const clickEnding = ():void => {
-    setEnds([...ends, {id: -(Math.floor(Math.random() * 1000 + 1))}]);
+    let newEnd = {
+      id: -(Math.floor(Math.random() * 1000 + 1)),
+      type: 'End',
+      arguments: 1,
+      func: function(a: any) {return a},
+      value: 1
+    }
+    setEnds([...ends, newEnd]);
   }
 
   
