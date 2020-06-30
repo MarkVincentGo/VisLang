@@ -13,7 +13,7 @@ export interface IVariableInfo {
 }
 
 export interface IVarReference {
-  readonly referenceId: number,
+  readonly id: number,
   readonly variableReferenced: IVariableInfo,
   deleted: boolean,
 }
@@ -42,10 +42,10 @@ export interface IConsoleLog {
 }
 
 interface EditorProps {
-  printToConsole(data: any): void
+  interpret(data: any): void
 }
 
-export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.Element => {
+export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Element => {
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
   const [operations, setOperations] = useState<IOperatorInfo[]>([]);
@@ -84,7 +84,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
     switch (option) {
       case 'Add Reference': {
         const newReference: IVarReference = {
-          referenceId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+          id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
           variableReferenced: varData,
           deleted: false
         }
@@ -133,7 +133,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
   const handleReferenceDropDown = (option: string, refData: IVarReference): void => {
     switch (option) {
       case 'Copy Reference': {
-        const newReference = {...refData, referenceId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) }
+        const newReference = {...refData, id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) }
         const newVarReferences = [...varReferences, newReference];
         setVarReferences(newVarReferences)
         break;
@@ -178,14 +178,21 @@ export const Editor: FunctionComponent<EditorProps> = ({ printToConsole }): JSX.
     setEnds([...ends, {id: -(Math.floor(Math.random() * 1000 + 1))}]);
   }
 
-  const pressPlay = (): void => { 
-    printToConsole({ variables })
-  }
-
+  
   const updateLines = (newLines: DataSVGLine[]):void => {
     setLines(newLines)
   }
-
+  
+  const pressPlay = (): void => { 
+    interpret([
+      ...variables,
+      ...varReferences,
+      ...operations,
+      ...lines,
+      ...logs,
+      ...ends
+    ])
+  }
 
   return (
     <Panel windowName="Editor">

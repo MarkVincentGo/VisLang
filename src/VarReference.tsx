@@ -17,7 +17,7 @@ export const VarReference: FunctionComponent<VarReferenceProps> = ({ data, handl
 
   return ( !data.deleted ?
     <Draggable
-      componentId={data.referenceId}
+      componentId={data.id}
       contextMenu={['Copy Reference', 'Delete Reference']}
       onContextMenu={e => e.preventDefault()}
       contextMenuClick={handleDropDown}>
