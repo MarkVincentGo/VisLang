@@ -73,6 +73,7 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
         </Fragment>
       ))}
       {children}
+      <rect x="100" y="100" width="40" height="40"/>
     </svg>
   )
 }

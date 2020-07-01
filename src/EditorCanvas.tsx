@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useCallback } from 'react';
+import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import { DrawLines } from './DrawLines';
 import styles from './Editor.module.css';
 import { Button } from './Button';
@@ -55,11 +55,29 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null}
     );
 
-  const canvasEl = useCallback((node) => {
-      if (node) {
-        setDimensions([node.clientHeight, node.clientWidth])
+  // const canvasEl = useCallback((node) => {
+  //     if (node) {
+  //       setDimensions([node.clientHeight, node.clientWidth])
+  //     }
+  //   }, [],)
+
+    const canvasEl = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      const getRectsInterval = setInterval(() => {
+        setDimensions(dimensions => {
+          let node = canvasEl.current;
+          if (node) {
+            let newDimensions: number[] = [node.clientHeight, node.clientWidth]
+            return JSON.stringify(dimensions) === JSON.stringify(newDimensions) ? dimensions : newDimensions
+          }
+          return dimensions
+        })
+      }, 500)
+      return () => {
+        clearInterval(getRectsInterval)
       }
-    }, [],)
+    }, [])
 
   const dragStart = (event: any ): void => {
     // gather all instances of variables and starts drag functionality

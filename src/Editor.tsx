@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useState } from 'react';
-import * as R from 'ramda';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';

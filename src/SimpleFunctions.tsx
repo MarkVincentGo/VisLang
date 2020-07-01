@@ -13,8 +13,7 @@ export const ConsoleLog: FunctionComponent<ConsoleLogProps> = ({data, mousedDown
   return (
     <Draggable
       componentId={data.id}
-      color="
-      "
+      color="lightgreen"
       borderColor="seaGreen"
       activeColor="#A7FF59">
       <DataNode
