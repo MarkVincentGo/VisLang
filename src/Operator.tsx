@@ -27,9 +27,19 @@ export const Operator: FunctionComponent<OperatorProps> = ({ operator, mousedDow
       contextMenu={['Delete Operation', 'Copy Operation']}
       onContextMenu={e => e.preventDefault()}
       contextMenuClick={handleDropDown}>
-      <DataNode position="top" nodes={operator.args.length} mousedDown={mousedDown} mousedUp={mousedUp} dragInfo={operator}/>
+      <DataNode
+        position="top"
+        nodes={operator.args.length}
+        mousedDown={mousedDown}
+        mousedUp={mousedUp}
+        dragInfo={operator}/>
         {operator.opType}
-      <DataNode position="bottom" nodes={1} mousedDown={mousedDown} mousedUp={mousedUp} dragInfo={operator}/>
+      <DataNode
+        position="bottom"
+        nodes={1}
+        mousedDown={mousedDown}
+        mousedUp={mousedUp}
+        dragInfo={operator}/>
     </Draggable>
     :
     <></>

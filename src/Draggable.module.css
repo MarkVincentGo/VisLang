@@ -4,7 +4,7 @@
   padding: 5px 10px;
   border: 2px solid blueviolet;
   border-radius: 5px;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Arial', sans-serif;
   cursor: pointer;
   z-index: 20; 
   user-select: none;

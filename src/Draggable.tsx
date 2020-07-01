@@ -26,8 +26,8 @@ interface DragInfo {
 
 
 export const Draggable: FunctionComponent<DraggableProps> = (
-  { color = 'rgba(157, 83, 226, 0.329)', 
-    activeColor = 'rgba(157, 83, 226, 0.429)',
+  { color = '#D195FF', 
+    activeColor = '#B75BFF',
     borderColor = 'blueviolet',
     children,
     style,
@@ -39,7 +39,7 @@ export const Draggable: FunctionComponent<DraggableProps> = (
 
   const [active, setActive] = useState(false);
   const left = useRef(Math.random() * 400 + 100).current;
-  const top = useRef(Math.random() * 50).current;
+  const top = useRef(Math.random() * 50 + 50).current;
 
   let dragInfo: DragInfo = {
     currentX: 0, 

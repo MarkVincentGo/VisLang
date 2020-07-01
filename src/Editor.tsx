@@ -179,7 +179,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       type: 'Function',
       opType: type,
       args: [null, null],
-      func: R.curryN(2, opFunc),
+      func: opFunc,
       value: 0,
       deleted: false
     }
@@ -187,16 +187,43 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     setOperations(newOperations);
   }
 
-  const editOperator = (operatorId: number, key: string, value: any): void => {
-    let newOperations = operations.map(el => {
-      let newEl:IFunctionInfo = {...el}
-      if (newEl.id === operatorId) {
-        newEl[key] = value;
-      }
-      return newEl;
-    });
-    console.log(newOperations)
-    setOperations(newOperations)
+  const editFunction = (operator: IFunctionInfo, key: string, value: any): void => {
+    switch (operator.type) {
+      case 'Function':
+        if (operator.opType === 'Console Log') {
+          let newLogs = logs.map(el => {
+            let newEl:IFunctionInfo = {...el}
+            if (newEl.id === operator.id) {
+              newEl[key] = value;
+            }
+            return newEl;
+          });
+          setLogs(newLogs)
+        } else {
+          let newOperations = operations.map(el => {
+            let newEl:IFunctionInfo = {...el}
+            if (newEl.id === operator.id) {
+              newEl[key] = value;
+            }
+            return newEl;
+          });
+          setOperations(newOperations)
+        }
+        break;
+      case 'End': 
+      let newEnds = ends.map(el => {
+        let newEl:IFunctionInfo = {...el}
+        if (newEl.id === operator.id) {
+          newEl[key] = value;
+        }
+        return newEl;
+      });
+      setEnds(newEnds)
+        break;
+    
+      default:
+        break;
+    }
   }
 
   const handleOperatorDropDown = (option: string, opData: IFunctionInfo) => {
@@ -220,11 +247,11 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       case 'Copy Operation': {
         let opCopy = operations.find(op => op.id === opData.id)
         if (opCopy) {
-          let newOperations = [...operations,
+          let newOperations = [
+            ...operations,
             {...opCopy,
               id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-              args: [null, null],
-            }
+              args: [null, null] }
           ];
           setOperations(newOperations);
         }
@@ -267,12 +294,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   
   const pressPlay = (): void => { 
     interpret([
-      ...variables,
-      ...varReferences,
-      ...operations,
+      ...variables.filter(v => !v.deleted),
+      ...varReferences.filter(vr => !vr.deleted),
+      ...operations.filter(op => !op.deleted),
       ...lines,
       ...logs,
-      ...ends
+      ...ends.filter(end => end.args[0])
     ])
   }
 
@@ -306,7 +333,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         referenceArray={varReferences}
         editVariable={editVariable}
         operationsArray={operations}
-        editOperator={editOperator}
+        editFunction={editFunction}
         logsArray={logs}
         endsArray={ends}
         handleVariableDropDown={handleVariableDropDown}

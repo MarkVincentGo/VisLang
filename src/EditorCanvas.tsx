@@ -20,7 +20,7 @@ interface CanvasProps {
   endsArray:any[],
   updateLines(newLines: DataSVGLine[]): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
-  editOperator(operatorId: number, key: string, value: any): void,
+  editFunction(operator: IFunctionInfo, key: string, value: any): void,
   handleVariableDropDown(option: string, varData: IVariableInfo): void,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
   handleOperatorDropDown(option: string, opData: IFunctionInfo): void,
@@ -37,7 +37,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     endsArray,
     updateLines,
     editVariable,
-    editOperator,
+    editFunction,
     handleVariableDropDown,
     handleReferenceDropDown,
     handleOperatorDropDown,
@@ -159,7 +159,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     if (position === 'top') {
       let newArgs = [...args];
       newArgs[index] = newLine.id;
-      nodeInfo.args = newArgs;
+      editFunction(nodeInfo, 'args', newArgs)
     }
 
     setcurrentLine(newLine)
@@ -187,8 +187,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     if (position === 'top') {
       let newArgs = [...args];
       newArgs[index] = newLine.id;
-      editOperator(nodeInfo.id, 'args', newArgs)
-
+      editFunction(nodeInfo, 'args', newArgs)
     }
 
     let newLines = [...linesArray, newLine];
@@ -205,10 +204,9 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       if (indexOfLineId > -1 ) {
         let argsCopy = [...op.args]
         argsCopy[indexOfLineId] = null;
-        editOperator(op.id, 'args', argsCopy);
+        editFunction(op, 'args', argsCopy);
       }
     }
-
 
   }
 
@@ -225,7 +223,8 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         backgroundColor="yellowgreen"
         color="black"
         onClick={pressPlay}
-        style={{ height: 'auto', borderRadius: 0 }}/>
+        style={{ height: 'auto', borderRadius: 0, width: '100%' }}
+        outerStyle={{width: '100%'}}/>
       {variableArray.map((data, i) => (
         <Variable
           data={data}

@@ -22,6 +22,7 @@ interface ButtonProps {
   dropDown?: boolean,
   dropDownList?: string[];
   style?: any,
+  outerStyle?: any,
   onClick?(): void;
   ddClick?(option: string): void;
 }
@@ -34,6 +35,7 @@ export const Button: FunctionComponent<ButtonProps> = (
     onClick = function(){},
     ddClick = function(){},
     style,
+    outerStyle,
     dropDown = false,
     dropDownList = [],
   }
@@ -59,7 +61,7 @@ export const Button: FunctionComponent<ButtonProps> = (
 
   return (
     <div 
-      style={{position: 'relative', width: 'max-content', borderRadius: 5 }}
+      style={{position: 'relative', width: 'max-content', borderRadius: 5, ...outerStyle}}
       onMouseEnter={mouseEnter}
       onMouseLeave={mouseLeave}>
       <div

@@ -113,7 +113,12 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
         onChange={setValName}
         value={valName}
         confirmFn={confirmVarDeclaration}/>
-        <DataNode position="bottom" nodes={1} mousedDown={mousedDown} mousedUp={mousedUp} dragInfo={data}/>
+        <DataNode
+          position="bottom"
+          nodes={1}
+          mousedDown={mousedDown}
+          mousedUp={mousedUp}
+          dragInfo={data}/>
     </Draggable>
     :
     <></>

@@ -1,11 +1,17 @@
-
 export default function(metaData) {
 
   // parses all value types and makes copy of meta data
-  let workData = parseValueTypes(metaData)
+  let workData = parseValueTypes(metaData);
+  let lines = getLines(metaData)
 
   // if assembled correctly, think of the data passed in as a stack, eventually it will run out
   // this makes it optimal for depth first search
+  let mapOfLines = new Map();
+  for (let line of lines) {
+    mapOfLines.set(line.id, line)
+  }
+  console.log(mapOfLines)
+
   let mapOfData = new Map();
   for (let data of workData) {
     mapOfData.set(data.id, data);
@@ -13,7 +19,6 @@ export default function(metaData) {
 
 
   let dfsArr = workData.filter(el => el.id < 0);
-  console.log(mapOfData)
 
   let orderOfOperations = [];
   // while still items in dfsArr
@@ -34,29 +39,29 @@ export default function(metaData) {
   // operation > values (LIKE SICP)
   
   console.log(orderOfOperations)
-  return interpret(orderOfOperations)
+  return(interpret(orderOfOperations, mapOfData, mapOfLines))
+
 }
 
-function interpret(inputArr = [], funcStack = [], valueStack = [], consoleArr = []) {
+function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(),consoleArr = [], funcStack = [], valueStack = []) {
   for (let node of inputArr) {
     if (node.type === 'End' || node.type === 'Function') {
       funcStack.push(node);
     } else if (node.type === 'Value') {
       valueStack.push(node);
-    }
+    } 
   }
 
   while (funcStack.length) {
     let topOfFuncStack = funcStack.pop();
-    console.log(topOfFuncStack)
-    let args = topOfFuncStack.arguments;
-    for (let i = 0; i < args; i++) {
-      topOfFuncStack.func = topOfFuncStack.func(valueStack.pop().value);
-    }
-    topOfFuncStack.value = topOfFuncStack.func;
+    //console.log(topOfFuncStack)
+    let args = topOfFuncStack.args;
+    // arguments contain the id's of every node the function depends on
+    let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
+    topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
+    valueStack = valueStack.slice(0, valueStack.length - applyArgs.length);
     if (topOfFuncStack.opType === 'Console Log') {consoleArr.push(topOfFuncStack.value.toString())}
     if (topOfFuncStack.type === 'End' ) consoleArr.push(`Last Return Value: ${topOfFuncStack.value}`)
-    topOfFuncStack.type = 'Value';
     valueStack.push(topOfFuncStack);
   }
   return consoleArr
@@ -79,5 +84,15 @@ function parseValueTypes(inputArr) {
       }
     }
   }
-  return output
+  return output;
+}
+
+function getLines(inputArr) {
+  let output = [];
+  for (let node of inputArr) {
+    if (node.hasOwnProperty('el1')) {
+      output.push(node)
+    }
+  }
+  return output;
 }

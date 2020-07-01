@@ -22,7 +22,12 @@ export const VarReference: FunctionComponent<VarReferenceProps> = ({ data, handl
       onContextMenu={e => e.preventDefault()}
       contextMenuClick={handleDropDown}>
       {data.variableReferenced.name}
-      <DataNode position="bottom" nodes={1} mousedDown={mousedDown} mousedUp={mousedUp} dragInfo={data}/>
+      <DataNode
+        position="bottom"
+        nodes={1}
+        mousedDown={mousedDown}
+        mousedUp={mousedUp}
+        dragInfo={data}/>
     </Draggable>
     :
     <></>
