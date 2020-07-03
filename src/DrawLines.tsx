@@ -3,6 +3,22 @@ import { createPortal } from 'react-dom';
 import styles from './Editor.module.css';
 import ddStyles from './Button.module.css'
 import { DataSVGLine } from './Editor';
+import { makeDraggable } from './utilityFunctions';
+
+interface CircleProps {
+  updateCirclePos(xPos: number, yPos: number): void
+}
+const Circle: FunctionComponent<CircleProps> = ({ updateCirclePos }): JSX.Element => {
+  const circleRef = useRef<SVGCircleElement>(null)
+  useEffect(() => {
+    let circleEl = circleRef.current
+    if (circleEl) {
+      makeDraggable(circleEl, updateCirclePos)
+    }
+  }, [])
+
+  return <circle ref={circleRef} cx="175" cy="175" r="4" strokeWidth="1" stroke="black" fill="red" />
+}
 
 interface DrawLinesProps {
   canvasInfo: number[],
@@ -12,7 +28,6 @@ interface DrawLinesProps {
   currentLine: DataSVGLine,
   deleteLine(lineId: number): void,
 }
-
 
 export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine, deleteLine}): JSX.Element => {
   const [rightClicked, setRightClicked] = useState<boolean>(false);
@@ -35,6 +50,12 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
 
   const clickOption = (event: React.SyntheticEvent): void => {
     deleteLine(selectedLine);
+  }
+  const [xPos, setxPos] = useState<number>(0);
+  const [yPos, setyPos] = useState<number>(0);
+  const updateCirclePos = (xPos: number, yPos: number):void => {
+    setxPos(xPos);
+    setyPos(yPos);
   }
 
   return (
@@ -72,8 +93,18 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
           }
         </Fragment>
       ))}
+      <>
+        <rect
+          onClick={() => console.log('rectclicked')}
+          x="150" rx="3"
+          y="150" ry="3"
+          width={Math.max(xPos + 20, 20)}
+          height={Math.max(yPos + 20, 20)}
+          strokeWidth="2"
+          style={{fill: 'none', strokeWidth: 6, stroke: 'black', cursor: 'pointer'}}/>
+        <Circle updateCirclePos={updateCirclePos}/>
+      </>
       {children}
-      <rect x="100" y="100" width="40" height="40"/>
     </svg>
   )
 }
