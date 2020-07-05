@@ -9,9 +9,9 @@ export const makeDraggable = (component: Element, callback = function(a:any, b:a
     })
     .on('drag', function() {
       const me = d3.select(this);
-      const transform = `translate(${d3.event.x}, ${d3.event.y})`;
-      translateX = d3.event.x;
-      translateY = d3.event.y;
+      translateX = Math.max(0, d3.event.x);
+      translateY = Math.max(0, d3.event.y);
+      const transform = `translate(${translateX}, ${translateY})`;
       callback(translateX, translateY);
       me.attr('transform', transform);
     });

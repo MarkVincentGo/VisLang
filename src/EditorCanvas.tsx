@@ -16,6 +16,7 @@ interface CanvasProps {
   referenceArray: IVarReference[],
   operationsArray: IFunctionInfo[],
   linesArray: DataSVGLine[],
+  loopsArray: number[],
   logsArray: IFunctionInfo[],
   endsArray:any[],
   updateLines(newLines: DataSVGLine[]): void,
@@ -33,6 +34,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     referenceArray,
     operationsArray,
     linesArray,
+    loopsArray,
     logsArray,
     endsArray,
     updateLines,
@@ -54,6 +56,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
   const [currentLine, setcurrentLine] = useState<DataSVGLine>(
     {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null}
     );
+  const [renderSVG, setrenderSVG] = useState(false);
 
   // const canvasEl = useCallback((node) => {
   //     if (node) {
@@ -68,7 +71,10 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         setDimensions(dimensions => {
           let node = canvasEl.current;
           if (node) {
-            let newDimensions: number[] = [node.clientHeight, node.clientWidth]
+            let newDimensions: number[] = [node.clientHeight, node.clientWidth];
+            if (!renderSVG) {
+              setrenderSVG(true)
+            }
             return JSON.stringify(dimensions) === JSON.stringify(newDimensions) ? dimensions : newDimensions
           }
           return dimensions
@@ -77,6 +83,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       return () => {
         clearInterval(getRectsInterval)
       }
+      // eslint-disable-next-line
     }, [])
 
   const dragStart = (event: any ): void => {
@@ -283,12 +290,17 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           data={end}/>
       ))}
 
-      <DrawLines
+      { renderSVG ?
+        <DrawLines
         canvasInfo={dimensions}
         currentLine={currentLine}
         mouseDown={mousedDownInNode}
         lines={linesArray}
+        loops={loopsArray}
         deleteLine={deleteLine}/>
+        : 
+        <></>
+      }
     </div>
   )
 }

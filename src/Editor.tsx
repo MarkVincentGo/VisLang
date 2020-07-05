@@ -52,6 +52,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
   const [operations, setOperations] = useState<IFunctionInfo[]>([]);
   const [lines, setLines] = useState<DataSVGLine[]>([]);
+  const [loops, setLoops] = useState<number[]>([])
   const [logs, setLogs] = useState<IFunctionInfo[]>([]);
   const [ends, setEnds] = useState<any[]>([]);
 
@@ -261,6 +262,11 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     }
   }
 
+  const clickLoop = (type: string): void => {
+    let newLoops = [...loops, 1];
+    setLoops(newLoops)
+  }
+
   const clickConsoleLog = ():void => {
     let newLog = {
       id: Math.floor(Math.random()* Number.MAX_SAFE_INTEGER),
@@ -318,7 +324,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         <Button
           name="Loops"
           dropDown
-          dropDownList={['For', 'While']}/>
+          dropDownList={['For', 'While']}
+          ddClick={clickLoop}/>
         <Button name="Function"/>
         <Button
           name="Log to Console"
@@ -333,6 +340,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         editVariable={editVariable}
         operationsArray={operations}
         editFunction={editFunction}
+        loopsArray={loops}
         logsArray={logs}
         endsArray={ends}
         handleVariableDropDown={handleVariableDropDown}
