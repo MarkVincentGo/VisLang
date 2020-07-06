@@ -43,13 +43,11 @@ export default function(metaData) {
 
 }
 
-function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(),consoleArr = [], funcStack = [], valueStack = []) {
+function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), consoleArr = [], funcStack = [],  scope = {}, valueStack = []) {
   for (let node of inputArr) {
     if (node.type === 'End' || node.type === 'Function') {
       funcStack.push(node);
-    } else if (node.type === 'Value') {
-      valueStack.push(node);
-    } 
+    }
   }
 
   while (funcStack.length) {
@@ -59,10 +57,8 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(),con
     // arguments contain the id's of every node the function depends on
     let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
     topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
-    valueStack = valueStack.slice(0, valueStack.length - applyArgs.length);
     if (topOfFuncStack.opType === 'Console Log') {consoleArr.push(topOfFuncStack.value.toString())}
     if (topOfFuncStack.type === 'End' ) consoleArr.push(`Last Return Value: ${topOfFuncStack.value}`)
-    valueStack.push(topOfFuncStack);
   }
   return consoleArr
 }
