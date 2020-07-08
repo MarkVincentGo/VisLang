@@ -285,7 +285,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           name="Operations"
           ddClick={clickOperator}
           dropDown
-          dropDownList={['+', '-', '*', '/', '%']}/>
+          dropDownList={['+', '-', '*', '/', 'mod', '<', '>', '==']}
+          ddStyle={{width: 110, height: 170}}/>
         <Button
           name="Loops"
           dropDown

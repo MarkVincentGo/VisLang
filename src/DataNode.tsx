@@ -15,7 +15,7 @@ interface DataNodesProps {
 export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo }): JSX.Element => {
   const [nodeData, setNodeData] = useState<any[]>(new Array(nodes).fill(null));
 
-  let nodePosition = position === 'top' ? {top: -5} : {bottom: -1.5};
+  let nodePosition = position === 'top' ? {top: -5} : {bottom: -1};
 
   const mouseEnter = (event: React.MouseEvent): void => {
     event.stopPropagation();

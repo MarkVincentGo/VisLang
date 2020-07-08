@@ -64,24 +64,39 @@ export class Operator implements IFunctionInfo {
   constructor(opType: string,) {
     this.opType = opType;
 
-    let opFunc = null
-    if (opType === '+') {
-      opFunc = (a: number, b: number): number => a + b;
-    } else if (opType === '-') {
-      opFunc = (a: number, b: number): number => a - b;
-    } else if (opType === '*') {
-      opFunc = (a: number, b: number): number => a * b;
-    } else if (opType === '/') {
-      opFunc = (a: number, b: number): number => a / b;
-    } else if (opType === '%') {
-      opFunc = (a: number, b: number): number => a % b;
-    }  else if (opType === 'Console Log') {
-      opFunc = (x: any) => { console.log(x); return x };
-    } else { 
-      opFunc = (): number => 0
+    switch (opType) {
+      case '+':
+        this.func = (a: number, b: number): number => a + b;
+        break;
+      case '-':
+        this.func = (a: number, b: number): number => a - b;
+        break;
+      case '*':
+        this.func = (a: number, b: number): number => a * b;
+        break;
+      case '/':
+        this.func = (a: number, b: number): number => a / b;
+        break;
+      case 'mod':
+        this.func = (a: number, b: number): number => a % b;
+        break;
+      case 'Console Log':
+        this.func = (x: any) => { console.log(x); return x };
+        this.args = [null]
+        break;
+      case '<':
+        this.func = (a: number | string, b: number | string): boolean => a < b;
+        break;
+      case '>':
+        this.func = (a: number | string, b: number | string): boolean => a > b;
+        break;  
+      case '==':
+        this.func = (a: number | string, b: number | string): boolean => a === b;
+      break;
+      default:
+        this.func = (): number => 0;
+        break;
     }
-
-    this.func = opFunc
   }
 }
 

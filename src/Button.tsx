@@ -23,8 +23,9 @@ interface ButtonProps {
   dropDownList?: string[];
   style?: any,
   outerStyle?: any,
-  onClick?(): void;
-  ddClick?(option: string): void;
+  ddStyle?: any,
+  onClick?(): void,
+  ddClick?(option: string): void,
 }
 
 export const Button: FunctionComponent<ButtonProps> = (
@@ -38,6 +39,7 @@ export const Button: FunctionComponent<ButtonProps> = (
     outerStyle,
     dropDown = false,
     dropDownList = [],
+    ddStyle = {},
   }
   ): JSX.Element => {
   const [outerHover, setOuterHover] = useState(false)
@@ -81,9 +83,12 @@ export const Button: FunctionComponent<ButtonProps> = (
         </svg>
       </div>
       {(dropDown && outerHover && dropDownList.length) ? 
-        <div className={styles.dropDown}>
+        <div className={styles.dropDown} style={{...ddStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', flexWrap: 'wrap'}}>
           {dropDownList.map((option, i) => (
-            <div className={styles.dropDownOptionContainer} key={i.toString()}>
+            <div
+              className={styles.dropDownOptionContainer}
+              key={i.toString()}
+              style={{width: name === 'Operations' ? '50%' : '100%'}}>
                 <div 
                   onClick={() => clickDropDown(option)}
                   className={styles.dropDownOption}>

@@ -11,7 +11,7 @@ interface DraggableProps {
   contextMenu?: any[],
   contextMenuClick?(option?: string): any,
   children?: any,
-  componentId: number
+  componentId: number,
 }
 
 interface DragInfo {
@@ -91,7 +91,10 @@ export const Draggable: FunctionComponent<DraggableProps> = (
         {rightClicked ? 
           <div className={ddStyles.dropDown}>
           {contextMenu.map((option, i) => (
-            <div className={ddStyles.dropDownOptionContainer} key={i.toString()} style={{fontFamily: 'Arial'}}>
+            <div 
+              className={ddStyles.dropDownOptionContainer}
+              key={i.toString()}
+              style={{fontFamily: 'Arial'}}>
                 <div 
                   onClick={() => clickDropDown(option)}
                   className={ddStyles.dropDownOption}>
