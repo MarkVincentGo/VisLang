@@ -5,7 +5,6 @@ import { DataNode } from './DataNode';
 
 
 
-
 interface OperatorProps {
   operator: IFunctionInfo,
   mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 

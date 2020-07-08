@@ -8,6 +8,17 @@ import {
 } from './Interfaces';
 
 
+export class Constant implements IConstantInfo {
+  id: number = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+  type: string = 'Constant';
+  valueType: string = '';
+  value: string = '';
+  deleted: boolean = false;
+
+  constructor(valueType: string) {
+    this.valueType = valueType;
+  }
+}
 
 export class Variable implements IVariableInfo {
   id: number = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
@@ -15,7 +26,7 @@ export class Variable implements IVariableInfo {
   valueType: string = '';
   name: string = '';
   args: any[] = [null];
-  func(incomingVal: any) {
+  func = function(incomingVal: any) {
     return incomingVal;
   };
   value: any =  undefined;
@@ -46,7 +57,7 @@ export class Operator implements IFunctionInfo {
   type: string = 'Function';
   opType: string = '';
   args: any[] = [null, null];
-  func(a: number, b: number): void {};
+  func = function(a: number, b: number): void {};
   value: number = 0;
   deleted: boolean = false;
 
@@ -98,7 +109,7 @@ export class End implements IEnd {
   id: number = -(Math.floor(Math.random() * 1000 + 1));
   type: string = 'End';
   args: any[] = [null];
-  func(a: any): any {
+  func = function(a: any): any {
     return a
   };
   value: any = 1

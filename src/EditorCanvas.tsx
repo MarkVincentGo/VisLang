@@ -6,12 +6,14 @@ import { Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
 import { VarReference } from './VarReference'
-import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine } from './Interfaces';
+import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IConstantInfo } from './Interfaces';
 import { ConsoleLog } from './SimpleFunctions';
 import { End } from './End';
+import { Constant } from './Constant';
 
 
 interface CanvasProps {
+  constantArray: IConstantInfo[],
   variableArray: IVariableInfo[],
   referenceArray: IVarReference[],
   operationsArray: IFunctionInfo[],
@@ -20,8 +22,10 @@ interface CanvasProps {
   logsArray: IFunctionInfo[],
   endsArray:any[],
   updateLines(newLines: IDataSVGLine[]): void,
+  editConstant(constData: IConstantInfo, value?: string): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
   editFunction(operator: IFunctionInfo, key: string, value: any): void,
+  handleConstantDropDown(option: string, constData: IConstantInfo): void,
   handleVariableDropDown(option: string, varData: IVariableInfo): void,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
   handleOperatorDropDown(option: string, opData: IFunctionInfo): void,
@@ -30,7 +34,8 @@ interface CanvasProps {
 
 
 export const Canvas: FunctionComponent<CanvasProps> = (
-  { variableArray,
+  { constantArray,
+    variableArray,
     referenceArray,
     operationsArray,
     linesArray,
@@ -38,32 +43,27 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     logsArray,
     endsArray,
     updateLines,
+    editConstant, 
     editVariable,
     editFunction,
+    handleConstantDropDown,
     handleVariableDropDown,
     handleReferenceDropDown,
     handleOperatorDropDown,
     pressPlay }
   ) => {
-  let active = false;
-  let selectedItem: any = null;
-  let itemData: any = null;
-  let startX = 0;
-  let startY = 0;
-  // this is attempt to get the height and width of the canvas component
-  const [dimensions, setDimensions] = useState<number[]>([0,0]);
-  const [mousedDownInNode, setmousedDownInNode] = useState<boolean>(false);
-  const [currentLine, setcurrentLine] = useState<IDataSVGLine>(
-    {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null}
+    let active = false;
+    let selectedItem: any = null;
+    let itemData: any = null;
+    let startX = 0;
+    let startY = 0;
+    // this is attempt to get the height and width of the canvas component
+    const [dimensions, setDimensions] = useState<number[]>([0,0]);
+    const [mousedDownInNode, setmousedDownInNode] = useState<boolean>(false);
+    const [currentLine, setcurrentLine] = useState<IDataSVGLine>(
+      {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null}
     );
-  const [renderSVG, setrenderSVG] = useState(false);
-
-  // const canvasEl = useCallback((node) => {
-  //     if (node) {
-  //       setDimensions([node.clientHeight, node.clientWidth])
-  //     }
-  //   }, [],)
-
+    const [renderSVG, setrenderSVG] = useState(false);
     const canvasEl = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -251,6 +251,15 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         onClick={pressPlay}
         style={{ height: 'auto', borderRadius: 0, width: '100%' }}
         outerStyle={{width: '100%'}}/>
+      {constantArray.map((data, i) => (
+        <Constant
+          data={data}
+          key={i.toString()}
+          edit={editConstant}
+          handleConstantDropDown={handleConstantDropDown}
+          mousedDown={nodeMouseDown}
+          mousedUp={nodeMouseUp}/>
+      ))}
       {variableArray.map((data, i) => (
         <Variable
           data={data}

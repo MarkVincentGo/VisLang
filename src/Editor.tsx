@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Variable, VarReference, Operator, End } from './Classes'
-import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IEnd } from './Interfaces';
+import { Constant, Variable, VarReference, Operator, End } from './Classes'
+import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IEnd, IConstantInfo } from './Interfaces';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
@@ -12,6 +12,7 @@ interface EditorProps {
 }
 
 export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Element => {
+  const [constants, setConstants] = useState<IConstantInfo[]>([])
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
   const [operations, setOperations] = useState<IFunctionInfo[]>([]);
@@ -21,12 +22,25 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const [ends, setEnds] = useState<any[]>([]);
 
 
+  const clickConstant = (type: string): void => {
+    let newConstant: IConstantInfo = new Constant(type)
+    let newConstantArray: IConstantInfo[] = [...constants, newConstant]
+    setConstants(newConstantArray)
+  }
+
+  const editConstant = (constData: IConstantInfo, value: string = ''): void => {
+    const newConstants = [...constants];
+    let editedConst = newConstants.find(constant => constant.id === constData.id);
+    if (editedConst) { editedConst.value = value }
+    setConstants(newConstants)
+  }
+
   /* when a type is clicked from the dropdown, this function creates new variable
     metadata and consequently makes a new dom element representing the variable
   */
   const clickVariable = (type: string): void => {
-    let newVarInfo: IVariableInfo = new Variable(type)
-    let newVarArray: IVariableInfo[] = [...variables, newVarInfo]
+    let newVar: IVariableInfo = new Variable(type)
+    let newVarArray: IVariableInfo[] = [...variables, newVar]
     setVariables(newVarArray)
   }
 
@@ -39,6 +53,23 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       editedVar.value = value;
     }
     setVariables(newVariables);
+  }
+
+  const handleConstantDropDown = ( option: string, constData: IConstantInfo ): void => {
+    switch (option) {
+      case 'Delete Constant': {
+        let newConstants = R.map(el => {
+          if (el === constData) {
+            el.deleted = true;
+          }
+          return el;
+        }, constants)
+        setConstants(newConstants)
+        break;
+      }
+      default:
+        break;
+    }
   }
 
   const handleVariableDropDown = ( option: string, varData: IVariableInfo ): void => {
@@ -227,6 +258,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   
   const pressPlay = (): void => { 
     interpret([
+      ...constants.filter(c => !c.deleted),
       ...variables.filter(v => !v.deleted),
       ...varReferences.filter(vr => !vr.deleted),
       ...operations.filter(op => !op.deleted),
@@ -239,7 +271,11 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   return (
     <Panel windowName="Editor">
       <ButtonContainer>
-        <Button name="Constant"/>
+        <Button 
+          name="Constant"
+          ddClick={clickConstant}
+          dropDown
+          dropDownList={['Number', 'String', 'Boolean']}/>
         <Button 
           name="Variables"
           ddClick={clickVariable}
@@ -263,6 +299,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           onClick={clickEnding}/>
       </ButtonContainer>
       <Canvas
+        constantArray={constants}
+        editConstant={editConstant}
         variableArray={variables}
         referenceArray={varReferences}
         editVariable={editVariable}
@@ -271,6 +309,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         loopsArray={loops}
         logsArray={logs}
         endsArray={ends}
+        handleConstantDropDown={handleConstantDropDown}
         handleVariableDropDown={handleVariableDropDown}
         handleReferenceDropDown={handleReferenceDropDown}
         handleOperatorDropDown={handleOperatorDropDown}

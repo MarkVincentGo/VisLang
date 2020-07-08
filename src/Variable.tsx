@@ -21,7 +21,7 @@ interface InputComponentProps {
   confirmFn?(): void
 }
 
-const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '', onChange, confirmFn = function(){}}): JSX.Element => {
+export const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '', onChange, confirmFn = function(){}}): JSX.Element => {
   const [varConfirmed, setVarConfirmed] = useState(false);
 
   const changeInputField = (event: React.SyntheticEvent): void => {
@@ -63,14 +63,6 @@ const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '
       </div>
   )
 }
-
-/* 
-  variable should be able to have a drop down menu on right click to offer 
-  options on what you can do with the variable
-  Ex: - create reference
-      - delete reference
-      - delete variable
-*/
 
 interface VariableProps {
   data: IVariableInfo,

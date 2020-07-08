@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Operator.module.css';
-import { IFunctionInfo, IVariableInfo, IVarReference } from './Interfaces';
+import { IFunctionInfo, IVariableInfo, IVarReference, IConstantInfo } from './Interfaces';
 
 
 
@@ -9,7 +9,7 @@ interface DataNodesProps {
   nodes: number,
   mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
   mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void,
-  dragInfo: IFunctionInfo | IVariableInfo | IVarReference,
+  dragInfo: IFunctionInfo | IVariableInfo | IVarReference | IConstantInfo,
 }
 
 export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo }): JSX.Element => {
