@@ -45,17 +45,25 @@ export default function(metaData) {
 }
 
 function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), consoleArr = [], funcStack = [],  scope = new Map(), valueStack = []) {
+  // first run, add vars to scope, add funcs to func stack
   for (let node of inputArr) {
-    if (node.type === 'End' || node.type === 'Function' || node.type === 'Assign Function') {
+    if (node.type === 'End' || node.type === 'Function' || node.type === 'Assign Function' || node.type === 'Reference') {
       funcStack.push(node);
+    }
+    if (node.type === 'Assign Function' && node.value !== 'REF') {
+      scope.set(node.name, node.value)
     }
   }
 
+  console.log(scope)
+
+  // second run, perform the operations, already have initial values in scope
   while (funcStack.length) {
     let topOfFuncStack = funcStack.pop();
     //console.log(topOfFuncStack)
     let args = topOfFuncStack.args;
     if (topOfFuncStack.type === 'Assign Function') {
+      // have to reevaluate this in case of a reassign
       scope.set(topOfFuncStack.name, topOfFuncStack.value)
       if (topOfFuncStack.args[0] !== null) {
         // duplicate code, maybe refactor later
@@ -67,6 +75,8 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
           topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
         }
       }
+    } else if (topOfFuncStack.type === 'Reference') {
+      topOfFuncStack.value = topOfFuncStack.func(scope)
     } else {
       // arguments contain the id's of every node the function depends on
       let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
@@ -75,7 +85,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
       if (topOfFuncStack.type === 'End') consoleArr.push(`Last Return Value: ${topOfFuncStack.value}`)
     }
   }
-  console.log(scope)
+  
   return consoleArr
 }
 

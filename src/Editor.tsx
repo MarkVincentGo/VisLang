@@ -20,6 +20,9 @@ export interface IVariableInfo {
 export interface IVarReference {
   readonly id: number,
   readonly variableReferenced: IVariableInfo,
+  value: any,
+  func(scope: Map<string, any>): void,
+  type: string,
   deleted: boolean,
   args?: any[],
 }
@@ -96,7 +99,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       case 'Add Reference': {
         const newReference: IVarReference = {
           id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+          type: 'Reference',
           variableReferenced: varData,
+          value: null,
+          func: function(scope: Map<string, any>) {
+            return scope.get(this.variableReferenced.name)
+          },
           deleted: false
         }
         const newVarReferences = [...varReferences, newReference]
@@ -111,14 +119,14 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         in the array and just add a 'deleted property which renders nothing if true */
         const newVarReferences = R.map(el => {
           if (el.variableReferenced === varData) {
-            el.deleted = true
+            el.deleted = true;
           }
           return el;
         }, varReferences);
 
         let newLines = lines.filter(line => line.el1 !== varData.id);
         newLines = newLines.filter(line => line.el2 !== varData.id);
-        setLines(newLines)
+        setLines(newLines);
 
 
         setVarReferences(newVarReferences);
@@ -144,7 +152,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const handleReferenceDropDown = (option: string, refData: IVarReference): void => {
     switch (option) {
       case 'Copy Reference': {
-        const newReference = {...refData, id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) }
+        const newReference = {...refData, id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}
         const newVarReferences = [...varReferences, newReference];
         setVarReferences(newVarReferences)
         break;

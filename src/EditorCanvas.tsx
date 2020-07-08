@@ -233,6 +233,15 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       }
     }
 
+    for (let end of endsArray) {
+      let indexOfLineId = end.args.indexOf(lineId);
+      if (indexOfLineId > -1 ) {
+        let argsCopy = [...end.args]
+        argsCopy[indexOfLineId] = null;
+        editFunction(end, 'args', argsCopy);
+      }
+    }
+
   }
 
   return (
