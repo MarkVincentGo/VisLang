@@ -84,6 +84,19 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
   const [varName, setVarName] = useState('');
   const [valName, setValName] = useState('');
 
+  const colorConditions = (type: string) => {
+    switch (type) {
+      case 'Number':
+        return '#B290FF';
+      case 'String':
+        return '#9090FF';
+      case 'Boolean':
+        return '#90ADFF';
+      default:
+        break;
+    }
+  }
+
   const confirmVarDeclaration = (): void => {
     if (varName.length && valName.length) {
       edit(data, varName, valName)
@@ -99,10 +112,17 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
 
   return ( !data.deleted ?
     <Draggable
+      color={colorConditions(data.valueType)}
       onContextMenu={e => e.preventDefault()}
       contextMenu={['Add Reference', 'Delete Variable']}
       contextMenuClick={handleDropDown}
       componentId={data.id}>
+      <DataNode
+        position="top"
+        nodes={data.args.length}
+        mousedDown={mousedDown}
+        mousedUp={mousedUp}
+        dragInfo={data}/>
       <InputComponent 
         onChange={setVarName}
         value={varName}
@@ -113,6 +133,8 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
         onChange={setValName}
         value={valName}
         confirmFn={confirmVarDeclaration}/>
+      <br />
+      <p style={{margin: '0 auto', fontSize: 8}}>{data.valueType}</p>
         <DataNode
           position="bottom"
           nodes={1}

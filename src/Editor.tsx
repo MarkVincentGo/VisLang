@@ -2,14 +2,17 @@ import React, { FunctionComponent, useState } from 'react';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
+import * as R from 'ramda';
 
 
 export interface IVariableInfo {
+  [key: string]: any,
   readonly id: number,
   type: string,
   valueType: string,
   name: string,
-  args?: any[],
+  args: any[],
+  func(...args: any[]): void,
   value?: any,
   deleted: boolean,
 }
@@ -63,9 +66,13 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const clickVariable = (type: string): void => {
     let newVarInfo = {
       id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      type: 'Value',
+      type: 'Assign Function',
       valueType: type,
       name: '',
+      args: [null],
+      func: function(incomingVal: any): any {
+        return incomingVal;
+      },
       value: undefined,
       deleted: false
     }
@@ -102,12 +109,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         and its references might move positions in the array and change their
         positions in the DOM. Workaround was to keep the variables and references
         in the array and just add a 'deleted property which renders nothing if true */
-        const newVarReferences = varReferences.map(el => {
+        const newVarReferences = R.map(el => {
           if (el.variableReferenced === varData) {
             el.deleted = true
           }
           return el;
-        });
+        }, varReferences);
 
         let newLines = lines.filter(line => line.el1 !== varData.id);
         newLines = newLines.filter(line => line.el2 !== varData.id);
@@ -117,14 +124,14 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         setVarReferences(newVarReferences);
         /* does a full delete of the vairable properties, interpreter SHOULD ignore
         var names of empty string*/
-        const newVariables = variables.map(el => {
+        const newVariables = R.map(el => {
           if (el === varData) {
             el.deleted = true;
             el.name = '';
             el.value = null
           }
           return el;
-        });
+        }, variables);
         setVariables(newVariables);
 
         break;
@@ -143,12 +150,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         break;
       }
       case 'Delete Reference': {
-        const newVarReferences = varReferences.map(el => {
+        const newVarReferences = R.map(el => {
           if (el === refData) {
             el.deleted = true;
           }
           return el;
-        });
+        }, varReferences);
         setVarReferences(newVarReferences);
         break;
       }
@@ -187,37 +194,48 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     setOperations(newOperations);
   }
 
-  const editFunction = (operator: IFunctionInfo, key: string, value: any): void => {
+  const editFunction = (operator: IFunctionInfo | IVariableInfo, key: string, value: any): void => {
     switch (operator.type) {
+      case 'Assign Function': {
+        let newVariables = R.map(el => {
+          let newVar: IVariableInfo = {...el};
+          if (newVar.id === operator.id) {
+            newVar[key] = value
+          }
+          return newVar
+        }, variables)
+        setVariables(newVariables)
+        break;
+      }
       case 'Function':
         if (operator.opType === 'Console Log') {
-          let newLogs = logs.map(el => {
+          let newLogs = R.map(el => {
             let newEl:IFunctionInfo = {...el}
             if (newEl.id === operator.id) {
               newEl[key] = value;
             }
             return newEl;
-          });
+          }, logs);
           setLogs(newLogs)
         } else {
-          let newOperations = operations.map(el => {
+          let newOperations = R.map(el => {
             let newEl:IFunctionInfo = {...el}
             if (newEl.id === operator.id) {
               newEl[key] = value;
             }
             return newEl;
-          });
+          }, operations);
           setOperations(newOperations)
         }
         break;
       case 'End': 
-      let newEnds = ends.map(el => {
+      let newEnds = R.map(el => {
         let newEl:IFunctionInfo = {...el}
         if (newEl.id === operator.id) {
           newEl[key] = value;
         }
         return newEl;
-      });
+      }, ends);
       setEnds(newEnds)
         break;
     
@@ -234,12 +252,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         newLines = newLines.filter(line => line.el2 !== id);
         setLines(newLines);
 
-        let newOperations = operations.map(op => {
+        let newOperations = R.map(op => {
           if (op.id === id) {
             op.deleted = true;
           }
           return op
-        });
+        }, operations);
         setOperations(newOperations);
         
         break;
@@ -311,6 +329,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   return (
     <Panel windowName="Editor">
       <ButtonContainer>
+        <Button name="Constant"/>
         <Button 
           name="Variables"
           ddClick={clickVariable}
@@ -326,7 +345,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           dropDown
           dropDownList={['For', 'While']}
           ddClick={clickLoop}/>
-        <Button name="Function"/>
         <Button
           name="Log to Console"
           onClick={clickConsoleLog}/>

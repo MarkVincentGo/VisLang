@@ -1,3 +1,4 @@
+
 export default function(metaData) {
 
   // parses all value types and makes copy of meta data
@@ -43,9 +44,9 @@ export default function(metaData) {
 
 }
 
-function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), consoleArr = [], funcStack = [],  scope = {}, valueStack = []) {
+function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), consoleArr = [], funcStack = [],  scope = new Map(), valueStack = []) {
   for (let node of inputArr) {
-    if (node.type === 'End' || node.type === 'Function') {
+    if (node.type === 'End' || node.type === 'Function' || node.type === 'Assign Function') {
       funcStack.push(node);
     }
   }
@@ -54,14 +55,31 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
     let topOfFuncStack = funcStack.pop();
     //console.log(topOfFuncStack)
     let args = topOfFuncStack.args;
-    // arguments contain the id's of every node the function depends on
-    let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
-    topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
-    if (topOfFuncStack.opType === 'Console Log') {consoleArr.push(topOfFuncStack.value.toString())}
-    if (topOfFuncStack.type === 'End' ) consoleArr.push(`Last Return Value: ${topOfFuncStack.value}`)
+    if (topOfFuncStack.type === 'Assign Function') {
+      scope.set(topOfFuncStack.name, topOfFuncStack.value)
+      if (topOfFuncStack.args[0] !== null) {
+        // duplicate code, maybe refactor later
+        let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
+        if (topOfFuncStack.value === 'REF') {
+          topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
+          scope.set(topOfFuncStack.name, topOfFuncStack.value)
+        } else {
+          topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
+        }
+      }
+    } else {
+      // arguments contain the id's of every node the function depends on
+      let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
+      topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
+      if (topOfFuncStack.opType === 'Console Log') {consoleArr.push(topOfFuncStack.value.toString())}
+      if (topOfFuncStack.type === 'End') consoleArr.push(`Last Return Value: ${topOfFuncStack.value}`)
+    }
   }
+  console.log(scope)
   return consoleArr
 }
+
+// eslint-disable-next-line
 
 function parseValueTypes(inputArr) {
   let output = [];
@@ -70,13 +88,17 @@ function parseValueTypes(inputArr) {
   }
 
   for (let variable of output) {
-    if (variable.type === 'Value') {
-      if (variable.valueType === 'Number') {
-        variable.value = +variable.value;
-      } else if (variable.valueType === 'Boolean') {
-        variable.value = variable.value === "true" ? true : false;
-      } else if (variable.valueType === 'Null') {
-        variable.value = null;
+    if (variable.hasOwnProperty('valueType')) {
+      if (variable.value === 'REF') {
+        variable.value = 'REF'
+      } else {
+        if (variable.valueType === 'Number') {
+          variable.value = +variable.value;
+        } else if (variable.valueType === 'Boolean') {
+          variable.value = variable.value === "true" ? true : false;
+        } else if (variable.valueType === 'Null') {
+          variable.value = null;
+        }
       }
     }
   }
