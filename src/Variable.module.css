@@ -1,5 +1,8 @@
 .varInput {
-  width: 20px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  border: none;
+  outline: none;
 }
 
 .varConfirmed {

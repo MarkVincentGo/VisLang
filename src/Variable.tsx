@@ -55,7 +55,7 @@ export const InputComponent: FunctionComponent<InputComponentProps> = ({value, n
       value={value}
       onChange={changeInputField}
       onKeyDown={pressEnter}
-      style={{width: 8 * (value.length || 1)}}/> ) :
+      style={{width: 12 * (value.length || 1)}}/> ) :
       <div 
         className={styles.varConfirmed}
         onClick={clickConfirmed}>

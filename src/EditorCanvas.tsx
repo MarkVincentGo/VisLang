@@ -91,10 +91,10 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     let draggables = document.getElementsByClassName('draggable');
     let dragSet = new Set(draggables)
     //every variable should have their own x and y properties, now find a way to access them
-    if (dragSet.has(event.target)) {
+    if (dragSet.has(event.target) || dragSet.has(event.target.parentNode)) {
       active = true;
       // does selected item have the meta data i need? Yes, in a data- prop
-      selectedItem = event.target;
+      selectedItem = dragSet.has(event.target) ? event.target : event.target.parentNode;
       itemData = JSON.parse(selectedItem.dataset.varinfo)
       let { xOffset, yOffset } = itemData;
       itemData.initialX = event.clientX - xOffset;
