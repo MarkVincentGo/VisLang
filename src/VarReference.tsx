@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Draggable } from './Draggable';
 import { DataNode } from './DataNode';
-import { IVarReference  } from './Editor';
+import { IVarReference  } from './Interfaces';
 
 interface VarReferenceProps {
   data: IVarReference,

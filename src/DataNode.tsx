@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Operator.module.css';
-import { IFunctionInfo, IVariableInfo, IVarReference } from './Editor';
+import { IFunctionInfo, IVariableInfo, IVarReference } from './Interfaces';
 
 
 

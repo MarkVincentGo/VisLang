@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Draggable } from './Draggable';
 import { DataNode } from './DataNode';
-import { IFunctionInfo } from './Editor'
+import { IFunctionInfo } from './Interfaces'
 
 interface ConsoleLogProps {
   data: IFunctionInfo,
@@ -22,7 +22,7 @@ export const ConsoleLog: FunctionComponent<ConsoleLogProps> = ({data, mousedDown
         mousedDown={mousedDown}
         mousedUp={mousedUp}
         dragInfo={data}/>
-        Log To Console
+        Log
       <DataNode
         position="bottom"
         nodes={1}

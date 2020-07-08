@@ -1,12 +1,12 @@
 import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import { DrawLines } from './DrawLines';
+import { DataSVGLine } from './Classes'
 import styles from './Editor.module.css';
 import { Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
 import { VarReference } from './VarReference'
-import { IVariableInfo, IVarReference, IFunctionInfo } from './Editor';
-import { DataSVGLine } from './Editor';
+import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine } from './Interfaces';
 import { ConsoleLog } from './SimpleFunctions';
 import { End } from './End';
 
@@ -15,11 +15,11 @@ interface CanvasProps {
   variableArray: IVariableInfo[],
   referenceArray: IVarReference[],
   operationsArray: IFunctionInfo[],
-  linesArray: DataSVGLine[],
+  linesArray: IDataSVGLine[],
   loopsArray: number[],
   logsArray: IFunctionInfo[],
   endsArray:any[],
-  updateLines(newLines: DataSVGLine[]): void,
+  updateLines(newLines: IDataSVGLine[]): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
   editFunction(operator: IFunctionInfo, key: string, value: any): void,
   handleVariableDropDown(option: string, varData: IVariableInfo): void,
@@ -53,7 +53,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
   // this is attempt to get the height and width of the canvas component
   const [dimensions, setDimensions] = useState<number[]>([0,0]);
   const [mousedDownInNode, setmousedDownInNode] = useState<boolean>(false);
-  const [currentLine, setcurrentLine] = useState<DataSVGLine>(
+  const [currentLine, setcurrentLine] = useState<IDataSVGLine>(
     {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null}
     );
   const [renderSVG, setrenderSVG] = useState(false);
@@ -170,18 +170,10 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       nodeId = nodeInfo.referenceId
     }
     setmousedDownInNode(true)
-    let newLine: DataSVGLine = {
-      data: null,
-      id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      x1: event.clientX,
-      y1: event.clientY,
-      x2: event.clientX, 
-      y2: event.clientY,
-      el1: position === "bottom" ? nodeId : null,
-      el2: position === "bottom" ? null : nodeId,
-    }
+    let newLine: IDataSVGLine = new DataSVGLine(position, nodeId, event)
 
     if (position === 'top') {
+      // implement logic if line is backed out
       let newArgs = [...args];
       newArgs[index] = newLine.id;
       editFunction(nodeInfo, 'args', newArgs)

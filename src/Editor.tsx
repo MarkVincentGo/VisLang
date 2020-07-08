@@ -1,53 +1,11 @@
 import React, { FunctionComponent, useState } from 'react';
+import { Variable, VarReference, Operator, End } from './Classes'
+import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IEnd } from './Interfaces';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
 import * as R from 'ramda';
 
-
-export interface IVariableInfo {
-  [key: string]: any,
-  readonly id: number,
-  type: string,
-  valueType: string,
-  name: string,
-  args: any[],
-  func(...args: any[]): void,
-  value?: any,
-  deleted: boolean,
-}
-
-export interface IVarReference {
-  readonly id: number,
-  readonly variableReferenced: IVariableInfo,
-  value: any,
-  func(scope: Map<string, any>): void,
-  type: string,
-  deleted: boolean,
-  args?: any[],
-}
-
-export interface IFunctionInfo {
-  [key: string]: any,
-  readonly id: number,
-  type: string,
-  opType: string,
-  args: any[],
-  func(...args: any[]): void,
-  value: number | string | boolean,
-  deleted: boolean
-}
-
-export interface DataSVGLine {
-  readonly id: number,
-  x1: number,
-  x2: number,
-  y1: number,
-  y2: number,
-  data: any,
-  el1: any,
-  el2: any,
-}
 
 interface EditorProps {
   interpret(data: any): void
@@ -57,7 +15,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
   const [operations, setOperations] = useState<IFunctionInfo[]>([]);
-  const [lines, setLines] = useState<DataSVGLine[]>([]);
+  const [lines, setLines] = useState<IDataSVGLine[]>([]);
   const [loops, setLoops] = useState<number[]>([])
   const [logs, setLogs] = useState<IFunctionInfo[]>([]);
   const [ends, setEnds] = useState<any[]>([]);
@@ -67,18 +25,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     metadata and consequently makes a new dom element representing the variable
   */
   const clickVariable = (type: string): void => {
-    let newVarInfo = {
-      id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      type: 'Assign Function',
-      valueType: type,
-      name: '',
-      args: [null],
-      func: function(incomingVal: any): any {
-        return incomingVal;
-      },
-      value: undefined,
-      deleted: false
-    }
+    let newVarInfo: IVariableInfo = new Variable(type)
     let newVarArray: IVariableInfo[] = [...variables, newVarInfo]
     setVariables(newVarArray)
   }
@@ -97,16 +44,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const handleVariableDropDown = ( option: string, varData: IVariableInfo ): void => {
     switch (option) {
       case 'Add Reference': {
-        const newReference: IVarReference = {
-          id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-          type: 'Reference',
-          variableReferenced: varData,
-          value: null,
-          func: function(scope: Map<string, any>) {
-            return scope.get(this.variableReferenced.name)
-          },
-          deleted: false
-        }
+        const newReference: IVarReference = new VarReference(varData)
         const newVarReferences = [...varReferences, newReference]
         setVarReferences(newVarReferences)
         break;
@@ -152,7 +90,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const handleReferenceDropDown = (option: string, refData: IVarReference): void => {
     switch (option) {
       case 'Copy Reference': {
-        const newReference = {...refData, id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}
+        // const newReference = {...refData, id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}
+        const newReference: IVarReference = new VarReference(refData.variableReferenced)
         const newVarReferences = [...varReferences, newReference];
         setVarReferences(newVarReferences)
         break;
@@ -174,30 +113,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   const clickOperator = (type: string): void => {
-    let opFunc = null
-    if (type === '+') {
-      opFunc = (a: number, b: number): number => a + b;
-    } else if (type === '-') {
-      opFunc = (a: number, b: number): number => a - b;
-    } else if (type === '*') {
-      opFunc = (a: number, b: number): number => a * b;
-    } else if (type === '/') {
-      opFunc = (a: number, b: number): number => a / b;
-    } else if (type === '%') {
-      opFunc = (a: number, b: number): number => a % b;
-    } else { 
-      opFunc = (): number => 0
-    }
-
-    let newOperatorInfo = {
-      id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-      type: 'Function',
-      opType: type,
-      args: [null, null],
-      func: opFunc,
-      value: 0,
-      deleted: false
-    }
+    let newOperatorInfo: IFunctionInfo = new Operator(type)
     const newOperations: IFunctionInfo[] = [...operations, newOperatorInfo];
     setOperations(newOperations);
   }
@@ -294,32 +210,18 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   const clickConsoleLog = ():void => {
-    let newLog = {
-      id: Math.floor(Math.random()* Number.MAX_SAFE_INTEGER),
-      type: 'Function',
-      opType: 'Console Log',
-      args: [null],
-      func: function(x: any) {console.log(x); return x},
-      value: 0,
-      deleted: false
-    };
+    let newLog = new Operator('Console Log');
     let newLogs = [...logs, newLog];
     setLogs(newLogs);
   }
 
   const clickEnding = ():void => {
-    let newEnd = {
-      id: -(Math.floor(Math.random() * 1000 + 1)),
-      type: 'End',
-      args: [null],
-      func: function(a: any) {return a},
-      value: 1
-    }
+    let newEnd: IEnd = new End();
     setEnds([...ends, newEnd]);
   }
 
   
-  const updateLines = (newLines: DataSVGLine[]):void => {
+  const updateLines = (newLines: IDataSVGLine[]):void => {
     setLines(newLines)
   }
   

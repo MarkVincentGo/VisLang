@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { Draggable } from './Draggable'
-import { IFunctionInfo } from './Editor';
+import { IFunctionInfo } from './Interfaces';
 import { DataNode } from './DataNode';
 
 

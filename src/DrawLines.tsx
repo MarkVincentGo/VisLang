@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState, useEffect, useRef, Fragment } from 
 import { createPortal } from 'react-dom';
 import styles from './Editor.module.css';
 import ddStyles from './Button.module.css'
-import { DataSVGLine } from './Editor';
+import { IDataSVGLine } from './Interfaces';
 import { makeDraggable } from './utilityFunctions';
 
 interface CircleProps {
@@ -77,10 +77,10 @@ const Loop: FunctionComponent<LoopProps> = ({ canvasBounds }): JSX.Element => {
 interface DrawLinesProps {
   canvasInfo: number[],
   children?: any,
-  lines: DataSVGLine[],
+  lines:IDataSVGLine[],
   loops: number[],
   mouseDown: boolean,
-  currentLine: DataSVGLine,
+  currentLine:IDataSVGLine,
   deleteLine(lineId: number): void,
 }
 
@@ -103,7 +103,7 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
       // the canvasInfo refresh essential for window resize
     }, [canvasInfo])
 
-  const handleRightClick = (event: React.MouseEvent, lineInfo: DataSVGLine):void => {
+  const handleRightClick = (event: React.MouseEvent, lineInfo:IDataSVGLine):void => {
     event.preventDefault();
     let svgBox = svgBoxRef.current;
     if (svgBox) {

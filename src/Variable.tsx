@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Variable.module.css';
 import { Draggable } from './Draggable';
-import { IVariableInfo } from './Editor';
+import { IVariableInfo } from './Interfaces';
 import { DataNode } from './DataNode';
 
 /*
