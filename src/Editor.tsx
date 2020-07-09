@@ -30,7 +30,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
 
   const editConstant = (constData: IConstantInfo, value: string = ''): void => {
     const newConstants = [...constants];
-    let editedConst = newConstants.find(constant => constant.id === constData.id);
+    let editedConst = R.find(constant => constant.id === constData.id, newConstants);
     if (editedConst) { editedConst.value = value }
     setConstants(newConstants)
   }
@@ -47,7 +47,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   /* edits variable info based on the variable id given on instantiation */
   const editVariable = (varData: IVariableInfo, name: string, value: string = ''): void => {
     const newVariables = [...variables];
-    let editedVar = newVariables.find(variable => variable.id === varData.id);
+    let editedVar = R.find(variable => variable.id === varData.id, newVariables);
     if (editedVar) {
       editedVar.name = name;
       editedVar.value = value;

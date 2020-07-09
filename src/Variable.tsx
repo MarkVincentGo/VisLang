@@ -49,15 +49,15 @@ export const InputComponent: FunctionComponent<InputComponentProps> = ({value, n
   return (
     !varConfirmed ? (
       <input 
-      className={styles.varInput}
-      type="text"
-      name={name}
-      value={value}
-      onChange={changeInputField}
-      onKeyDown={pressEnter}
-      style={{width: 12 * (value.length || 1)}}/> ) :
+        className={styles.varInput}
+        type="text"
+        name={name}
+        value={value}
+        onChange={changeInputField}
+        onKeyDown={pressEnter}
+        style={{width: 10 * (value.length || 1)}}/> ) :
       <div 
-        className={styles.varConfirmed}
+        className={[styles.varConfirmed, 'inputConfirm'].join(' ')}
         onClick={clickConfirmed}>
         {value || 'undef'}
       </div>

@@ -10,6 +10,7 @@ import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IConstantInf
 import { ConsoleLog } from './SimpleFunctions';
 import { End } from './End';
 import { Constant } from './Constant';
+import { LoopPrototype } from './utilityFunctions'
 
 
 interface CanvasProps {
@@ -251,6 +252,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         onClick={pressPlay}
         style={{ height: 'auto', borderRadius: 0, width: '100%' }}
         outerStyle={{width: '100%'}}/>
+        <LoopPrototype />
       {constantArray.map((data, i) => (
         <Constant
           data={data}
@@ -311,6 +313,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         : 
         <></>
       }
+      
     </div>
   )
 }
