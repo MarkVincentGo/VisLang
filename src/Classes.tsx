@@ -42,7 +42,7 @@ export class VarReference implements IVarReference {
   type: string = 'Reference';
   variableReferenced: IVariableInfo = new Variable('Number');
   value: any = null;
-  func(scope: Map<string, any>) {
+  func = (scope: Map<string, any>) => {
     return scope.get(this.variableReferenced.name);
   };
   deleted: boolean = false;

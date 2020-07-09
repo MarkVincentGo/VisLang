@@ -59,6 +59,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
 
   // second run, perform the operations, already have initial values in scope
   while (funcStack.length) {
+    debugger
     let topOfFuncStack = funcStack.pop();
     //console.log(topOfFuncStack)
     let args = topOfFuncStack.args;
