@@ -21,11 +21,11 @@ export const Constant: FunctionComponent<VariableProps> = (
   const colorConditions = (type: string) => {
     switch (type) {
       case 'Number':
-        return '#B290FF';
+        return '#90C4FF';
       case 'String':
-        return '#9090FF';
+        return '#90D5FF';
       case 'Boolean':
-        return '#90ADFF';
+        return '#90EDFF';
       default:
         break;
     }

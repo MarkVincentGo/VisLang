@@ -3,76 +3,76 @@ import { createPortal } from 'react-dom';
 import styles from './Editor.module.css';
 import ddStyles from './Button.module.css'
 import { IDataSVGLine } from './Interfaces';
-import { makeDraggable } from './utilityFunctions';
+// import { makeDraggable } from './utilityFunctions';
 
-interface CircleProps {
-  rectXPos: number,
-  rectYPos: number,
-  updateCirclePos(xPos: number, yPos: number): void
-}
-const Circle: FunctionComponent<CircleProps> = ({ rectXPos, rectYPos, updateCirclePos }): JSX.Element => {
-  const circleRef = useRef<SVGCircleElement>(null)
-  useEffect(() => {
-    let circleEl = circleRef.current
-    if (circleEl) {
-      makeDraggable(circleEl, updateCirclePos)
-    }
-    // eslint-disable-next-line
-  }, [])
+// interface CircleProps {
+//   rectXPos: number,
+//   rectYPos: number,
+//   updateCirclePos(xPos: number, yPos: number): void
+// }
+// const Circle: FunctionComponent<CircleProps> = ({ rectXPos, rectYPos, updateCirclePos }): JSX.Element => {
+//   const circleRef = useRef<SVGCircleElement>(null)
+//   useEffect(() => {
+//     let circleEl = circleRef.current
+//     if (circleEl) {
+//       makeDraggable(circleEl, updateCirclePos)
+//     }
+//     // eslint-disable-next-line
+//   }, [])
 
-  return <circle ref={circleRef} cx={Math.max(25 + rectXPos, 25)} cy={Math.max(25 + rectYPos, 25)} r="4" strokeWidth="1" stroke="black" fill="red" />
-}
+//   return <circle ref={circleRef} cx={Math.max(25 + rectXPos, 25)} cy={Math.max(25 + rectYPos, 25)} r="4" strokeWidth="1" stroke="black" fill="red" />
+// }
 
 
-interface LoopProps {
-  canvasBounds: number[]
-}
+// interface LoopProps {
+//   canvasBounds: number[]
+// }
 
-const Loop: FunctionComponent<LoopProps> = ({ canvasBounds }): JSX.Element => {
-  const [xPos, setxPos] = useState<number>(canvasBounds[0]);
-  const [yPos, setyPos] = useState<number>(canvasBounds[1]);
+// const Loop: FunctionComponent<LoopProps> = ({ canvasBounds }): JSX.Element => {
+//   const [xPos, setxPos] = useState<number>(canvasBounds[0]);
+//   const [yPos, setyPos] = useState<number>(canvasBounds[1]);
 
-  const [circlexPos, setcirclexPos] = useState<number>(0);
-  const [circleyPos, setcircleyPos] = useState<number>(0);
+//   const [circlexPos, setcirclexPos] = useState<number>(0);
+//   const [circleyPos, setcircleyPos] = useState<number>(0);
 
-  const updateRectPos = (x: number, y: number): void => {
-    setxPos(canvasBounds[0] + x);
-    setyPos(canvasBounds[1] + y);
-  }
+//   const updateRectPos = (x: number, y: number): void => {
+//     setxPos(canvasBounds[0] + x);
+//     setyPos(canvasBounds[1] + y);
+//   }
 
-  const updateCirclePos = (xPos: number, yPos: number):void => {
-    setcirclexPos(xPos);
-    setcircleyPos(yPos);
-  }
+//   const updateCirclePos = (xPos: number, yPos: number):void => {
+//     setcirclexPos(xPos);
+//     setcircleyPos(yPos);
+//   }
 
   
-  const rectRef = useRef<SVGRectElement>(null)
+//   const rectRef = useRef<SVGRectElement>(null)
   
-  useEffect(() => {
-    let rectEl = rectRef.current
-    if (rectEl) {
-      makeDraggable(rectEl, updateRectPos)
-      setxPos(canvasBounds[0]);
-      setyPos(canvasBounds[1]);
-    }
-    // eslint-disable-next-line
-  }, []);
+//   useEffect(() => {
+//     let rectEl = rectRef.current
+//     if (rectEl) {
+//       makeDraggable(rectEl, updateRectPos)
+//       setxPos(canvasBounds[0]);
+//       setyPos(canvasBounds[1]);
+//     }
+//     // eslint-disable-next-line
+//   }, []);
 
-  return (
-    <Fragment>
-      <rect
-        onClick={() => { if (rectRef.current) { console.log(rectRef.current.getBoundingClientRect())}}}
-        x={canvasBounds[0]} rx="3"
-        y={canvasBounds[1]} ry="3"
-        width={circlexPos + 20}
-        height={circleyPos + 20}
-        strokeWidth="2"
-        style={{fill: 'none', strokeWidth: 6, stroke: 'black', cursor: 'pointer'}}
-        ref={rectRef}/>
-      <Circle updateCirclePos={updateCirclePos} rectXPos={xPos} rectYPos={yPos}/>
-    </Fragment>
-  )
-}
+//   return (
+//     <Fragment>
+//       <rect
+//         onClick={() => { if (rectRef.current) { console.log(rectRef.current.getBoundingClientRect())}}}
+//         x={canvasBounds[0]} rx="3"
+//         y={canvasBounds[1]} ry="3"
+//         width={circlexPos + 20}
+//         height={circleyPos + 20}
+//         strokeWidth="2"
+//         style={{fill: 'none', strokeWidth: 6, stroke: 'black', cursor: 'pointer'}}
+//         ref={rectRef}/>
+//       <Circle updateCirclePos={updateCirclePos} rectXPos={xPos} rectYPos={yPos}/>
+//     </Fragment>
+//   )
+// }
 
 interface DrawLinesProps {
   canvasInfo: number[],
@@ -88,7 +88,7 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
   const [rightClicked, setRightClicked] = useState<boolean>(false);
   const [mousePos, setMousePos] = useState<number[]>([0,0]);
   const [selectedLine, setSelectedLine] = useState<number>(0);
-  const [bounds, setbounds] = useState<number[]>([0,0]);
+  // const [bounds, setbounds] = useState<number[]>([0,0]);
 
   const svgBoxRef = useRef<SVGSVGElement>(null);
 
@@ -97,8 +97,8 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
     if (svgBox) {
         let {left, top} = svgBox.getBoundingClientRect();
         svgBox.setAttribute('viewBox', `${left} ${top} ${svgBox.clientWidth} ${svgBox.clientHeight}`);
-        // add 3 because of the stroke width of rectangle svg
-        setbounds([left + 3, top + 3])
+        // // add 3 because of the stroke width of rectangle svg
+        // setbounds([left + 3, top + 3])
       }
       // the canvasInfo refresh essential for window resize
     }, [canvasInfo])
@@ -153,9 +153,9 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
           }
         </Fragment>
       ))}
-      {loops.map(el => (
-        <Loop canvasBounds={bounds}/>
-      ))}
+      {/* {loops.map(el => (
+        <LoopPrototype />
+      ))} */}
       {children}
     </svg>
   )

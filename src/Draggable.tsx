@@ -77,9 +77,9 @@ export const Draggable: FunctionComponent<DraggableProps> = (
       onMouseOver={mouseIn}
       onMouseLeave={mouseOut}
       style={{
-        backgroundColor: active ? activeColor : color,
+        backgroundColor: color,
         borderColor,
-        boxShadow: active ? `0px 0px 0px 1px ${borderColor}` : 'none',
+        boxShadow: active ? `0px 0px 5px 1px ${borderColor}` : `0px 0px 6px 1px rgba(0,0,0,.7)`,
         left,
         top,
         zIndex: active ? 200 : 20,

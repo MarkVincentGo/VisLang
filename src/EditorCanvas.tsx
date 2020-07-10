@@ -252,7 +252,9 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         onClick={pressPlay}
         style={{ height: 'auto', borderRadius: 0, width: '100%' }}
         outerStyle={{width: '100%'}}/>
-        <LoopPrototype />
+      {loopsArray.map((data, i) => (
+        <LoopPrototype key={i.toString()}/>
+      ))}
       {constantArray.map((data, i) => (
         <Constant
           data={data}

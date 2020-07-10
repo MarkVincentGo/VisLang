@@ -2,7 +2,7 @@
   position: absolute;
   width: max-content;
   padding: 5px 10px;
-  border: 2px solid blueviolet;
+  /* border: 2px solid blueviolet; */
   border-radius: 5px;
   font-family: 'Arial', sans-serif;
   cursor: pointer;

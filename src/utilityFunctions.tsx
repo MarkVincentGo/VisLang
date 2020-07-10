@@ -1,20 +1,44 @@
-import * as R from 'ramda';
+//import _ from 'lodash';
 import * as d3 from 'd3';
 import React, { useState, useEffect, useRef } from 'react'; 
 
 const isEnclosed = (bounds2: any, bounds1: any) => {
   // top left right
-  let left = bounds1.left < bounds2.left;
-  let right = bounds1.right > bounds2.right;
-  let top = bounds1.top < bounds2.top;
-  let bottom = bounds1.bottom > bounds2.bottom
+  let left = bounds1.left < bounds2.left + 30;
+  let right = bounds1.right > bounds2.right - 30;
+  let top = bounds1.top < bounds2.top + 30;
+  let bottom = bounds1.bottom > bounds2.bottom - 30;
   if (left && right && top && bottom) {
     return true
   }
   return false
 }
 
-export const makeDraggable = (component: Element, callback = function(a:any, b:any){}, square: boolean = false) => {
+const highlightEnclosedElements = (enclosingEl: Element, callback: (a: number) => void) => {
+  let dragCoords: Map<DOMRect, Element> = new Map();
+  let dragSibs = enclosingEl.parentElement?.getElementsByClassName('draggable');
+  if (dragSibs) {
+    for (let i = 0; i < dragSibs.length; i++) {
+      let sib = dragSibs[i];
+      let bounds = sib.getBoundingClientRect();
+      dragCoords.set(bounds, sib);
+    }
+    let meBounds = enclosingEl.getBoundingClientRect()
+    dragCoords.forEach((val, key) => {
+      let info = val as HTMLElement;
+      let tag = d3.select(val);
+      if (isEnclosed(key, meBounds)) {
+        tag.style('outline', '1px solid black')
+        let componentInfo = info.dataset.varinfo ? JSON.parse(info.dataset.varinfo) : '';
+        callback(componentInfo.componentId)
+      } else {
+        tag.style('outline', 'none')
+      }
+    })
+  }
+}
+// const hEET = _.throttle(highlightEnclosedElements, 300)
+export const makeDraggable = (component: Element, posCallback = function(a:any, b:any){}, square: boolean = false, loopCallback = function(a: number) {}) => {
   let translateX = 0;
   let translateY = 0;
   const handleDrag = d3.drag()
@@ -26,37 +50,20 @@ export const makeDraggable = (component: Element, callback = function(a:any, b:a
       translateX = Math.max(0, d3.event.x);
       translateY = Math.max(0, d3.event.y);
       const transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
-      callback(translateX, translateY);
+      posCallback(translateX, translateY);
       me.style('transform', transform);
 
-      if (square) {
-        //const dad = d3.select(this.parentElement)
-        // returns an array of all draggable siblings
-        let dragCoords: Map<DOMRect, Element> = new Map();
-        let dragSibs = this.parentElement?.getElementsByClassName('draggable');
-        if (dragSibs) {
-          for (let i = 0; i < dragSibs.length; i++) {
-            let sib = dragSibs[i];
-            let bounds = sib.getBoundingClientRect();
-            dragCoords.set(bounds, sib);
-          }
-          let meBounds = this.getBoundingClientRect()
-          dragCoords.forEach((val, key) => {
-            let tag = d3.select(val);
-            let originalColor = tag.style('background-color');
-            if (isEnclosed(key, meBounds)) {
-              tag.style('background-color', 'red')
-            } else {
-              tag.style('background-color', originalColor)
-            }
-          })
-        }
-      }
+      // if (square) {
+      //   hEET(this, loopCallback)
+      // }
     })
     .on('end', function() {
- 
+
     })
     handleDrag(d3.select(component))
+    if (square) {
+      return setInterval(() => highlightEnclosedElements(component, loopCallback), 500)
+    }
 }
 
 export const LoopPrototype = (): JSX.Element => {
@@ -67,8 +74,9 @@ export const LoopPrototype = (): JSX.Element => {
   useEffect(() => {
     let loopEl = loopRef.current
     let circleEl = circleRef.current
+    let setIntHighlight: any = null
     if (loopEl && circleEl) {
-      makeDraggable(loopEl, () => {}, true);
+      setIntHighlight = makeDraggable(loopEl, () => {}, true, (id) => console.log(id));
     }
     if (circleEl) {
       makeDraggable(circleEl, (x: number, y: number) => {
@@ -76,6 +84,9 @@ export const LoopPrototype = (): JSX.Element => {
         setcircleYPos(y)
       })
     }
+    return (() => {
+      clearInterval(setIntHighlight);
+    })
     // eslint-disable-next-line
   }, []);
 
@@ -87,7 +98,8 @@ export const LoopPrototype = (): JSX.Element => {
           width: circleXPos + 100,
           height: circleYPos + 100,
           position: 'absolute',
-          border: '6px solid purple'}}>
+          border: '6px solid purple',
+          }}>
         <div ref={circleRef} 
           style={{
             backgroundColor: 'red',
