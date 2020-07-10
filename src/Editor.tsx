@@ -18,7 +18,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const [operations, setOperations] = useState<IFunctionInfo[]>([]);
   const [lines, setLines] = useState<IDataSVGLine[]>([]);
   const [loops, setLoops] = useState<number[]>([])
-  const [logs, setLogs] = useState<IFunctionInfo[]>([]);
   const [ends, setEnds] = useState<any[]>([]);
 
 
@@ -163,25 +162,14 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         break;
       }
       case 'Function':
-        if (operator.opType === 'Console Log') {
-          let newLogs = R.map(el => {
-            let newEl:IFunctionInfo = {...el}
-            if (newEl.id === operator.id) {
-              newEl[key] = value;
-            }
-            return newEl;
-          }, logs);
-          setLogs(newLogs)
-        } else {
-          let newOperations = R.map(el => {
-            let newEl:IFunctionInfo = {...el}
-            if (newEl.id === operator.id) {
-              newEl[key] = value;
-            }
-            return newEl;
-          }, operations);
-          setOperations(newOperations)
-        }
+        let newOperations = R.map(el => {
+          let newEl:IFunctionInfo = {...el}
+          if (newEl.id === operator.id) {
+            newEl[key] = value;
+          }
+          return newEl;
+        }, operations);
+        setOperations(newOperations);
         break;
       case 'End': 
       let newEnds = R.map(el => {
@@ -247,9 +235,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   const clickConsoleLog = ():void => {
-    let newLog = new Operator('Console Log');
-    let newLogs = [...logs, newLog];
-    setLogs(newLogs);
+    let newOperation = new Operator('Console Log', 'lightgreen');
+    let newOperations = [...operations, newOperation];
+    setOperations(newOperations);
   }
 
   const clickEnding = ():void => {
@@ -269,7 +257,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       ...varReferences.filter(vr => !vr.deleted),
       ...operations.filter(op => !op.deleted),
       ...lines,
-      ...logs,
       ...ends.filter(end => end.args[0])
     ])
   }
@@ -317,7 +304,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         operationsArray={operations}
         editFunction={editFunction}
         loopsArray={loops}
-        logsArray={logs}
         endsArray={ends}
         handleConstantDropDown={handleConstantDropDown}
         handleVariableDropDown={handleVariableDropDown}

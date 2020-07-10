@@ -1,6 +1,5 @@
 //import _ from 'lodash';
 import * as d3 from 'd3';
-import React, { useState, useEffect, useRef } from 'react'; 
 
 const isEnclosed = (bounds2: any, bounds1: any) => {
   // top left right
@@ -64,53 +63,4 @@ export const makeDraggable = (component: Element, posCallback = function(a:any, 
     if (square) {
       return setInterval(() => highlightEnclosedElements(component, loopCallback), 500)
     }
-}
-
-export const LoopPrototype = (): JSX.Element => {
-  const [circleXPos, setcircleXPos] = useState(0);
-  const [circleYPos, setcircleYPos] = useState(0)
-  const loopRef = useRef<HTMLDivElement>(null);
-  const circleRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    let loopEl = loopRef.current
-    let circleEl = circleRef.current
-    let setIntHighlight: any = null
-    if (loopEl && circleEl) {
-      setIntHighlight = makeDraggable(loopEl, () => {}, true, (id) => console.log(id));
-    }
-    if (circleEl) {
-      makeDraggable(circleEl, (x: number, y: number) => {
-        setcircleXPos(x);
-        setcircleYPos(y)
-      })
-    }
-    return (() => {
-      clearInterval(setIntHighlight);
-    })
-    // eslint-disable-next-line
-  }, []);
-
-  return (
-    <>
-      <div ref={loopRef} 
-        style={{
-          backgroundColor: 'rgba(0,0,0,0)',
-          width: circleXPos + 100,
-          height: circleYPos + 100,
-          position: 'absolute',
-          border: '6px solid purple',
-          }}>
-        <div ref={circleRef} 
-          style={{
-            backgroundColor: 'red',
-            borderRadius:'50%',
-            width: 20,
-            height: 20,
-            position: 'absolute',
-            bottom: -(16 - circleYPos),
-            right: -(16 - circleXPos),
-          }}></div>
-      </div>
-    </>
-  )
 }

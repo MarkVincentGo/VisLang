@@ -3,7 +3,6 @@ import styles from './Operator.module.css';
 import { IFunctionInfo, IVariableInfo, IVarReference, IConstantInfo } from './Interfaces';
 
 
-
 interface DataNodesProps {
   position: string,
   nodes: number,

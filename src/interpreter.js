@@ -31,11 +31,8 @@ export default function(metaData) {
     // here need to determine the order according to order in args array
     if (topEl.args) {
       for (let arg of topEl.args) {
-        for (let el of workData) {
-          if (el.el2 === topEl.id && el.id === arg) {
-            // push el1 of those lines to dfsArr
-            dfsArr.push(mapOfData.get(el.el1));
-          }
+        if (arg) {
+          dfsArr.push(mapOfData.get((mapOfLines.get(arg)).el1));
         }
       }
     }
@@ -64,7 +61,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
 
   // second run, perform the operations, already have initial values in scope
   while (funcStack.length) {
-    debugger
+    // debugger
     let topOfFuncStack = funcStack.pop();
     //console.log(topOfFuncStack)
     let args = topOfFuncStack.args;

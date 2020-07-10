@@ -7,10 +7,9 @@ import { Variable } from './Variable';
 import { Operator } from './Operator';
 import { VarReference } from './VarReference'
 import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IConstantInfo } from './Interfaces';
-import { ConsoleLog } from './SimpleFunctions';
 import { End } from './End';
 import { Constant } from './Constant';
-import { LoopPrototype } from './utilityFunctions'
+import { LoopPrototype } from './Loop'
 
 
 interface CanvasProps {
@@ -20,7 +19,6 @@ interface CanvasProps {
   operationsArray: IFunctionInfo[],
   linesArray: IDataSVGLine[],
   loopsArray: number[],
-  logsArray: IFunctionInfo[],
   endsArray:any[],
   updateLines(newLines: IDataSVGLine[]): void,
   editConstant(constData: IConstantInfo, value?: string): void,
@@ -41,7 +39,6 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     operationsArray,
     linesArray,
     loopsArray,
-    logsArray,
     endsArray,
     updateLines,
     editConstant, 
@@ -203,6 +200,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     }
     
     if (position === 'top') {
+      console.log(index)
       let newArgs = [...args];
       newArgs[index] = newLine.id;
       editFunction(nodeInfo, 'args', newArgs)
@@ -253,7 +251,9 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         style={{ height: 'auto', borderRadius: 0, width: '100%' }}
         outerStyle={{width: '100%'}}/>
       {loopsArray.map((data, i) => (
-        <LoopPrototype key={i.toString()}/>
+        <LoopPrototype
+          key={i.toString()}
+          />
       ))}
       {constantArray.map((data, i) => (
         <Constant
@@ -289,13 +289,6 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         mousedUp={nodeMouseUp}
         handleOperatorDropDown={handleOperatorDropDown}/>
         ))}
-      {logsArray.map((log, i) => (
-        <ConsoleLog
-          key={i.toString()}
-          mousedDown={nodeMouseDown}
-          mousedUp={nodeMouseUp}
-          data={log}/>
-      ))}
       {endsArray.map((end, i) => (
         <End
           key={i.toString()}

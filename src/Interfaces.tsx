@@ -3,7 +3,8 @@ export interface IConstantInfo {
   readonly id: number,
   type: string,
   value: string,
-  deleted: boolean
+  deleted: boolean,
+  color?: string
 }
 
 export interface IVariableInfo {

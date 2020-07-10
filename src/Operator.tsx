@@ -19,7 +19,7 @@ export const Operator: FunctionComponent<OperatorProps> = ({ operator, mousedDow
   
   return ( !operator.deleted ?
     <Draggable
-      color="#FCBB5B"
+      color={operator.color}
       activeColor="#FDAD29"
       borderColor="#FF5000"
       componentId={operator.id}

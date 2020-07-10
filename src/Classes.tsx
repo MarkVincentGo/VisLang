@@ -60,9 +60,14 @@ export class Operator implements IFunctionInfo {
   func = function(a: number, b: number): void {};
   value: number = 0;
   deleted: boolean = false;
+  color: string = '#FCBB5B';
 
-  constructor(opType: string,) {
+  constructor(opType: string, color?: string) {
     this.opType = opType;
+
+    if (color) {
+      this.color = color;
+    }
 
     switch (opType) {
       case '+':
