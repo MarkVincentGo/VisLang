@@ -93,6 +93,10 @@ export class Operator implements IFunctionInfo {
       case '==':
         this.func = (a: number | string, b: number | string): boolean => a === b;
       break;
+      case 'Order':
+        this.args = [null, null, null];
+        this.func = (...args): any => args[args.length - 1];
+      break;
       default:
         this.func = (): number => 0;
         break;

@@ -235,6 +235,12 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     }
   }
 
+  const clickOrder = ():void => {
+    let newOperation = new Operator('Order');
+    let newOperations = [...operations, newOperation];
+    setOperations(newOperations);
+  }
+
   const clickLoop = (type: string): void => {
     let newLoops = [...loops, 1];
     setLoops(newLoops)
@@ -292,6 +298,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           dropDown
           dropDownList={['For', 'While']}
           ddClick={clickLoop}/>
+        <Button 
+          name="Order"
+          onClick={clickOrder}/>
         <Button
           name="Log to Console"
           onClick={clickConsoleLog}/>

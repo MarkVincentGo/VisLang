@@ -283,12 +283,12 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       ))}
       {operationsArray.map((operator, i) => (
         <Operator
-          operator={operator}
-          key={i.toString()}
-          mousedDown={nodeMouseDown}
-          mousedUp={nodeMouseUp}
-          handleOperatorDropDown={handleOperatorDropDown}/>
-      ))}
+        operator={operator}
+        key={i.toString()}
+        mousedDown={nodeMouseDown}
+        mousedUp={nodeMouseUp}
+        handleOperatorDropDown={handleOperatorDropDown}/>
+        ))}
       {logsArray.map((log, i) => (
         <ConsoleLog
           key={i.toString()}

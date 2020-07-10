@@ -28,10 +28,15 @@ export default function(metaData) {
     let topEl = dfsArr.pop();
     orderOfOperations.push(topEl)
     // iterate metaData for elementid in el2 of lines
-    for (let el of workData) {
-      if (el.el2 === topEl.id) {
-        // push el1 of those lines to dfsArr
-        dfsArr.push(mapOfData.get(el.el1));
+    // here need to determine the order according to order in args array
+    if (topEl.args) {
+      for (let arg of topEl.args) {
+        for (let el of workData) {
+          if (el.el2 === topEl.id && el.id === arg) {
+            // push el1 of those lines to dfsArr
+            dfsArr.push(mapOfData.get(el.el1));
+          }
+        }
       }
     }
   }
