@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Constant, Variable, VarReference, Operator, End } from './Classes'
-import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IEnd, IConstantInfo } from './Interfaces';
+import { Constant, Variable, VarReference, Operator, End, Loop } from './Classes'
+import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IEnd, IConstantInfo, ILoop } from './Interfaces';
 import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
@@ -17,7 +17,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
   const [operations, setOperations] = useState<IFunctionInfo[]>([]);
   const [lines, setLines] = useState<IDataSVGLine[]>([]);
-  const [loops, setLoops] = useState<number[]>([])
+  const [loops, setLoops] = useState<ILoop[]>([])
   const [ends, setEnds] = useState<any[]>([]);
 
 
@@ -64,6 +64,10 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           return el;
         }, constants)
         setConstants(newConstants)
+
+        let newLines = lines.filter(line => line.el1 !== constData.id);
+        newLines = newLines.filter(line => line.el2 !== constData.id);
+        setLines(newLines);
         break;
       }
       default:
@@ -134,6 +138,10 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           return el;
         }, varReferences);
         setVarReferences(newVarReferences);
+
+        let newLines = lines.filter(line => line.el1 !==  refData.id);
+        newLines = newLines.filter(line => line.el2 !== refData.id);
+        setLines(newLines);
         break;
       }
         
@@ -230,7 +238,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   const clickLoop = (type: string): void => {
-    let newLoops = [...loops, 1];
+    let newLoop = new Loop()
+    let newLoops = [...loops, newLoop];
     setLoops(newLoops)
   }
 

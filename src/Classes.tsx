@@ -4,7 +4,8 @@ import {
   IVarReference,
   IFunctionInfo,
   IDataSVGLine,
-  IEnd
+  IEnd,
+  ILoop,
 } from './Interfaces';
 
 
@@ -137,4 +138,11 @@ export class End implements IEnd {
     return a
   };
   value: any = 1
+}
+
+export class Loop implements ILoop {
+  id: number = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+  type: string = 'Loop';
+  args: any[] = [null];
+  func = function() {}
 }

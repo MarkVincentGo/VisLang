@@ -58,3 +58,10 @@ export interface IEnd {
   func(a: any): any,
   value: any,
 }
+
+export interface ILoop {
+  readonly id: number,
+  type: string,
+  args: any[],
+  func(): any
+}

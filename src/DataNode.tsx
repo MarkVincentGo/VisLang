@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Operator.module.css';
-import { IFunctionInfo, IVariableInfo, IVarReference, IConstantInfo } from './Interfaces';
+import { IFunctionInfo, IVariableInfo, IVarReference, IConstantInfo, ILoop } from './Interfaces';
 
 
 interface DataNodesProps {
@@ -8,10 +8,11 @@ interface DataNodesProps {
   nodes: number,
   mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
   mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void,
-  dragInfo: IFunctionInfo | IVariableInfo | IVarReference | IConstantInfo,
+  dragInfo: IFunctionInfo | IVariableInfo | IVarReference | IConstantInfo | ILoop,
+  style?: any,
 }
 
-export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo }): JSX.Element => {
+export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo, style = {} }): JSX.Element => {
   const [nodeData, setNodeData] = useState<any[]>(new Array(nodes).fill(null));
 
   let nodePosition = position === 'top' ? {top: -4.5} : {bottom: -0.5};
@@ -42,7 +43,7 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
   return (
     <div 
       className={styles.nodeContainer}
-      style={nodePosition}
+      style={{...nodePosition, ...style}}
       >
       {(new Array(nodes).fill(0)).map((el, i) => (
         <div

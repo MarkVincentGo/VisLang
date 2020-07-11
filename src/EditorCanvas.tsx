@@ -6,7 +6,7 @@ import { Button } from './Button';
 import { Variable } from './Variable';
 import { Operator } from './Operator';
 import { VarReference } from './VarReference'
-import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IConstantInfo } from './Interfaces';
+import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IConstantInfo, ILoop } from './Interfaces';
 import { End } from './End';
 import { Constant } from './Constant';
 import { LoopPrototype } from './Loop'
@@ -18,7 +18,7 @@ interface CanvasProps {
   referenceArray: IVarReference[],
   operationsArray: IFunctionInfo[],
   linesArray: IDataSVGLine[],
-  loopsArray: number[],
+  loopsArray: ILoop[],
   endsArray:any[],
   updateLines(newLines: IDataSVGLine[]): void,
   editConstant(constData: IConstantInfo, value?: string): void,
@@ -253,7 +253,9 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       {loopsArray.map((data, i) => (
         <LoopPrototype
           key={i.toString()}
-          />
+          data={data}
+          mousedDown={nodeMouseDown}
+          mousedUp={nodeMouseUp}/>
       ))}
       {constantArray.map((data, i) => (
         <Constant
@@ -299,12 +301,11 @@ export const Canvas: FunctionComponent<CanvasProps> = (
 
       { renderSVG ?
         <DrawLines
-        canvasInfo={dimensions}
-        currentLine={currentLine}
-        mouseDown={mousedDownInNode}
-        lines={linesArray}
-        loops={loopsArray}
-        deleteLine={deleteLine}/>
+          canvasInfo={dimensions}
+          currentLine={currentLine}
+          mouseDown={mousedDownInNode}
+          lines={linesArray}
+          deleteLine={deleteLine}/>
         : 
         <></>
       }

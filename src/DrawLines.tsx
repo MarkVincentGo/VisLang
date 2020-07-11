@@ -78,13 +78,12 @@ interface DrawLinesProps {
   canvasInfo: number[],
   children?: any,
   lines:IDataSVGLine[],
-  loops: number[],
   mouseDown: boolean,
   currentLine:IDataSVGLine,
   deleteLine(lineId: number): void,
 }
 
-export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, loops, mouseDown, currentLine, deleteLine}): JSX.Element => {
+export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine, deleteLine}): JSX.Element => {
   const [rightClicked, setRightClicked] = useState<boolean>(false);
   const [mousePos, setMousePos] = useState<number[]>([0,0]);
   const [selectedLine, setSelectedLine] = useState<number>(0);
