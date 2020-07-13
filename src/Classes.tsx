@@ -88,7 +88,7 @@ export class Operator implements IFunctionInfo {
       case 'mod':
         this.func = (a: number, b: number): number => a % b;
         break;
-      case 'Console Log':
+      case 'Print':
         this.func = (x: any) => { console.log(x); return x };
         this.args = [null]
         break;

@@ -29,7 +29,7 @@ export default function(metaData) {
     orderOfOperations.push(topEl)
     // iterate metaData for elementid in el2 of lines
     // here need to determine the order according to order in args array
-    if (topEl.args) {
+    if (topEl.hasOwnProperty('args')) {
       for (let arg of topEl.args) {
         if (arg) {
           dfsArr.push(mapOfData.get((mapOfLines.get(arg)).el1));
@@ -84,7 +84,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
       // arguments contain the id's of every node the function depends on
       let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
       topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
-      if (topOfFuncStack.opType === 'Console Log') {consoleArr.push(topOfFuncStack.value.toString())}
+      if (topOfFuncStack.opType === 'Print') {consoleArr.push(topOfFuncStack.value.toString())}
       if (topOfFuncStack.type === 'End') consoleArr.push(`Last Return Value: ${topOfFuncStack.value}`)
     }
   }

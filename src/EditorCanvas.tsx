@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import { DrawLines } from './DrawLines';
-import { DataSVGLine, Operator as Operation } from './Classes'
+import { DataSVGLine } from './Classes'
 import styles from './Editor.module.css';
 import { Button } from './Button';
 import { Variable } from './Variable';
@@ -86,7 +86,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     }, [])
 
   const dragStart = (event: any ): void => {
-    event.preventDefault();
+    if (event.target.tagName !== 'INPUT') {event.preventDefault()}
     // gather all instances of variables and starts drag functionality
     let draggables = document.getElementsByClassName('draggable');
     let dragSet = new Set(draggables)
@@ -239,7 +239,10 @@ export const Canvas: FunctionComponent<CanvasProps> = (
 
   }
 
-  const [order, setorder] = useState(new Operation('Order', 'yellow'));
+
+  const changeOrderArgs = (operator: IFunctionInfo): void => {
+    editFunction(operator, 'args', operator.args)
+  }
 
 
   return (
@@ -291,6 +294,15 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           handleReferenceDropDown={handleReferenceDropDown}/>
       ))}
       {operationsArray.map((operator, i) => (
+        operator.opType === 'Order' ?
+        <Order
+          key={i.toString()}
+          operator={operator}
+          mousedDown={nodeMouseDown}
+          mousedUp={nodeMouseUp}
+          changeArgNum={changeOrderArgs}
+          handleOperatorDropDown={handleOperatorDropDown}/> 
+        :
         <Operator
         operator={operator}
         key={i.toString()}
@@ -298,12 +310,6 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         mousedUp={nodeMouseUp}
         handleOperatorDropDown={handleOperatorDropDown}/>
         ))}
-      <Order
-        operator={order}
-        mousedDown={nodeMouseDown}
-        mousedUp={nodeMouseUp}
-        changeArgNum={setorder}
-        handleOperatorDropDown={handleOperatorDropDown}/>
       {endsArray.map((end, i) => (
         <End
           key={i.toString()}

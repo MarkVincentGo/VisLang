@@ -10,7 +10,7 @@ interface OperatorProps {
   mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
   mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void,
   handleOperatorDropDown(option: string, opData: IFunctionInfo): void,
-  changeArgNum: any,
+  changeArgNum(operator: IFunctionInfo): void,
 }
 
 export const Order: FunctionComponent<OperatorProps> = ({ operator, mousedDown, mousedUp, handleOperatorDropDown, changeArgNum }): JSX.Element => {
@@ -29,7 +29,6 @@ export const Order: FunctionComponent<OperatorProps> = ({ operator, mousedDown, 
         newOperator.decreaseArgs()
       }
     }
-    console.log(newOperator)
     changeArgNum(newOperator)
   }
   

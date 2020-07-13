@@ -232,10 +232,11 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   const clickOrder = ():void => {
-    let newOperation = new Operator('Order');
+    let newOperation = new Operator('Order', 'goldenrod');
     let newOperations = [...operations, newOperation];
     setOperations(newOperations);
   }
+
 
   const clickLoop = (type: string): void => {
     let newLoop = new Loop()
@@ -244,7 +245,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   const clickConsoleLog = ():void => {
-    let newOperation = new Operator('Console Log', 'lightgreen');
+    let newOperation = new Operator('Print', 'lightgreen');
     let newOperations = [...operations, newOperation];
     setOperations(newOperations);
   }
@@ -295,10 +296,10 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           dropDownList={['For', 'While']}
           ddClick={clickLoop}/>
         <Button 
-          name="Order"
+          name="Set Order"
           onClick={clickOrder}/>
         <Button
-          name="Log to Console"
+          name="Print"
           onClick={clickConsoleLog}/>
         <Button 
           name="End"
