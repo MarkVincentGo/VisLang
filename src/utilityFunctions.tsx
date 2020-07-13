@@ -1,5 +1,6 @@
 //import _ from 'lodash';
 import * as d3 from 'd3';
+import * as R from 'ramda';
 
 const isEnclosed = (bounds2: any, bounds1: any) => {
   // top left right
@@ -13,9 +14,10 @@ const isEnclosed = (bounds2: any, bounds1: any) => {
   return false
 }
 
-const highlightEnclosedElements = (enclosingEl: Element, callback: (a: number) => void) => {
+const highlightEnclosedElements = (enclosingEl: Element, callback: (a: number[]) => void): void => {
   let dragCoords: Map<DOMRect, Element> = new Map();
   let dragSibs = enclosingEl.parentElement?.getElementsByClassName('draggable');
+  let highlightedArr: number[] = [];
   if (dragSibs) {
     for (let i = 0; i < dragSibs.length; i++) {
       let sib = dragSibs[i];
@@ -29,15 +31,17 @@ const highlightEnclosedElements = (enclosingEl: Element, callback: (a: number) =
       if (isEnclosed(key, meBounds)) {
         tag.style('outline', '1px solid black')
         let componentInfo = info.dataset.varinfo ? JSON.parse(info.dataset.varinfo) : '';
-        callback(componentInfo.componentId)
+        highlightedArr.push(componentInfo.componentId)
       } else {
         tag.style('outline', 'none')
       }
     })
+    callback(highlightedArr)
   }
 }
+
 // const hEET = _.throttle(highlightEnclosedElements, 300)
-export const makeDraggable = (component: Element, posCallback = function(a:any, b:any){}, square: boolean = false, loopCallback = function(a: number) {}) => {
+export const makeDraggable = (component: Element, posCallback = function(a:any, b:any){}, square: boolean = false, loopCallback = function(a: number[]) {}) => {
   let translateX = 0;
   let translateY = 0;
   const handleDrag = d3.drag()
@@ -60,7 +64,14 @@ export const makeDraggable = (component: Element, posCallback = function(a:any, 
 
     })
     handleDrag(d3.select(component))
+
+    let prevArr: number[] = [];
     if (square) {
-      return setInterval(() => highlightEnclosedElements(component, loopCallback), 500)
+      return setInterval(() => highlightEnclosedElements(component, (arr: number[]) => {
+        if (!R.equals(prevArr, arr)) {
+          loopCallback(arr);
+        }
+        prevArr = [...arr];
+      }), 500)
     }
 }

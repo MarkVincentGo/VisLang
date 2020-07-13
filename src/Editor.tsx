@@ -244,6 +244,17 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     setLoops(newLoops)
   }
 
+  const editLoop = (loop: ILoop, key: string, value: any): void => {
+    let newLoops = R.map((l) => {
+      let newLoop = {...l};
+      if (l.id === loop.id) {
+        newLoop[key] = value;
+      }
+      return newLoop;
+    }, loops)
+    setLoops(newLoops);
+  }
+
   const clickConsoleLog = ():void => {
     let newOperation = new Operator('Print', 'lightgreen');
     let newOperations = [...operations, newOperation];
@@ -267,6 +278,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
       ...varReferences.filter(vr => !vr.deleted),
       ...operations.filter(op => !op.deleted),
       ...lines,
+      ...loops,
       ...ends.filter(end => end.args[0])
     ])
   }
@@ -314,6 +326,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
         operationsArray={operations}
         editFunction={editFunction}
         loopsArray={loops}
+        editLoop={editLoop}
         endsArray={ends}
         handleConstantDropDown={handleConstantDropDown}
         handleVariableDropDown={handleVariableDropDown}

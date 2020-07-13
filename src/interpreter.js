@@ -3,30 +3,56 @@ export default function(metaData) {
 
   // parses all value types and makes copy of meta data
   let workData = parseValueTypes(metaData);
-  let lines = getLines(metaData)
 
   // if assembled correctly, think of the data passed in as a stack, eventually it will run out
   // this makes it optimal for depth first search
-  let mapOfLines = new Map();
-  for (let line of lines) {
-    mapOfLines.set(line.id, line)
-  }
-  console.log(mapOfLines)
 
   let mapOfData = new Map();
   for (let data of workData) {
     mapOfData.set(data.id, data);
   };
 
+  let mapOfLines = getMapOfLines(workData);
+  let [mapOfLoops, mapOfRefIdToLoopId] = getMapOfLoops(workData);
+
+
+
 
   let dfsArr = workData.filter(el => el.id < 0);
 
   let orderOfOperations = [];
+
+  let loopTracker = {};
+  for (let [loopId, loop] of mapOfLoops) {
+    loopTracker[loopId] = loop.enclosedComponents.size;
+  }
+
+
   // while still items in dfsArr
   while (dfsArr.length) {
     // pop the top element
     let topEl = dfsArr.pop();
-    orderOfOperations.push(topEl)
+
+    
+    /******************LOOP HANDLING*******************/
+    if (mapOfRefIdToLoopId.has(topEl.id)) {
+      if (loopTracker[mapOfRefIdToLoopId.get(topEl.id)] === mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)).enclosedComponents.size) {
+        orderOfOperations.push('end loop');
+      }
+      orderOfOperations.push(topEl);
+      loopTracker[mapOfRefIdToLoopId.get(topEl.id)] -= 1;
+      if (loopTracker[mapOfRefIdToLoopId.get(topEl.id)] === 0) {
+        orderOfOperations.push('start loop');
+      }
+      /*^^^^^^^^^^^^^^^^^^LOOP HANDLING^^^^^^^^^^^^^^^^^^^*/
+    } else {
+      orderOfOperations.push(topEl)
+    }
+
+
+
+  
+
     // iterate metaData for elementid in el2 of lines
     // here need to determine the order according to order in args array
     if (topEl.hasOwnProperty('args')) {
@@ -92,7 +118,6 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
   return consoleArr
 }
 
-// eslint-disable-next-line
 
 function parseValueTypes(inputArr) {
   let output = [];
@@ -118,12 +143,26 @@ function parseValueTypes(inputArr) {
   return output;
 }
 
-function getLines(inputArr) {
-  let output = [];
+function getMapOfLines(inputArr) {
+  let output = new Map();
   for (let node of inputArr) {
     if (node.hasOwnProperty('el1')) {
-      output.push(node)
+      output.set(node.id, node)
     }
   }
   return output;
+}
+
+function getMapOfLoops(inputArr) {
+  let loopMap = new Map();
+  let mapOfRefIdToLoopId = new Map();
+  for (let node of inputArr) {
+    if (node.type === 'Loop') {
+      loopMap.set(node.id, node);
+      for (let refId of node.enclosedComponents) {
+        mapOfRefIdToLoopId.set(refId, node.id)
+      }
+    }
+  }
+  return [loopMap, mapOfRefIdToLoopId];
 }

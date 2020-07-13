@@ -8,10 +8,11 @@ interface LoopProps {
   data: ILoop,
   mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
   mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void,
+  edit(loop: ILoop, key: string, value: any): void,
   //handleOperatorDropDown(option: string, opData: IFunctionInfo): void
 }
 
-export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, mousedUp }): JSX.Element => {
+export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, mousedUp, edit }): JSX.Element => {
   const [circleXPos, setcircleXPos] = useState(0);
   const [circleYPos, setcircleYPos] = useState(0)
   const loopRef = useRef<HTMLDivElement>(null);
@@ -21,8 +22,14 @@ export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, 
     let circleEl = circleRef.current
     let setIntHighlight: any = null
     if (loopEl && circleEl) {
-      // makeDraggable returns a setInterval
-      setIntHighlight = makeDraggable(loopEl, () => {}, true, (id) => console.log(id));
+      // makeDraggable returns a setInterval, cleared on unmount
+      setIntHighlight = makeDraggable(
+        loopEl, () => {}, 
+        true, 
+        (arr: number[]) => {
+          edit(data, 'enclosedComponents', new Set<number>(arr))
+          console.log(arr)
+        });
     }
     if (circleEl) {
       makeDraggable(circleEl, (x: number, y: number) => {
@@ -48,7 +55,7 @@ export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, 
           }}>
         <DataNode
           position="top"
-          nodes={2}
+          nodes={data.args.length}
           mousedDown={mousedDown}
           mousedUp={mousedUp}
           dragInfo={data}

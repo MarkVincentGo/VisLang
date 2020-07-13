@@ -62,9 +62,11 @@ export interface IEnd {
 }
 
 export interface ILoop {
+  [key: string]: any,
   readonly id: number,
   type: string,
   args: any[],
-  func(): any
+  func(): any,
+  enclosedComponents: Set<number>
 }
 
