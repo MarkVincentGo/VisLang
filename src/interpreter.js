@@ -34,24 +34,25 @@ export default function(metaData) {
     let topEl = dfsArr.pop();
 
     
-    /******************LOOP HANDLING*******************/
+    /*********************   LOOP HANDLING   **********************/
+
     if (mapOfRefIdToLoopId.has(topEl.id)) {
       if (loopTracker[mapOfRefIdToLoopId.get(topEl.id)] === mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)).enclosedComponents.size) {
-        orderOfOperations.push('end loop');
+        // orderOfOperations.push(`endLoop${mapOfRefIdToLoopId.get(topEl.id)}`);
+        orderOfOperations.push({...mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)), term: 'End'});
       }
       orderOfOperations.push(topEl);
       loopTracker[mapOfRefIdToLoopId.get(topEl.id)] -= 1;
       if (loopTracker[mapOfRefIdToLoopId.get(topEl.id)] === 0) {
-        orderOfOperations.push('start loop');
+        // orderOfOperations.push(`startLoop${mapOfRefIdToLoopId.get(topEl.id)}`);
+        orderOfOperations.push({...mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)), term: 'start'});
       }
-      /*^^^^^^^^^^^^^^^^^^LOOP HANDLING^^^^^^^^^^^^^^^^^^^*/
+      /*^^^^^^^^^^^^^^^^^^   LOOP HANDLING    ^^^^^^^^^^^^^^^^^^^*/
+
     } else {
       orderOfOperations.push(topEl)
     }
 
-
-
-  
 
     // iterate metaData for elementid in el2 of lines
     // here need to determine the order according to order in args array
