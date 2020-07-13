@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import { DrawLines } from './DrawLines';
-import { DataSVGLine } from './Classes'
+import { DataSVGLine, Operator as Operation } from './Classes'
 import styles from './Editor.module.css';
 import { Button } from './Button';
 import { Variable } from './Variable';
@@ -9,7 +9,8 @@ import { VarReference } from './VarReference'
 import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IConstantInfo, ILoop } from './Interfaces';
 import { End } from './End';
 import { Constant } from './Constant';
-import { LoopPrototype } from './Loop'
+import { LoopPrototype } from './Loop';
+import { Order } from './Order';
 
 
 interface CanvasProps {
@@ -85,6 +86,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     }, [])
 
   const dragStart = (event: any ): void => {
+    event.preventDefault();
     // gather all instances of variables and starts drag functionality
     let draggables = document.getElementsByClassName('draggable');
     let dragSet = new Set(draggables)
@@ -193,22 +195,24 @@ export const Canvas: FunctionComponent<CanvasProps> = (
   const nodeMouseUp = (event: React.MouseEvent, nodeInfo: any, index: number):void => {
     let { position, id: nodeId, args } = nodeInfo;
     let newLine = {...currentLine}
-    if (position === 'bottom') {
-      newLine.el1 = nodeId
-    } else if (position === 'top') {
-      newLine.el2 = nodeId
-    }
-    
-    if (position === 'top') {
-      console.log(index)
-      let newArgs = [...args];
-      newArgs[index] = newLine.id;
-      editFunction(nodeInfo, 'args', newArgs)
-    }
 
-    let newLines = [...linesArray, newLine];
-    updateLines(newLines);
-    setmousedDownInNode(false)
+    if ((newLine.el1 || newLine.el2) && (newLine.el1 !== newLine.el2)) {
+      if (position === 'bottom') {
+        newLine.el1 = nodeId
+      } else if (position === 'top') {
+        newLine.el2 = nodeId
+      }
+      
+      if (position === 'top') {
+        let newArgs = [...args];
+        newArgs[index] = newLine.id;
+        editFunction(nodeInfo, 'args', newArgs)
+      }
+      
+      let newLines = [...linesArray, newLine];
+      updateLines(newLines);
+    }
+      setmousedDownInNode(false)
   }
 
   const deleteLine = (lineId: number): void => {
@@ -234,6 +238,9 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     }
 
   }
+
+  const [order, setorder] = useState(new Operation('Order', 'yellow'));
+
 
   return (
     <div 
@@ -291,6 +298,12 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         mousedUp={nodeMouseUp}
         handleOperatorDropDown={handleOperatorDropDown}/>
         ))}
+      <Order
+        operator={order}
+        mousedDown={nodeMouseDown}
+        mousedUp={nodeMouseUp}
+        changeArgNum={setorder}
+        handleOperatorDropDown={handleOperatorDropDown}/>
       {endsArray.map((end, i) => (
         <End
           key={i.toString()}

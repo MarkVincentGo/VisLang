@@ -59,6 +59,8 @@ export class Operator implements IFunctionInfo {
   opType: string = '';
   args: any[] = [null, null];
   func = function(a: number, b: number): void {};
+  increaseArgs = function() {};
+  decreaseArgs = function() {};
   value: number = 0;
   deleted: boolean = false;
   color: string = '#FCBB5B';
@@ -102,6 +104,8 @@ export class Operator implements IFunctionInfo {
       case 'Order':
         this.args = [null, null, null];
         this.func = (...args): any => args[args.length - 1];
+        this.increaseArgs = function() {this.args = [...this.args, null]};
+        this.decreaseArgs = function() {this.args = this.args.slice(0, this.args.length - 1)}
       break;
       default:
         this.func = (): number => 0;

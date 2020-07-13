@@ -36,6 +36,8 @@ export interface IFunctionInfo {
   opType: string,
   args: any[],
   func(...args: any[]): void,
+  increaseArgs?(): void,
+  decreaseArgs?(): void,
   value: number | string | boolean,
   deleted: boolean
 }
@@ -65,3 +67,4 @@ export interface ILoop {
   args: any[],
   func(): any
 }
+
