@@ -80,7 +80,8 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), lo
     if (node.type === 'Loop' && node.term === 'End') {
       scope.set(`Loop${node.id}`, []);
       scope.set(`LogLoop${node.id}`, true);
-      scope.set(`LoopCount${node.id}`, 3)
+      debugger
+      scope.set(`LoopCount${node.id}`, inputMap.get(linesMap.get(node.args[0]).el1).value)
     }
 
     if (node.type === 'Loop' && node.term === 'Start') {

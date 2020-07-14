@@ -161,7 +161,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     setOperations(newOperations);
   }
 
-  const editFunction = (operator: IFunctionInfo | IVariableInfo, key: string, value: any): void => {
+  const editFunction = (operator: IFunctionInfo | IVariableInfo | ILoop, key: string, value: any): void => {
     switch (operator.type) {
       case 'Assign Function': {
         let newVariables = R.map(el => {
@@ -183,6 +183,16 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
           return newEl;
         }, operations);
         setOperations(newOperations);
+        break;
+      case 'Loop':
+        let newLoops = R.map(el => {
+          let newLoop: ILoop = {...el}
+          if (newLoop.id === operator.id) {
+            newLoop[key] = value;
+          }
+          return newLoop;
+        }, loops);
+        setLoops(newLoops)
         break;
       case 'End': 
       let newEnds = R.map(el => {
