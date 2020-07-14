@@ -17,6 +17,7 @@ export interface IVariableInfo {
   func(...args: any[]): void,
   value?: any,
   deleted: boolean,
+  reassign?: boolean
 }
 
 export interface IVarReference {

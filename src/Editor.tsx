@@ -50,6 +50,11 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
     if (editedVar) {
       editedVar.name = name;
       editedVar.value = value;
+      if (editedVar.value === 'REF') {
+        editedVar.reassign = true;
+      } else {
+        editedVar.reassign = false;
+      }
     }
     setVariables(newVariables);
   }

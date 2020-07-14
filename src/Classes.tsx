@@ -32,6 +32,7 @@ export class Variable implements IVariableInfo {
   };
   value: any =  undefined;
   deleted: boolean = false;
+  reassign: boolean = false;
 
   constructor(valueType: string) {
     this.valueType = valueType;
@@ -147,7 +148,7 @@ export class End implements IEnd {
 export class Loop implements ILoop {
   id: number = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
   type: string = 'Loop';
-  args: any[] = [1, null];
+  args: any[] = [null, null];
   func = function() {};
   enclosedComponents = new Set<number>();
 }

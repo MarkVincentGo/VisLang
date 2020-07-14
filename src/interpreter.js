@@ -45,7 +45,7 @@ export default function(metaData) {
       loopTracker[mapOfRefIdToLoopId.get(topEl.id)] -= 1;
       if (loopTracker[mapOfRefIdToLoopId.get(topEl.id)] === 0) {
         // orderOfOperations.push(`startLoop${mapOfRefIdToLoopId.get(topEl.id)}`);
-        orderOfOperations.push({...mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)), term: 'start'});
+        orderOfOperations.push({...mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)), term: 'Start'});
       }
       /*^^^^^^^^^^^^^^^^^^   LOOP HANDLING    ^^^^^^^^^^^^^^^^^^^*/
 
@@ -69,16 +69,35 @@ export default function(metaData) {
   // operation > values (LIKE SICP)
   
   console.log(orderOfOperations)
-  return(interpret(orderOfOperations, mapOfData, mapOfLines))
+  return(interpret(orderOfOperations, mapOfData, mapOfLines, mapOfLoops))
 
 }
 
-function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), consoleArr = [], funcStack = [],  scope = new Map(), valueStack = []) {
+function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), loopMap = new Map(), consoleArr = [], funcStack = [],  scope = new Map()) {
   // first run, add vars to scope, add funcs to func stack
   for (let node of inputArr) {
-    if (node.type === 'End' || node.type === 'Function' || node.type === 'Assign Function' || node.type === 'Reference') {
-      funcStack.push(node);
+
+    if (node.type === 'Loop' && node.term === 'End') {
+      scope.set(`Loop${node.id}`, []);
+      scope.set(`LogLoop${node.id}`, true);
+      scope.set(`LoopCount${node.id}`, 3)
     }
+
+    if (node.type === 'Loop' && node.term === 'Start') {
+      scope.set(`LogLoop${node.id}`, false)
+    }
+
+    if (['End', 'Function', 'Reference', 'Assign Function', 'Loop'].includes(node.type)) {
+      funcStack.push(node);
+      for (let [loopId] of loopMap) {
+        if (scope.get(`LogLoop${loopId}`) === true && node.type !== 'Loop') {
+          let arr = scope.get(`Loop${loopId}`);
+          arr.push(node);
+          scope.set(`Loop${loopId}`, arr);
+        }
+      }
+    }
+
     if (node.type === 'Assign Function' && node.value !== 'REF') {
       scope.set(node.name, node.value)
     }
@@ -92,24 +111,50 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), co
     let topOfFuncStack = funcStack.pop();
     //console.log(topOfFuncStack)
     let args = topOfFuncStack.args;
+
+    /* ASSIGN FUNCTION */
     if (topOfFuncStack.type === 'Assign Function') {
       // have to reevaluate this in case of a reassign
       scope.set(topOfFuncStack.name, topOfFuncStack.value)
       if (topOfFuncStack.args[0] !== null) {
         // duplicate code, maybe refactor later
         let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
-        if (topOfFuncStack.value === 'REF') {
+        if (topOfFuncStack.reassign === true) {
           topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
           scope.set(topOfFuncStack.name, topOfFuncStack.value)
         } else {
-          topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
+          topOfFuncStack.value = scope.get(topOfFuncStack.name)
         }
       }
+    
+    /* REFERENCE */
     } else if (topOfFuncStack.type === 'Reference') {
       topOfFuncStack.value = topOfFuncStack.func(scope)
+    /* LOOPS */
+    } else if (topOfFuncStack.type === 'Loop') {
+      if (topOfFuncStack.term === 'End') {
+        if (scope.get(`LoopCount${topOfFuncStack.id}`) > 1) {
+          funcStack = [...funcStack,topOfFuncStack];
+          funcStack = funcStack.concat(scope.get(`Loop${topOfFuncStack.id}`));
+          let countsLeft = scope.get(`LoopCount${topOfFuncStack.id}`);
+          countsLeft -= 1;
+          scope.set(`LoopCount${topOfFuncStack.id}`, countsLeft);
+        } 
+      } else if (topOfFuncStack.term === 'Start') {
+        continue
+      }
+        
+    /* EVERYTHING ELSE */
     } else {
       // arguments contain the id's of every node the function depends on
-      let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
+      let applyArgs = args.map(id => {
+        let idVar = linesMap.get(id).el1;
+        if (scope.get(inputMap.get(idVar).name)) {
+          return scope.get(inputMap.get(idVar).name)
+        } else {
+          return inputMap.get(linesMap.get(id).el1).value
+        }
+      });
       topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
       if (topOfFuncStack.opType === 'Print') {consoleArr.push(topOfFuncStack.value.toString())}
       if (topOfFuncStack.type === 'End') consoleArr.push(`Last Return Value: ${topOfFuncStack.value}`)
