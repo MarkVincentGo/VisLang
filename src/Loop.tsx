@@ -28,7 +28,6 @@ export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, 
         true, 
         (arr: number[]) => {
           edit(data, 'enclosedComponents', new Set<number>(arr))
-          console.log(arr)
         });
     }
     if (circleEl) {
@@ -46,6 +45,7 @@ export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, 
   return (
     <>
       <div ref={loopRef} 
+        className="draggable loop"
         style={{
           backgroundColor: 'rgba(0,0,0,0)',
           width: circleXPos + 50,

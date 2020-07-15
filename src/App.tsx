@@ -4,7 +4,7 @@ import './App.css';
 import { Editor } from './Editor';
 import { Console } from './Console'
 import Interpreter from './interpreter'
-import { dragResizeX, dragResizeY } from './utilityFunctions'
+import { dragResizeX } from './utilityFunctions'
 
 
 function App(): JSX.Element {
@@ -16,8 +16,6 @@ function App(): JSX.Element {
     let resizeEl = resizer.current;
     if (resizeEl && window.innerWidth > 1200) {
       dragResizeX(resizeEl, changeWidth)
-    } else if (resizeEl && window.innerWidth <= 1200) {
-      dragResizeY(resizeEl, changeWidth)
     }
   }, [])
   

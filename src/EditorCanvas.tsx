@@ -82,7 +82,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           return dimensions
         })
 
-        
+
       }, 500)
 
 

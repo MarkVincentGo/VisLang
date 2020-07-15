@@ -73,7 +73,7 @@ export const Draggable: FunctionComponent<DraggableProps> = (
   const [rightClicked, setRightClicked] = useState(false);
   return (
     <div 
-      className={[styles.variable, active ? styles.active : '', 'draggable'].join(' ')}
+      className={[styles.variable, active ? styles.active : '', 'draggable', 'element'].join(' ')}
       onMouseOver={mouseIn}
       onMouseLeave={mouseOut}
       style={{

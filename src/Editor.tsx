@@ -27,7 +27,17 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     let changeRef = (): void => {
      setRefer(window.innerWidth * 2 / 3 - 50);
     }
-    window.addEventListener('resize', changeRef)
+    window.addEventListener('resize', changeRef);
+// this is for loading sessions
+    // let variables = JSON.parse(`[{"id":624655794445455,"type":"Constant","valueType":"Number","value":"1","deleted":false},{"id":1045881243552361,"type":"Assign Function","valueType":"Number","name":"1","args":[null],"value":"3","deleted":false,"reassign":false},{"id":7382545063440897,"type":"Function","opType":"+","args":[1537821049957365,707717976527685],"value":0,"deleted":false,"color":"#FCBB5B"},{"id":3580793239737571,"x1":359,"x2":381,"y1":265,"y2":363,"el1":7382545063440897,"el2":-261},{"id":707717976527685,"x1":455,"x2":368,"y1":185,"y2":234,"el1":1045881243552361,"el2":7382545063440897},{"id":1537821049957365,"x1":273,"x2":355,"y1":197,"y2":233,"el1":624655794445455,"el2":7382545063440897},{"id":-261,"type":"End","args":[3580793239737571],"value":1}]`)
+    // let newVar = variables.filter((el: any) => {
+    //   return el.type === 'Assign Function'
+    // });
+    // let newConst = variables.filter((el: any) => el.type === 'Constant')
+    // let newOps = variables.filter((el: any) => el.type === 'Function')
+    // setVariables(newVar)
+    // setConstants(newConst)
+    // setOperations(newOps)
     return () => {
       window.removeEventListener('resize', changeRef)
     }
@@ -300,7 +310,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
   }
   
   const pressPlay = (): void => { 
-    interpret([
+    let allData = [
       ...constants.filter(c => !c.deleted),
       ...variables.filter(v => !v.deleted),
       ...varReferences.filter(vr => !vr.deleted),
@@ -308,7 +318,8 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
       ...lines,
       ...loops,
       ...ends.filter(end => end.args[0])
-    ])
+    ];
+    interpret(allData);
   }
 
   return (
