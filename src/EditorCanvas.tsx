@@ -9,7 +9,6 @@ import { VarReference } from './VarReference'
 import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IConstantInfo, ILoop } from './Interfaces';
 import { End } from './End';
 import { Constant } from './Constant';
-import { LoopPrototype } from './Loop';
 import { Order } from './Order';
 
 
@@ -293,14 +292,6 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         onClick={pressPlay}
         style={{ height: 'auto', borderRadius: 0, width: '100%' }}
         outerStyle={{width: '100%'}}/>
-      {loopsArray.map((data, i) => (
-        <LoopPrototype
-          key={i.toString()}
-          data={data}
-          mousedDown={nodeMouseDown}
-          mousedUp={nodeMouseUp}
-          edit={editLoop}/>
-      ))}
       {constantArray.map((data, i) => (
         <Constant
           data={data}
@@ -358,7 +349,11 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         currentLine={currentLine}
         mouseDown={mousedDownInNode}
         lines={linesArray}
-        deleteLine={deleteLine}/>
+        deleteLine={deleteLine}
+        loops={loopsArray}
+        loopMouseDown={nodeMouseDown}
+        loopMouseUp={nodeMouseUp}
+        editLoop={editLoop}/>
         : 
         <></>
       }

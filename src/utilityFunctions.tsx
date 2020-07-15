@@ -16,7 +16,7 @@ const isEnclosed = (bounds2: any, bounds1: any) => {
 
 const highlightEnclosedElements = (enclosingEl: Element, callback: (a: number[]) => void): void => {
   let dragCoords: Map<DOMRect, Element> = new Map();
-  let dragSibs = enclosingEl.parentElement?.getElementsByClassName('element');
+  let dragSibs = enclosingEl.parentElement?.parentElement?.getElementsByClassName('element');
   let highlightedArr: number[] = [];
   if (dragSibs) {
     for (let i = 0; i < dragSibs.length; i++) {
@@ -52,9 +52,11 @@ export const makeDraggable = (component: Element, posCallback = function(a:any, 
       const me = d3.select(this);
       translateX = Math.max(0, d3.event.x);
       translateY = Math.max(0, d3.event.y);
-      const transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
+      if (square) {
+        const transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
+        me.style('transform', transform);
+      }
       posCallback(translateX, translateY);
-      me.style('transform', transform);
 
       // if (square) {
       //   hEET(this, loopCallback)

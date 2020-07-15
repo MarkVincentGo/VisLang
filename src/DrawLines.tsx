@@ -2,7 +2,8 @@ import React, { FunctionComponent, useState, useEffect, useRef, Fragment } from 
 import { createPortal } from 'react-dom';
 import styles from './Editor.module.css';
 import ddStyles from './Button.module.css'
-import { IDataSVGLine } from './Interfaces';
+import { IDataSVGLine, ILoop } from './Interfaces';
+import { LoopPrototype } from './Loop';
 // import { makeDraggable } from './utilityFunctions';
 
 // interface CircleProps {
@@ -80,10 +81,14 @@ interface DrawLinesProps {
   lines:IDataSVGLine[],
   mouseDown: boolean,
   currentLine:IDataSVGLine,
+  loops: ILoop[],
   deleteLine(lineId: number): void,
+  loopMouseDown(e: React.MouseEvent, nodeInfo: any, index: number): void,
+  loopMouseUp(e: React.MouseEvent, nodeInfo: any, index: number): void,
+  editLoop(loop: ILoop, key: string, value: any): void,
 }
 
-export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine, deleteLine}): JSX.Element => {
+export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine, deleteLine, loops, loopMouseDown, loopMouseUp, editLoop}): JSX.Element => {
   const [rightClicked, setRightClicked] = useState<boolean>(false);
   const [mousePos, setMousePos] = useState<number[]>([0,0]);
   const [selectedLine, setSelectedLine] = useState<number>(0);
@@ -157,6 +162,14 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
       {/* {loops.map(el => (
         <LoopPrototype />
       ))} */}
+      {loops.map((data: ILoop, i: number) => (
+        <LoopPrototype
+          key={i.toString()}
+          data={data}
+          mousedDown={loopMouseDown}
+          mousedUp={loopMouseUp}
+          edit={editLoop}/>
+      ))}
       {children}
     </svg>
   )
