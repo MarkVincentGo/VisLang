@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import { Constant, Variable, VarReference, Operator, End, Loop } from './Classes'
 import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IEnd, IConstantInfo, ILoop } from './Interfaces';
 import { Panel } from './Panel';
@@ -8,10 +8,12 @@ import * as R from 'ramda';
 
 
 interface EditorProps {
-  interpret(data: any): void
+  interpret(data: any): void,
+  getWidth(s: string, p: number): void,
+  width: number
 }
 
-export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Element => {
+export const Editor: FunctionComponent<EditorProps> = ({ interpret, getWidth, width }): JSX.Element => {
   const [constants, setConstants] = useState<IConstantInfo[]>([])
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
@@ -19,6 +21,18 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   const [lines, setLines] = useState<IDataSVGLine[]>([]);
   const [loops, setLoops] = useState<ILoop[]>([])
   const [ends, setEnds] = useState<any[]>([]);
+
+  const [refer, setRefer] = useState<number>(window.innerWidth > 1200 ? ((window.innerWidth * 2 / 3) - 50) : window.innerWidth - 50);
+
+  useEffect(() => {
+    let changeRef = (): void => {
+     setRefer(window.innerWidth > 1200 ? ((window.innerWidth * 2 / 3) - 50) : window.innerWidth - 50);
+    }
+    window.addEventListener('resize', changeRef)
+    return () => {
+      window.removeEventListener('resize', changeRef)
+    }
+  }, [])
 
 
   const clickConstant = (type: string): void => {
@@ -299,7 +313,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret }): JSX.Eleme
   }
 
   return (
-    <Panel windowName="Editor">
+    <Panel windowName="Editor" style={{width: refer + width}}>
       <ButtonContainer>
         <Button 
           name="Constant"
