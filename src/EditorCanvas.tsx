@@ -81,7 +81,11 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           }
           return dimensions
         })
+
+        
       }, 500)
+
+
       return () => {
         clearInterval(getRectsInterval)
       }
@@ -125,6 +129,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       // if this is an el1, change all of the x1, y1
       // if this is an el2, change the x2, y2
       // make the change relative to the bound client rect of canvas
+      console.log(selectedItem.getBoundingClientRect())
       let newLines = linesArray.map(el => {
         let newEl = {...el}
         if (newEl.el1 === itemData.componentId) {

@@ -6,7 +6,7 @@
 }
 
 .resizer {
-  height: 97vh;
+  height: 94vh;
   width: 10px;
   cursor: ew-resize;
 }
@@ -15,7 +15,7 @@
   background-color: gainsboro;
 }
 
-
+/* 
 @media (max-width: 1200px) {
   .App {
     flex-direction: column;
@@ -26,4 +26,4 @@
     height: 10px;
     cursor: ns-resize;
   }
-}
+} */

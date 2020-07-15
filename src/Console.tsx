@@ -6,16 +6,15 @@ const backgroundColor = '#180027';
 
 interface ConsoleProps {
   output: string[],
-  getWidth(s: string, w: number): void,
   width: number
 }
 
-export const Console:FunctionComponent<ConsoleProps> = ({ output, getWidth, width }): JSX.Element => {
-  const [refer, setRefer] = useState<number>(window.innerWidth > 1200 ? ((window.innerWidth * 2 / 3) - 50) : window.innerWidth - 50);
+export const Console:FunctionComponent<ConsoleProps> = ({ output, width }): JSX.Element => {
+  const [refer, setRefer] = useState<number>((window.innerWidth / 3) - 50);
 
   useEffect(() => {
     let changeRef = (): void => {
-     setRefer(window.innerWidth > 1200 ? ((window.innerWidth / 3) - 50) : window.innerWidth - 50);
+     setRefer((window.innerWidth / 3) - 50);
     }
     window.addEventListener('resize', changeRef)
     return () => {

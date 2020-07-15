@@ -95,7 +95,8 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
     let svgBox = svgBoxRef.current;
     if (svgBox) {
         let {left, top} = svgBox.getBoundingClientRect();
-        svgBox.setAttribute('viewBox', `${left} ${top} ${svgBox.clientWidth} ${svgBox.clientHeight}`);
+        svgBox.setAttribute('viewBox', `${left} ${top} ${20000} ${20000}`);
+//        svgBox.setAttribute('viewBox', `${left} ${top} ${svgBox.clientWidth} ${svgBox.clientHeight}`);
         // // add 3 because of the stroke width of rectangle svg
         // setbounds([left + 3, top + 3])
       }
@@ -122,7 +123,8 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
       ref={svgBoxRef}
       viewBox={`0 0 0 0`}
       onClick={() => setRightClicked(false)}
-      style={{width: canvasInfo[1], height: canvasInfo[0]}}>
+      // style={{width: canvasInfo[1] height: canvasInfo[0]}}>
+      style={{width: 20000, height: 20000}}>
       {mouseDown ? <line x1={currentLine.x1} x2={currentLine.x2} y1={currentLine.y1} y2={currentLine.y2} stroke="black"/> : <></>}
       {lines.map((el, i) => (
         <Fragment key={i.toString()}>

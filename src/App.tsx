@@ -4,7 +4,7 @@ import './App.css';
 import { Editor } from './Editor';
 import { Console } from './Console'
 import Interpreter from './interpreter'
-import { dragResize } from './utilityFunctions'
+import { dragResizeX, dragResizeY } from './utilityFunctions'
 
 
 function App(): JSX.Element {
@@ -14,8 +14,10 @@ function App(): JSX.Element {
 
   useEffect(() => {
     let resizeEl = resizer.current;
-    if (resizeEl) {
-      dragResize(resizeEl, changeWidth)
+    if (resizeEl && window.innerWidth > 1200) {
+      dragResizeX(resizeEl, changeWidth)
+    } else if (resizeEl && window.innerWidth <= 1200) {
+      dragResizeY(resizeEl, changeWidth)
     }
   }, [])
   
@@ -23,9 +25,6 @@ function App(): JSX.Element {
     setConsoleText(Interpreter(data))
   }
 
-  const getWidth = (side: string, width: number) => {
-      setConsoleWidth(width)
-  }
   const changeWidth = (pixels: number) => {
     setConsoleWidth(pixels)
   }
@@ -33,10 +32,13 @@ function App(): JSX.Element {
 
 
   return (
-    <div className="App">
-      <Editor interpret={showOutputToConsole} getWidth={getWidth} width={consoleWidth}/>
-      <div ref={resizer} className="resizer" />
-      <Console output={consoleText} getWidth={getWidth} width={consoleWidth}/>
+    <div>
+      <div className="top">My Lang</div>
+      <div className="App">
+        <Editor interpret={showOutputToConsole} width={consoleWidth}/>
+        <div ref={resizer} className="resizer" />
+        <Console output={consoleText} width={consoleWidth}/>
+      </div>
     </div>
   );
 }

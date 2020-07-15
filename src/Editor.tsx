@@ -9,11 +9,10 @@ import * as R from 'ramda';
 
 interface EditorProps {
   interpret(data: any): void,
-  getWidth(s: string, p: number): void,
   width: number
 }
 
-export const Editor: FunctionComponent<EditorProps> = ({ interpret, getWidth, width }): JSX.Element => {
+export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JSX.Element => {
   const [constants, setConstants] = useState<IConstantInfo[]>([])
   const [variables, setVariables] = useState<IVariableInfo[]>([]);
   const [varReferences, setVarReferences] = useState<IVarReference[]>([]);
@@ -22,11 +21,11 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, getWidth, wi
   const [loops, setLoops] = useState<ILoop[]>([])
   const [ends, setEnds] = useState<any[]>([]);
 
-  const [refer, setRefer] = useState<number>(window.innerWidth > 1200 ? ((window.innerWidth * 2 / 3) - 50) : window.innerWidth - 50);
+  const [refer, setRefer] = useState<number>((window.innerWidth * 2 / 3) - 50);
 
   useEffect(() => {
     let changeRef = (): void => {
-     setRefer(window.innerWidth > 1200 ? ((window.innerWidth * 2 / 3) - 50) : window.innerWidth - 50);
+     setRefer(window.innerWidth * 2 / 3 - 50);
     }
     window.addEventListener('resize', changeRef)
     return () => {

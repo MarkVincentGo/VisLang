@@ -1,6 +1,6 @@
 .container {
   width: 48vw;
-  height: 95vh;
+  height: 91vh;
   border: 1px solid grey;
   padding: 10px;
   display: flex;
@@ -10,9 +10,9 @@
   overflow-y: scroll;
 }
 
-@media (max-width: 1200px) {
+/* @media (max-width: 1200px) {
   .container {
     height: 46vh;
     width: 95vw;
   }
-}
+} */

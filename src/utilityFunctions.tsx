@@ -76,7 +76,7 @@ export const makeDraggable = (component: Element, posCallback = function(a:any, 
     }
 }
 
-export const dragResize = (component: Element, posCallback = function(a:any){}) => {
+export const dragResizeX = (component: Element, posCallback = function(a:any){}) => {
   let translateX = 0;
   const handleDrag = d3.drag()
     .subject(function() {
@@ -85,6 +85,19 @@ export const dragResize = (component: Element, posCallback = function(a:any){}) 
     .on('drag', function() {
       translateX = d3.event.x;
       posCallback(translateX)
+    })
+    handleDrag(d3.select(component))
+}
+
+export const dragResizeY = (component: Element, posCallback = function(a:any){}) => {
+  let translateY = 0;
+  const handleDrag = d3.drag()
+    .subject(function() {
+      return { y: translateY }
+    })
+    .on('drag', function() {
+      translateY = d3.event.x;
+      posCallback(translateY)
     })
     handleDrag(d3.select(component))
 }
