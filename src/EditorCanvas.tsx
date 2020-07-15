@@ -62,7 +62,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     const [dimensions, setDimensions] = useState<number[]>([0,0]);
     const [mousedDownInNode, setmousedDownInNode] = useState<boolean>(false);
     const [currentLine, setcurrentLine] = useState<IDataSVGLine>(
-      {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null}
+      {id: 0, x1: 0, y1: 0, x2: 0, y2: 0, el1: null, el2: null}
     );
     const [renderSVG, setrenderSVG] = useState(false);
     const canvasEl = useRef<HTMLDivElement>(null)
@@ -72,7 +72,8 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         setDimensions(dimensions => {
           let node = canvasEl.current;
           if (node) {
-            let newDimensions: number[] = [node.clientHeight, node.clientWidth];
+            // 31px is the height of the play button
+            let newDimensions: number[] = [node.clientHeight - 31, node.clientWidth];
             if (!renderSVG) {
               setrenderSVG(true)
             }
@@ -140,10 +141,11 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       }
     }
     if (mousedDownInNode) {
-      setcurrentLine({id: 0, x1: 0, y1: 0, x2: 0, y2: 0, data: null, el1: null, el2: null})
+      setcurrentLine({id: 0, x1: 0, y1: 0, x2: 0, y2: 0, el1: null, el2: null})
       setmousedDownInNode(false)
     }
   }
+
 
   const drag = (event: React.MouseEvent): void => {
     if (active) {
@@ -154,6 +156,30 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       itemData.xOffset = itemData.currentX;
       itemData.yOffset = itemData.currentY;
       setTranslate(itemData.currentX, itemData.currentY, selectedItem);
+
+      let topNodes = selectedItem.getElementsByClassName('DN top')[0];
+      let bottomNodes = selectedItem.getElementsByClassName('DN bottom')[0];
+      if (topNodes) {
+        let topLines = document.getElementsByClassName(`top${topNodes.dataset.node}`);
+        if (topLines.length) {
+          for (let j = 0; j < topLines.length; j++) {
+            let line = topLines[j];
+            line.setAttributeNS(null, 'x2', `${event.clientX}`);
+            line.setAttributeNS(null, 'y2', `${event.clientY}`)
+          }
+        }
+      }
+
+      if (bottomNodes) {
+        let bottomLines = document.getElementsByClassName(`bot${bottomNodes.dataset.node}`);
+        if (bottomLines.length) {
+          for (let j = 0; j < bottomLines.length; j++) {
+            let line = bottomLines[j];
+            line.setAttributeNS(null, 'x1', `${event.clientX}`);
+            line.setAttributeNS(null, 'y1', `${event.clientY}`)
+          }
+        }
+      }
     }
     if (mousedDownInNode) {
       nodeMouseMove(event)
@@ -323,15 +349,21 @@ export const Canvas: FunctionComponent<CanvasProps> = (
 
       { renderSVG ?
         <DrawLines
-          canvasInfo={dimensions}
-          currentLine={currentLine}
-          mouseDown={mousedDownInNode}
-          lines={linesArray}
-          deleteLine={deleteLine}/>
+        canvasInfo={dimensions}
+        currentLine={currentLine}
+        mouseDown={mousedDownInNode}
+        lines={linesArray}
+        deleteLine={deleteLine}/>
         : 
         <></>
       }
       
+        {/* <svg style={{position: 'absolute', border: '1px solid black'}} viewBox="0 0 100 50">
+          <line x1="0" x2="100" y1="0" y2="50" stroke="black"/>
+        </svg>
+        <svg style={{position: 'absolute'}} viewBox="0 0 100 100">
+          <line x1="100" x2="0" y1="0" y2="100" stroke="black"/>
+        </svg> */}
     </div>
   )
 }

@@ -49,7 +49,6 @@ export interface IDataSVGLine {
   x2: number,
   y1: number,
   y2: number,
-  data: any,
   el1: number | null,
   el2: number | null,
 }

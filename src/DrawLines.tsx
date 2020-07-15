@@ -127,12 +127,12 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
       {lines.map((el, i) => (
         <Fragment key={i.toString()}>
           <line
+            className={[`bot${el.el1}`, `top${el.el2}`, styles.line].join(' ')}
             key={i.toString()}
             x1={el.x1}
             x2={el.x2}
             y1={el.y1}
             y2={el.y2}
-            className={styles.line}
             onContextMenu={e => handleRightClick(e, el)}
           />
           {rightClicked ?

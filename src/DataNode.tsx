@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import styles from './Operator.module.css';
 import { IFunctionInfo, IVariableInfo, IVarReference, IConstantInfo, ILoop } from './Interfaces';
 
@@ -13,8 +13,6 @@ interface DataNodesProps {
 }
 
 export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo, style = {} }): JSX.Element => {
-  const [nodeData, setNodeData] = useState<any[]>(new Array(nodes).fill(null));
-
   let nodePosition = position === 'top' ? {top: -4.5} : {bottom: -0.5};
 
   const mouseEnter = (event: React.MouseEvent): void => {
@@ -32,9 +30,6 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
   }
 
   const mouseUp = (i: number, event: React.MouseEvent): void => {
-    const newNodeData = [...nodeData];
-    newNodeData[i] = {data: ''};
-    setNodeData(newNodeData);
     if (mousedUp) {
       mousedUp(event, {...dragInfo, position}, i);
     }
@@ -48,7 +43,8 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
       {(new Array(nodes).fill(0)).map((el, i) => (
         <div
           key={i.toString()}
-          className={[styles.node, 'dataNode'].join(' ')}
+          className={[styles.node, 'dataNode', 'DN', position].join(' ')}
+          data-node={dragInfo.id}
           onMouseOver={mouseEnter}
           onMouseOut={mouseLeave}
           onMouseDown={(e) => {mouseDown(i, e)}}

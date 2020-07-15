@@ -123,7 +123,6 @@ export class DataSVGLine implements IDataSVGLine {
   y2: number = 0;
   el1: number | null = null;
   el2: number | null = null;
-  data: any = null;
 
   constructor(position: string, nodeId: number, event: React.MouseEvent) {
     this.x1 = event.clientX;

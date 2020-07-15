@@ -1,6 +1,7 @@
 .variable {
   position: absolute;
   width: max-content;
+  height: auto;
   padding: 5px 10px;
   /* border: 2px solid blueviolet; */
   border-radius: 5px;
