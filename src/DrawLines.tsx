@@ -85,7 +85,7 @@ interface DrawLinesProps {
   deleteLine(lineId: number): void,
   loopMouseDown(e: React.MouseEvent, nodeInfo: any, index: number): void,
   loopMouseUp(e: React.MouseEvent, nodeInfo: any, index: number): void,
-  editLoop(loop: ILoop, key: string, value: any): void,
+  editLoop(loop: number, key: string, value: any, l: any[]): void,
 }
 
 export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, children, lines, mouseDown, currentLine, deleteLine, loops, loopMouseDown, loopMouseUp, editLoop}): JSX.Element => {
@@ -168,7 +168,8 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
           data={data}
           mousedDown={loopMouseDown}
           mousedUp={loopMouseUp}
-          edit={editLoop}/>
+          edit={editLoop}
+          loops={loops}/>
       ))}
       {children}
     </svg>

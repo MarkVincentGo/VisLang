@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import * as R from 'ramda';
 import { makeDraggable } from './utilityFunctions';
-import { DataNode } from './DataNode'
+import { DataNodeLoop } from './DataNode'
 import { ILoop } from './Interfaces'
 
 
@@ -59,6 +59,14 @@ export const LoopPrototype: FunctionComponent<LoopProps> = ({ loops, data, mouse
     <>
       <rect ref={loopRef} x={33} y={117} height={circleYPos + 50} width={circleXPos + 50} style={{fill: 'none', strokeWidth: 6, stroke: 'black', cursor: 'pointer'}}/>
       <circle ref={circleRef} r="10" cx={circleXPos + rectXPos + 89} cy={circleYPos + rectYPos + 173}/>
+      <DataNodeLoop
+        position="top"
+        nodes={1}
+        mousedDown={mousedDown}
+        mousedUp={mousedUp}
+        dragInfo={data}
+        cx={(circleXPos / 2 + rectXPos + 60)}
+        cy={rectYPos + 117}/>
       {/* <div 
         className="draggable loop"
         style={{

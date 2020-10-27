@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import styles from './Operator.module.css';
 import { IFunctionInfo, IVariableInfo, IVarReference, IConstantInfo, ILoop } from './Interfaces';
 
@@ -51,5 +51,55 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
           onMouseUp={(e) => mouseUp(i, e)}/>
       ))}
     </div>
+  )
+}
+
+interface DataNodesLoopProps extends DataNodesProps {
+  cx: number,
+  cy: number,
+}
+
+export const DataNodeLoop: FunctionComponent<DataNodesLoopProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo, style = {}, cx, cy }): JSX.Element => {
+  const [hover, setHover] = useState(false)
+
+  const mouseEnter = (event: React.MouseEvent): void => {
+    event.stopPropagation();
+    setHover(true);
+  }
+
+  const mouseLeave = (event: React.MouseEvent): void => {
+    event.stopPropagation();
+    setHover(false);
+  }
+
+  const mouseDown = (i: number, event: React.MouseEvent): void => {
+    if (mousedDown && dragInfo) {
+      mousedDown(event, {...dragInfo, position}, i);
+    }
+  }
+
+  const mouseUp = (i: number, event: React.MouseEvent): void => {
+    if (mousedUp) {
+      mousedUp(event, {...dragInfo, position}, i);
+    }
+  }
+
+  return (
+    <>
+      {(new Array(nodes).fill(0)).map((el, i) => (
+        <circle
+          key={i.toString()}
+          className={[styles.nodeLoop, 'dataNode', 'DN', position].join(' ')}
+          r={hover ? '4' : '3'}
+          cx={cx}
+          cy={cy}
+          fill="red"
+          data-node={dragInfo.id}
+          onMouseOver={mouseEnter}
+          onMouseOut={mouseLeave}
+          onMouseDown={(e) => {mouseDown(i, e)}}
+          onMouseUp={(e) => mouseUp(i, e)}/>
+      ))}
+    </>
   )
 }

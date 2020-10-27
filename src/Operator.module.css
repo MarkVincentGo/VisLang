@@ -18,3 +18,7 @@
 .node:hover {
   box-shadow: 0px 0px 0px 1px black;
 }
+
+.nodeLoop:hover {
+  fill: purple;
+}

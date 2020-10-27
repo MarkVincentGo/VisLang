@@ -147,7 +147,7 @@ export class End implements IEnd {
 export class Loop implements ILoop {
   id: number = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
   type: string = 'Loop';
-  args: any[] = [null, null];
+  args: any[] = [null];
   func = function() {};
   enclosedComponents = new Set<number>();
 }

@@ -24,7 +24,7 @@ interface CanvasProps {
   editConstant(constData: IConstantInfo, value?: string): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
   editFunction(operator: IFunctionInfo, key: string, value: any): void,
-  editLoop(loop: number,  key: string, value: any, l: any[]): void,
+  editLoop(loop: number,  key: string, value: any, l?: any[]): void,
   handleConstantDropDown(option: string, constData: IConstantInfo): void,
   handleVariableDropDown(option: string, varData: IVariableInfo): void,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
@@ -236,6 +236,11 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       }
       
       if (position === 'top') {
+        if (nodeInfo.type === 'Loop') {
+          let newArgs = [...args];
+          newArgs[index] = newLine.id;
+          editLoop(nodeInfo.id, 'args', newArgs)
+        }
         let newArgs = [...args];
         newArgs[index] = newLine.id;
         editFunction(nodeInfo, 'args', newArgs)

@@ -274,9 +274,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
 
 
   //BUG, when certain loop is put in, loops array in state is modified
-  const editLoop = (loop: number, key: string, value: any, larr: any[]): void => {
-    debugger
-    console.log(loops)
+  const editLoop = (loop: number, key: string, value: any, larr?: any[]): void => {
     let newLoops = R.map((l: ILoop) => {
       let newLoop: ILoop = {...l};
       if (newLoop.id === loop) {
@@ -284,8 +282,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
       }
       return newLoop;
     }, loops)
-    debugger
-    console.log(newLoops)
     setLoops(newLoops);
   }
 
