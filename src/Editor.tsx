@@ -5,6 +5,7 @@ import { Panel } from './Panel';
 import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
 import * as R from 'ramda';
+import { getDraggableCoordinates } from './utilityFunctions';
 
 
 interface EditorProps {
@@ -29,15 +30,68 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     }
     window.addEventListener('resize', changeRef);
 // this is for loading sessions
-    // let variables = JSON.parse(`[{"id":624655794445455,"type":"Constant","valueType":"Number","value":"1","deleted":false},{"id":1045881243552361,"type":"Assign Function","valueType":"Number","name":"1","args":[null],"value":"3","deleted":false,"reassign":false},{"id":7382545063440897,"type":"Function","opType":"+","args":[1537821049957365,707717976527685],"value":0,"deleted":false,"color":"#FCBB5B"},{"id":3580793239737571,"x1":359,"x2":381,"y1":265,"y2":363,"el1":7382545063440897,"el2":-261},{"id":707717976527685,"x1":455,"x2":368,"y1":185,"y2":234,"el1":1045881243552361,"el2":7382545063440897},{"id":1537821049957365,"x1":273,"x2":355,"y1":197,"y2":233,"el1":624655794445455,"el2":7382545063440897},{"id":-261,"type":"End","args":[3580793239737571],"value":1}]`)
-    // let newVar = variables.filter((el: any) => {
-    //   return el.type === 'Assign Function'
-    // });
-    // let newConst = variables.filter((el: any) => el.type === 'Constant')
-    // let newOps = variables.filter((el: any) => el.type === 'Function')
-    // setVariables(newVar)
-    // setConstants(newConst)
-    // setOperations(newOps)
+    let variables = JSON.parse(`[{"id":3440241934379641,"type":"Constant","valueType":"Number","value":"1","deleted":false,"left":189.53125,"top":148.796875},{"id":3231878006121587,"type":"Constant","valueType":"Number","value":"2","deleted":false,"left":346.203125,"top":153.375},{"id":2319048072233563,"type":"Function","opType":"+","args":[7411721733786273,3490305724360401],"value":0,"deleted":false,"color":"#FCBB5B","left":201.734375,"top":139.875},{"id":7411721733786273,"x1":273,"x2":332,"y1":219,"y2":266,"el1":3440241934379641,"el2":2319048072233563},{"id":3490305724360401,"x1":374,"x2":349,"y1":198,"y2":269,"el1":3231878006121587,"el2":2319048072233563},{"id":6384779577110457,"x1":342,"x2":343,"y1":298,"y2":327,"el1":2319048072233563,"el2":-620},{"id":-620,"type":"End","args":[6384779577110457],"value":1,"left":457.09375,"top":169.203125}]`)
+    let newVar = variables.filter((el: any) => {
+      return el.type === 'Assign Function'
+    });
+    let newConst = variables.filter((el: any) => el.type === 'Constant')
+    let newOps = variables.filter((el: any) => el.type === 'Function')
+    // add abstraction method for this
+    newOps = newOps.map((el: any) => {
+      switch (el.opType) {
+        case '+':
+          el.func = (a: number, b: number): number => a + b;
+          return el;
+        case '-':
+          el.func = (a: number, b: number): number => a - b;
+          return el;
+        case '*':
+          el.func = (a: number, b: number): number => a * b;
+          return el;
+        case '/':
+          el.func = (a: number, b: number): number => a / b;
+          return el;
+        case 'mod':
+          el.func = (a: number, b: number): number => a % b;
+          return el;
+        case 'Print':
+          el.func = (x: any) => { console.log(x); return x };
+          el.args = [null]
+          return el;
+        case '<':
+          el.func = (a: number | string, b: number | string): boolean => a < b;
+          return el;
+        case '>':
+          el.func = (a: number | string, b: number | string): boolean => a > b;
+          return el;  
+        case '==':
+          el.func = (a: number | string, b: number | string): boolean => a === b;
+        return el;
+        case 'Order':
+          el.args = [null, null, null];
+          el.func = (...args: any): any => args[args.length - 1];
+          el.increaseArgs = function() {el.args = [...el.args, null]};
+          el.decreaseArgs = function() {el.args = el.args.slice(0, el.args.length - 1)}
+        return el;
+        default:
+          el.func = (): number => 0;
+          return el;
+      }
+    })
+    let newEnds = variables.filter((el: any) => el.type === 'End')
+    newEnds = newEnds.map((el: any) => {
+      el.func = function(a: any): any {
+        return a;
+      };
+      return el;
+    })
+    let newLines = variables.filter((el: any) => el.hasOwnProperty('el1'))
+    setVariables(newVar)
+    setConstants(newConst)
+    setOperations(newOps)
+    setLines(newLines)
+    setEnds(newEnds)
+    console.log(variables)
     return () => {
       window.removeEventListener('resize', changeRef)
     }
@@ -311,6 +365,17 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
       ...loops,
       ...ends.filter(end => end.args[0])
     ];
+    const processed = allData.map((e: any) =>
+    {
+      let newE = { ...e }
+      if (!e.hasOwnProperty('el1')) {
+        const { left, top } = getDraggableCoordinates(newE)
+        newE.left = left;
+        newE.top = top;
+      }
+      return newE;
+    })
+    console.log(JSON.stringify(processed));
     interpret(allData);
   }
 

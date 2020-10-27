@@ -16,7 +16,7 @@ interface VariableProps {
 export const Constant: FunctionComponent<VariableProps> = (
   { data, edit, handleConstantDropDown, mousedDown, mousedUp }
   ): JSX.Element => {
-  const [valName, setValName] = useState('');
+  const [valName, setValName] = useState(data.value || '');
 
   const colorConditions = (type: string) => {
     switch (type) {
@@ -48,6 +48,8 @@ export const Constant: FunctionComponent<VariableProps> = (
       onContextMenu={e => e.preventDefault()}
       contextMenu={['Delete Constant']}
       contextMenuClick={handleDropDown}
+      left={data.left}
+      top={data.top}
       componentId={data.id}>
       <InputComponent
         onChange={setValName}

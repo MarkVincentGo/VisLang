@@ -25,6 +25,8 @@ export const Operator: FunctionComponent<OperatorProps> = ({ operator, mousedDow
       componentId={operator.id}
       contextMenu={['Delete Operation', 'Copy Operation']}
       onContextMenu={e => e.preventDefault()}
+      left={operator.left}
+      top={operator.top}
       contextMenuClick={handleDropDown}>
       <DataNode
         position="top"

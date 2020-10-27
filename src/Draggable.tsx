@@ -12,6 +12,8 @@ interface DraggableProps {
   contextMenuClick?(option?: string): any,
   children?: any,
   componentId: number,
+  left?: number,
+  top?: number
 }
 
 interface DragInfo {
@@ -34,12 +36,14 @@ export const Draggable: FunctionComponent<DraggableProps> = (
     onContextMenu = function(){},
     contextMenuClick = function(){},
     contextMenu = [],
-    componentId },
+    componentId,
+    left: leftCoord,
+    top: topCoord },
   ) => {
 
   const [active, setActive] = useState(false);
-  const left = useRef(Math.random() * 400 + 100).current;
-  const top = useRef(Math.random() * 50 + 50).current;
+  const left = useRef(leftCoord || Math.random() * 400 + 100).current;
+  const top = useRef(topCoord || Math.random() * 50 + 50).current;
 
   let dragInfo: DragInfo = {
     currentX: 0, 
@@ -86,6 +90,7 @@ export const Draggable: FunctionComponent<DraggableProps> = (
         ...style
       }}
       data-varinfo={JSON.stringify(dragInfo)}
+      data-componentid={dragInfo.componentId}
       onContextMenu={e => {onContextMenu(e); setRightClicked(true)}}>
         {children}
         {rightClicked ? 

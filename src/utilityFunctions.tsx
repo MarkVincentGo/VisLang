@@ -90,3 +90,9 @@ export const dragResizeX = (component: Element, posCallback = function(a:any){})
     })
     handleDrag(d3.select(component))
 }
+
+export const getDraggableCoordinates = (draggable: any): {left: number, top: number} => {
+  const component = document.querySelectorAll(`[data-componentid='${draggable.id}']`)
+  const { left, top } = component[0].getBoundingClientRect();
+  return { left, top }
+}

@@ -14,6 +14,8 @@ export const End: FunctionComponent<EndProps> = ({ data, mousedDown, mousedUp })
       componentId={data.id}
       activeColor="#FF7C7C"
       color="#FF6F6F"
+      left={data.left}
+      top={data.top}
       borderColor="#FF0D0D">
       <DataNode
         position="top"

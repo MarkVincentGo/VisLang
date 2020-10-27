@@ -22,7 +22,7 @@ interface InputComponentProps {
 }
 
 export const InputComponent: FunctionComponent<InputComponentProps> = ({value, name = '', onChange, confirmFn = function(){}}): JSX.Element => {
-  const [varConfirmed, setVarConfirmed] = useState(false);
+  const [varConfirmed, setVarConfirmed] = useState(value ? true : false);
 
   const changeInputField = (event: React.SyntheticEvent): void => {
     let target = event.target as HTMLInputElement;
@@ -109,6 +109,8 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
       onContextMenu={e => e.preventDefault()}
       contextMenu={['Add Reference', 'Delete Variable']}
       contextMenuClick={handleDropDown}
+      left={data.left}
+      top={data.top}
       componentId={data.id}>
       <DataNode
         position="top"

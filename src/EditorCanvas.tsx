@@ -128,7 +128,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       // if this is an el1, change all of the x1, y1
       // if this is an el2, change the x2, y2
       // make the change relative to the bound client rect of canvas
-      console.log(selectedItem.getBoundingClientRect())
+      //console.log(selectedItem.getBoundingClientRect())
       let newLines = linesArray.map(el => {
         let newEl = {...el}
         if (newEl.el1 === itemData.componentId) {
@@ -290,13 +290,22 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       onMouseUp={dragEnd}
       onMouseMove={drag}
       ref={canvasEl}>
-      <Button
-        name="Play"
-        backgroundColor="yellowgreen"
-        color="black"
-        onClick={pressPlay}
-        style={{ height: 'auto', borderRadius: 0, width: '100%' }}
-        outerStyle={{width: '100%'}}/>
+      <div style={{ display: 'flex'}}>
+        <Button
+          name="Play"
+          backgroundColor="yellowgreen"
+          color="black"
+          onClick={pressPlay}
+          style={{ height: 'auto', borderRadius: 0, width: '100%' }}
+          outerStyle={{width: '50%'}}/>
+        <Button
+          name="Save"
+          backgroundColor="cadetblue"
+          color="black"
+          onClick={pressPlay}
+          style={{ height: 'auto', borderRadius: 0, width: '100%' }}
+          outerStyle={{width: '50%'}}/>
+      </div>
       {constantArray.map((data, i) => (
         <Constant
           data={data}
@@ -350,15 +359,15 @@ export const Canvas: FunctionComponent<CanvasProps> = (
 
       { renderSVG ?
         <DrawLines
-        canvasInfo={dimensions}
-        currentLine={currentLine}
-        mouseDown={mousedDownInNode}
-        lines={linesArray}
-        deleteLine={deleteLine}
-        loops={loopsArray}
-        loopMouseDown={nodeMouseDown}
-        loopMouseUp={nodeMouseUp}
-        editLoop={editLoop}/>
+          canvasInfo={dimensions}
+          currentLine={currentLine}
+          mouseDown={mousedDownInNode}
+          lines={linesArray}
+          deleteLine={deleteLine}
+          loops={loopsArray}
+          loopMouseDown={nodeMouseDown}
+          loopMouseUp={nodeMouseUp}
+          editLoop={editLoop}/>
         : 
         <></>
       }
