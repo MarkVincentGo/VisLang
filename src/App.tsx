@@ -31,7 +31,7 @@ function App(): JSX.Element {
 
   return (
     <div>
-      <div className="top">My Lang</div>
+      <div className="top">VLANG</div>
       <div className="App">
         <Editor interpret={showOutputToConsole} width={consoleWidth}/>
         <div ref={resizer} className="resizer" />

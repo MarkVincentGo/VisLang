@@ -54,6 +54,7 @@ export interface IDataSVGLine {
 }
 
 export interface IEnd {
+  [key: string]: any,
   readonly id: number,
   type: string;
   args: any[];

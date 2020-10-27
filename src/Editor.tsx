@@ -19,7 +19,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
   const [operations, setOperations] = useState<IFunctionInfo[]>([]);
   const [lines, setLines] = useState<IDataSVGLine[]>([]);
   const [loops, setLoops] = useState<ILoop[]>([])
-  const [ends, setEnds] = useState<any[]>([]);
+  const [ends, setEnds] = useState<IEnd[]>([]);
 
   const [refer, setRefer] = useState<number>((window.innerWidth * 2 / 3) - 50);
 
@@ -184,7 +184,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     setOperations(newOperations);
   }
 
-  const editFunction = (operator: IFunctionInfo | IVariableInfo | ILoop, key: string, value: any): void => {
+  const editFunction = (operator: IFunctionInfo | IVariableInfo | IEnd, key: string, value: any): void => {
     switch (operator.type) {
       case 'Assign Function': {
         let newVariables = R.map(el => {
@@ -207,19 +207,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
         }, operations);
         setOperations(newOperations);
         break;
-      case 'Loop':
-        let newLoops = R.map(el => {
-          let newLoop: ILoop = {...el}
-          if (newLoop.id === operator.id) {
-            newLoop[key] = value;
-          }
-          return newLoop;
-        }, loops);
-        setLoops(newLoops)
-        break;
       case 'End': 
       let newEnds = R.map(el => {
-        let newEl:IFunctionInfo = {...el}
+        let newEl:IEnd = {...el}
         if (newEl.id === operator.id) {
           newEl[key] = value;
         }
@@ -278,18 +268,24 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
 
   const clickLoop = (type: string): void => {
     let newLoop = new Loop()
-    let newLoops = [...loops, newLoop];
+    let newLoops = [...loops, {...newLoop}];
     setLoops(newLoops)
   }
 
-  const editLoop = (loop: ILoop, key: string, value: any): void => {
-    let newLoops = R.map((l) => {
-      let newLoop = {...l};
-      if (l.id === loop.id) {
+
+  //BUG, when certain loop is put in, loops array in state is modified
+  const editLoop = (loop: number, key: string, value: any, larr: any[]): void => {
+    debugger
+    console.log(loops)
+    let newLoops = R.map((l: ILoop) => {
+      let newLoop: ILoop = {...l};
+      if (newLoop.id === loop) {
         newLoop[key] = value;
       }
       return newLoop;
     }, loops)
+    debugger
+    console.log(newLoops)
     setLoops(newLoops);
   }
 

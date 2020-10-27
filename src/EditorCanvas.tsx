@@ -24,7 +24,7 @@ interface CanvasProps {
   editConstant(constData: IConstantInfo, value?: string): void,
   editVariable(varData: IVariableInfo, name: string, value?: string): void,
   editFunction(operator: IFunctionInfo, key: string, value: any): void,
-  editLoop(loop: ILoop, key: string, value: any): void,
+  editLoop(loop: number,  key: string, value: any, l: any[]): void,
   handleConstantDropDown(option: string, constData: IConstantInfo): void,
   handleVariableDropDown(option: string, varData: IVariableInfo): void,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
@@ -357,13 +357,6 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         : 
         <></>
       }
-      
-        {/* <svg style={{position: 'absolute', border: '1px solid black'}} viewBox="0 0 100 50">
-          <line x1="0" x2="100" y1="0" y2="50" stroke="black"/>
-        </svg>
-        <svg style={{position: 'absolute'}} viewBox="0 0 100 100">
-          <line x1="100" x2="0" y1="0" y2="100" stroke="black"/>
-        </svg> */}
     </div>
   )
 }

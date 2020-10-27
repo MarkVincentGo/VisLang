@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
+import * as R from 'ramda';
 import { makeDraggable } from './utilityFunctions';
 import { DataNode } from './DataNode'
 import { ILoop } from './Interfaces'
@@ -8,11 +9,12 @@ interface LoopProps {
   data: ILoop,
   mousedDown(event: React.MouseEvent, dragInfo: any, index: number): void, 
   mousedUp(event: React.MouseEvent, dragInfo: any, index: number): void,
-  edit(loop: ILoop, key: string, value: any): void,
+  edit(loop: number, key: string, value: any, larr: any[]): void,
+  loops: ILoop[],
   //handleOperatorDropDown(option: string, opData: IFunctionInfo): void
 }
 
-export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, mousedUp, edit }): JSX.Element => {
+export const LoopPrototype: FunctionComponent<LoopProps> = ({ loops, data, mousedDown, mousedUp, edit }): JSX.Element => {
   const [circleXPos, setcircleXPos] = useState(0);
   const [circleYPos, setcircleYPos] = useState(0);
   const [rectXPos, setrectXPos] = useState(0);
@@ -20,6 +22,7 @@ export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, 
 
   const loopRef = useRef<SVGRectElement>(null);
   const circleRef = useRef<SVGCircleElement>(null);
+  const enclosedRef = useRef<number[]>([])
   useEffect(() => {
     let loopEl = loopRef.current
     let circleEl = circleRef.current
@@ -34,8 +37,10 @@ export const LoopPrototype: FunctionComponent<LoopProps> = ({ data, mousedDown, 
         }, 
         true, 
         (arr: number[]) => {
-          edit(data, 'enclosedComponents', new Set<number>(arr))
-          console.log(arr)
+          if (!R.equals(enclosedRef.current, arr)) {
+            edit(data.id, 'enclosedComponents', new Set<number>(arr), loops)
+          }
+          enclosedRef.current = arr;
         });
     }
     if (circleEl) {

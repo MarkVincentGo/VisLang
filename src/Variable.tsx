@@ -105,6 +105,7 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
   return ( !data.deleted ?
     <Draggable
       color={colorConditions(data.valueType)}
+      borderColor="goldenrod"
       onContextMenu={e => e.preventDefault()}
       contextMenu={['Add Reference', 'Delete Variable']}
       contextMenuClick={handleDropDown}
