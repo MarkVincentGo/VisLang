@@ -8,6 +8,7 @@ import * as R from 'ramda';
 import { getDraggableCoordinates } from './utilityFunctions';
 import { createPortal } from 'react-dom';
 import { LoadModal, SaveModal } from './SaveModal';
+import axios from 'axios';
 
 
 interface EditorProps {
@@ -307,7 +308,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     setOperations([]);
   }
 
-  const saveData = (name: string): void => {
+  const saveData = async (name: string): Promise<void> => {
     let allData = [
       ...constants.filter(c => !c.deleted),
       ...variables.filter(v => !v.deleted),
@@ -328,7 +329,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
       }
       return newE;
     })
-    localStorage.setItem(`savedProgram${name}`, JSON.stringify(processed))
+    await axios.post('/save', { Name: name, Components: JSON.stringify(processed)})
     setSaveModal(false)
   }
 
@@ -336,12 +337,13 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     setSaveModal(true)
   }
 
-  const loadData = (name: string) => {
+  const loadData = async (name: string) => {
     pressClear();
 
+    const { data } = await axios.get(`/load/${name}`)
     // this is for loading sessions
-    if (!localStorage.getItem(name)) {setLoadModal(false); return };
-    let variables = JSON.parse(localStorage.getItem(name) as string)
+    if (!data.Name) {setLoadModal(false); return };
+    let variables = data.Components;
     let newVar = variables.filter((el: any) => {
       return el.type === 'Assign Function'
     });
