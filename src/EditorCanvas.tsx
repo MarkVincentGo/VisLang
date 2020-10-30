@@ -300,33 +300,33 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       ref={canvasEl}>
       <div style={{ display: 'flex'}}>
         <Button
-          name="Clear"
-          backgroundColor="coral"
-          color="black"
-          onClick={pressClear}
-          style={{ height: 'auto', borderRadius: 0, width: '100%' }}
-          outerStyle={{width: '25%'}}/>
-        <Button
           name="Play"
           backgroundColor="yellowgreen"
           color="black"
           onClick={pressPlay}
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
-          outerStyle={{width: '25%'}}/>
+          outerStyle={{width: '25%', display: 'flex', boxShadow: 'inset 0px 0px 4px 4px rgba(54,54,54,1)'}}/>
+        <Button
+          name="Clear"
+          backgroundColor="coral"
+          color="black"
+          onClick={pressClear}
+          style={{ height: 'auto', borderRadius: 0, width: '100%' }}
+          outerStyle={{width: '25%', display: 'flex'}}/>
         <Button
           name="Save"
           backgroundColor="cadetblue"
           color="black"
           onClick={pressSave}
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
-          outerStyle={{width: '25%'}}/>
+          outerStyle={{width: '25%', display: 'flex'}}/>
         <Button
           name="Load"
           backgroundColor="yellow"
           color="black"
           onClick={pressLoad}
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
-          outerStyle={{width: '25%'}}/>
+          outerStyle={{width: '25%', display: 'flex'}}/>
       </div>
       {constantArray.map((data, i) => (
         <Constant
