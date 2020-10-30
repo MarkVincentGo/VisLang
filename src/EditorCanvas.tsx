@@ -29,12 +29,16 @@ interface CanvasProps {
   handleVariableDropDown(option: string, varData: IVariableInfo): void,
   handleReferenceDropDown(option: string, refData: IVarReference): void,
   handleOperatorDropDown(option: string, opData: IFunctionInfo): void,
-  pressPlay(): void
+  pressPlay(): void,
+  pressSave(): void,
+  pressClear(): void,
+  pressLoad(): void
 }
 
 
 export const Canvas: FunctionComponent<CanvasProps> = (
-  { constantArray,
+  { 
+    constantArray,
     variableArray,
     referenceArray,
     operationsArray,
@@ -50,7 +54,11 @@ export const Canvas: FunctionComponent<CanvasProps> = (
     handleVariableDropDown,
     handleReferenceDropDown,
     handleOperatorDropDown,
-    pressPlay }
+    pressPlay,
+    pressSave,
+    pressClear,
+    pressLoad
+  }
   ) => {
     let active = false;
     let selectedItem: any = null;
@@ -292,19 +300,33 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       ref={canvasEl}>
       <div style={{ display: 'flex'}}>
         <Button
+          name="Clear"
+          backgroundColor="coral"
+          color="black"
+          onClick={pressClear}
+          style={{ height: 'auto', borderRadius: 0, width: '100%' }}
+          outerStyle={{width: '25%'}}/>
+        <Button
           name="Play"
           backgroundColor="yellowgreen"
           color="black"
           onClick={pressPlay}
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
-          outerStyle={{width: '50%'}}/>
+          outerStyle={{width: '25%'}}/>
         <Button
           name="Save"
           backgroundColor="cadetblue"
           color="black"
-          onClick={pressPlay}
+          onClick={pressSave}
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
-          outerStyle={{width: '50%'}}/>
+          outerStyle={{width: '25%'}}/>
+        <Button
+          name="Load"
+          backgroundColor="yellow"
+          color="black"
+          onClick={pressLoad}
+          style={{ height: 'auto', borderRadius: 0, width: '100%' }}
+          outerStyle={{width: '25%'}}/>
       </div>
       {constantArray.map((data, i) => (
         <Constant

@@ -6,6 +6,8 @@ import { Canvas } from './EditorCanvas';
 import { ButtonContainer, Button } from './Button';
 import * as R from 'ramda';
 import { getDraggableCoordinates } from './utilityFunctions';
+import { createPortal } from 'react-dom';
+import { LoadModal, SaveModal } from './SaveModal';
 
 
 interface EditorProps {
@@ -22,6 +24,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
   const [loops, setLoops] = useState<ILoop[]>([])
   const [ends, setEnds] = useState<IEnd[]>([]);
 
+  const [saveModal, setSaveModal] = useState(false)
+  const [loadModal, setLoadModal] = useState(false)
+
   const [refer, setRefer] = useState<number>((window.innerWidth * 2 / 3) - 50);
 
   useEffect(() => {
@@ -29,69 +34,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
      setRefer(window.innerWidth * 2 / 3 - 50);
     }
     window.addEventListener('resize', changeRef);
-// this is for loading sessions
-    let variables = JSON.parse(`[{"id":3440241934379641,"type":"Constant","valueType":"Number","value":"1","deleted":false,"left":189.53125,"top":148.796875},{"id":3231878006121587,"type":"Constant","valueType":"Number","value":"2","deleted":false,"left":346.203125,"top":153.375},{"id":2319048072233563,"type":"Function","opType":"+","args":[7411721733786273,3490305724360401],"value":0,"deleted":false,"color":"#FCBB5B","left":201.734375,"top":139.875},{"id":7411721733786273,"x1":273,"x2":332,"y1":219,"y2":266,"el1":3440241934379641,"el2":2319048072233563},{"id":3490305724360401,"x1":374,"x2":349,"y1":198,"y2":269,"el1":3231878006121587,"el2":2319048072233563},{"id":6384779577110457,"x1":342,"x2":343,"y1":298,"y2":327,"el1":2319048072233563,"el2":-620},{"id":-620,"type":"End","args":[6384779577110457],"value":1,"left":457.09375,"top":169.203125}]`)
-    let newVar = variables.filter((el: any) => {
-      return el.type === 'Assign Function'
-    });
-    let newConst = variables.filter((el: any) => el.type === 'Constant')
-    let newOps = variables.filter((el: any) => el.type === 'Function')
-    // add abstraction method for this
-    newOps = newOps.map((el: any) => {
-      switch (el.opType) {
-        case '+':
-          el.func = (a: number, b: number): number => a + b;
-          return el;
-        case '-':
-          el.func = (a: number, b: number): number => a - b;
-          return el;
-        case '*':
-          el.func = (a: number, b: number): number => a * b;
-          return el;
-        case '/':
-          el.func = (a: number, b: number): number => a / b;
-          return el;
-        case 'mod':
-          el.func = (a: number, b: number): number => a % b;
-          return el;
-        case 'Print':
-          el.func = (x: any) => { console.log(x); return x };
-          el.args = [null]
-          return el;
-        case '<':
-          el.func = (a: number | string, b: number | string): boolean => a < b;
-          return el;
-        case '>':
-          el.func = (a: number | string, b: number | string): boolean => a > b;
-          return el;  
-        case '==':
-          el.func = (a: number | string, b: number | string): boolean => a === b;
-        return el;
-        case 'Order':
-          el.args = [null, null, null];
-          el.func = (...args: any): any => args[args.length - 1];
-          el.increaseArgs = function() {el.args = [...el.args, null]};
-          el.decreaseArgs = function() {el.args = el.args.slice(0, el.args.length - 1)}
-        return el;
-        default:
-          el.func = (): number => 0;
-          return el;
-      }
-    })
-    let newEnds = variables.filter((el: any) => el.type === 'End')
-    newEnds = newEnds.map((el: any) => {
-      el.func = function(a: any): any {
-        return a;
-      };
-      return el;
-    })
-    let newLines = variables.filter((el: any) => el.hasOwnProperty('el1'))
-    setVariables(newVar)
-    setConstants(newConst)
-    setOperations(newOps)
-    setLines(newLines)
-    setEnds(newEnds)
-    console.log(variables)
     return () => {
       window.removeEventListener('resize', changeRef)
     }
@@ -354,6 +296,119 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
   const updateLines = (newLines: IDataSVGLine[]):void => {
     setLines(newLines)
   }
+
+  const pressClear = (): void => {
+    setConstants([]);
+    setVariables([]);
+    setVarReferences([]);
+    setEnds([]);
+    setLoops([]);
+    setLines([]);
+    setOperations([]);
+  }
+
+  const saveData = (name: string): void => {
+    let allData = [
+      ...constants.filter(c => !c.deleted),
+      ...variables.filter(v => !v.deleted),
+      ...varReferences.filter(vr => !vr.deleted),
+      ...operations.filter(op => !op.deleted),
+      ...lines,
+      ...loops,
+      ...ends.filter(end => end.args[0])
+    ];
+
+    const processed = allData.map((e: any) =>
+    {
+      let newE = { ...e }
+      if (!e.hasOwnProperty('el1')) {
+        const { left, top } = getDraggableCoordinates(newE)
+        newE.left = left - 30;
+        newE.top = top - 83;
+      }
+      return newE;
+    })
+    localStorage.setItem(`savedProgram${name}`, JSON.stringify(processed))
+    setSaveModal(false)
+  }
+
+  const pressSave = (): void => {
+    setSaveModal(true)
+  }
+
+  const loadData = (name: string) => {
+    pressClear();
+
+    // this is for loading sessions
+    if (!localStorage.getItem(name)) {setLoadModal(false); return };
+    let variables = JSON.parse(localStorage.getItem(name) as string)
+    let newVar = variables.filter((el: any) => {
+      return el.type === 'Assign Function'
+    });
+    let newConst = variables.filter((el: any) => el.type === 'Constant')
+    let newOps = variables.filter((el: any) => el.type === 'Function')
+    // add abstraction method for this
+    newOps = newOps.map((el: any) => {
+      switch (el.opType) {
+        case '+':
+          el.func = (a: number, b: number): number => a + b;
+          return el;
+        case '-':
+          el.func = (a: number, b: number): number => a - b;
+          return el;
+        case '*':
+          el.func = (a: number, b: number): number => a * b;
+          return el;
+        case '/':
+          el.func = (a: number, b: number): number => a / b;
+          return el;
+        case 'mod':
+          el.func = (a: number, b: number): number => a % b;
+          return el;
+        case 'Print':
+          el.func = (x: any) => { console.log(x); return x };
+          el.args = [null]
+          return el;
+        case '<':
+          el.func = (a: number | string, b: number | string): boolean => a < b;
+          return el;
+        case '>':
+          el.func = (a: number | string, b: number | string): boolean => a > b;
+          return el;  
+        case '==':
+          el.func = (a: number | string, b: number | string): boolean => a === b;
+        return el;
+        case 'Order':
+          el.args = [null, null, null];
+          el.func = (...args: any): any => args[args.length - 1];
+          el.increaseArgs = function() {el.args = [...el.args, null]};
+          el.decreaseArgs = function() {el.args = el.args.slice(0, el.args.length - 1)}
+        return el;
+        default:
+          el.func = (): number => 0;
+          return el;
+      }
+    })
+    let newEnds = variables.filter((el: any) => el.type === 'End')
+    newEnds = newEnds.map((el: any) => {
+      el.func = function(a: any): any {
+        return a;
+      };
+      return el;
+    })
+    let newLines = variables.filter((el: any) => el.hasOwnProperty('el1'))
+    setLines(newLines)
+    setVariables(newVar)
+    setConstants(newConst)
+    setOperations(newOps)
+    setEnds(newEnds)
+    console.log(variables)
+    setLoadModal(false)
+  }
+
+  const pressLoad = () => {
+    setLoadModal(true)
+  }
   
   const pressPlay = (): void => { 
     let allData = [
@@ -365,22 +420,17 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
       ...loops,
       ...ends.filter(end => end.args[0])
     ];
-    const processed = allData.map((e: any) =>
-    {
-      let newE = { ...e }
-      if (!e.hasOwnProperty('el1')) {
-        const { left, top } = getDraggableCoordinates(newE)
-        newE.left = left;
-        newE.top = top;
-      }
-      return newE;
-    })
-    console.log(JSON.stringify(processed));
     interpret(allData);
   }
 
   return (
     <Panel windowName="Editor" style={{width: refer + width}}>
+      {saveModal && createPortal(
+        <SaveModal onClick={() => setSaveModal(false)} saveFn={saveData}/>, 
+        document.getElementsByClassName('App')[0])}
+      {loadModal && createPortal(
+        <LoadModal onClick={() => setSaveModal(false)} loadFn={loadData}/>, 
+        document.getElementsByClassName('App')[0])}
       <ButtonContainer>
         <Button 
           name="Constant"
@@ -429,6 +479,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
         handleReferenceDropDown={handleReferenceDropDown}
         handleOperatorDropDown={handleOperatorDropDown}
         pressPlay={pressPlay}
+        pressSave={pressSave}
+        pressLoad={pressLoad}
+        pressClear={pressClear}
         linesArray={lines}
         updateLines={updateLines}/>
     </Panel>

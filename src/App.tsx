@@ -30,11 +30,11 @@ function App(): JSX.Element {
 
 
   return (
-    <div>
+    <div className="main">
       <div className="top">VLANG</div>
       <div className="App">
         <Editor interpret={showOutputToConsole} width={consoleWidth}/>
-        <div ref={resizer} className="resizer" />
+        <div ref={resizer} className="resizer" draggable="false"/>
         <Console output={consoleText} width={consoleWidth}/>
       </div>
     </div>

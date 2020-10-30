@@ -1,0 +1,44 @@
+
+.modalBackground {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.saveModal {
+  position: absolute;
+  height: 40vh;
+  width: 50vw;
+  background-color: white;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.form {
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.inputComponent {
+  height: 60px;
+}
+
+.input {
+  height: 30px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
