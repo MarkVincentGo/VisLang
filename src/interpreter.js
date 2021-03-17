@@ -1,6 +1,5 @@
 
 export default function(metaData) {
-
   // parses all value types and makes copy of meta data
   let workData = parseValueTypes(metaData);
 
@@ -13,7 +12,7 @@ export default function(metaData) {
   };
 
   let mapOfLines = getMapOfLines(workData);
-  let [mapOfLoops, mapOfRefIdToLoopId] = getMapOfLoops(workData);
+  let [mapOfLoops, refIdToLoopIdMap] = getMapOfLoops(workData);
 
 
 
@@ -36,16 +35,16 @@ export default function(metaData) {
     
     /*********************   LOOP HANDLING   **********************/
 
-    if (mapOfRefIdToLoopId.has(topEl.id)) {
-      if (loopTracker[mapOfRefIdToLoopId.get(topEl.id)] === mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)).enclosedComponents.size) {
-        // orderOfOperations.push(`endLoop${mapOfRefIdToLoopId.get(topEl.id)}`);
-        orderOfOperations.push({...mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)), term: 'End'});
+    if (refIdToLoopIdMap.has(topEl.id)) {
+      if (loopTracker[refIdToLoopIdMap.get(topEl.id)] === mapOfLoops.get(refIdToLoopIdMap.get(topEl.id)).enclosedComponents.size) {
+        // orderOfOperations.push(`endLoop${refIdToLoopIdMap.get(topEl.id)}`);
+        orderOfOperations.push({...mapOfLoops.get(refIdToLoopIdMap.get(topEl.id)), term: 'End'});
       }
       orderOfOperations.push(topEl);
-      loopTracker[mapOfRefIdToLoopId.get(topEl.id)] -= 1;
-      if (loopTracker[mapOfRefIdToLoopId.get(topEl.id)] === 0) {
-        // orderOfOperations.push(`startLoop${mapOfRefIdToLoopId.get(topEl.id)}`);
-        orderOfOperations.push({...mapOfLoops.get(mapOfRefIdToLoopId.get(topEl.id)), term: 'Start'});
+      loopTracker[refIdToLoopIdMap.get(topEl.id)] -= 1;
+      if (loopTracker[refIdToLoopIdMap.get(topEl.id)] === 0) {
+        // orderOfOperations.push(`startLoop${refIdToLoopIdMap.get(topEl.id)}`);
+        orderOfOperations.push({...mapOfLoops.get(refIdToLoopIdMap.get(topEl.id)), term: 'Start'});
       }
       /*^^^^^^^^^^^^^^^^^^   LOOP HANDLING    ^^^^^^^^^^^^^^^^^^^*/
 
@@ -68,19 +67,19 @@ export default function(metaData) {
   //the output is an array (Order of Operations) that is logical based on:
   // operation > values (LIKE SICP)
   
-  console.log(orderOfOperations)
+  // console.log(orderOfOperations)
   return(interpret(orderOfOperations, mapOfData, mapOfLines, mapOfLoops))
 
 }
 
-function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), loopMap = new Map(), consoleArr = [], funcStack = [],  scope = new Map()) {
+export function interpret(inputArr = [], idToDataMap = new Map(), lineIdToLineDataMap = new Map(), loopIdToLoopDataMap = new Map(), consoleArr = [], funcStack = [],  scope = new Map()) {
   // first run, add vars to scope, add funcs to func stack
   for (let node of inputArr) {
 
     if (node.type === 'Loop' && node.term === 'End') {
       scope.set(`Loop${node.id}`, []);
       scope.set(`LogLoop${node.id}`, true);
-      scope.set(`LoopCount${node.id}`, (node.args[0])? inputMap.get(linesMap.get(node.args[0]).el1).value : 1)
+      scope.set(`LoopCount${node.id}`, (node.args[0])? idToDataMap.get(lineIdToLineDataMap.get(node.args[0]).el1).value : 1)
     }
 
     if (node.type === 'Loop' && node.term === 'Start') {
@@ -89,7 +88,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), lo
 
     if (['End', 'Function', 'Reference', 'Assign Function', 'Loop'].includes(node.type)) {
       funcStack.push(node);
-      for (let [loopId] of loopMap) {
+      for (let [loopId] of loopIdToLoopDataMap) {
         if (scope.get(`LogLoop${loopId}`) === true && node.type !== 'Loop') {
           let arr = scope.get(`Loop${loopId}`);
           arr.push(node);
@@ -103,7 +102,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), lo
     }
   }
 
-  console.log(scope)
+  // console.log(scope)
 
   // second run, perform the operations, already have initial values in scope
   while (funcStack.length) {
@@ -118,7 +117,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), lo
       scope.set(topOfFuncStack.name, topOfFuncStack.value)
       if (topOfFuncStack.args[0] !== null) {
         // duplicate code, maybe refactor later
-        let applyArgs = args.map(id => inputMap.get(linesMap.get(id).el1).value);
+        let applyArgs = args.map(id => idToDataMap.get(lineIdToLineDataMap.get(id).el1).value);
         if (topOfFuncStack.reassign === true) {
           topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
           scope.set(topOfFuncStack.name, topOfFuncStack.value)
@@ -148,11 +147,12 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), lo
     } else {
       // arguments contain the id's of every node the function depends on
       let applyArgs = args.map(id => {
-        let idVar = linesMap.get(id).el1;
-        if (scope.get(inputMap.get(idVar).name)) {
-          return scope.get(inputMap.get(idVar).name)
+        let idOfArgument = lineIdToLineDataMap.get(id).el1;
+        let argument = idToDataMap.get(idOfArgument);
+        if (scope.get(argument.name)) {
+          return scope.get(argument.name)
         } else {
-          return inputMap.get(linesMap.get(id).el1).value
+          return idToDataMap.get(idOfArgument).value
         }
       });
       topOfFuncStack.value = topOfFuncStack.func.apply(topOfFuncStack, applyArgs);
@@ -165,7 +165,7 @@ function interpret(inputArr = [], inputMap = new Map(), linesMap = new Map(), lo
 }
 
 
-function parseValueTypes(inputArr) {
+export function parseValueTypes(inputArr) {
   let output = [];
   for (let node of inputArr) {
     output.push({...node})
@@ -189,7 +189,7 @@ function parseValueTypes(inputArr) {
   return output;
 }
 
-function getMapOfLines(inputArr) {
+export function getMapOfLines(inputArr) {
   let output = new Map();
   for (let node of inputArr) {
     if (node.hasOwnProperty('el1')) {
@@ -199,16 +199,16 @@ function getMapOfLines(inputArr) {
   return output;
 }
 
-function getMapOfLoops(inputArr) {
-  let loopMap = new Map();
-  let mapOfRefIdToLoopId = new Map();
+export function getMapOfLoops(inputArr) {
+  let loopIdToLoopDataMap = new Map();
+  let refIdToLoopIdMap = new Map();
   for (let node of inputArr) {
     if (node.type === 'Loop') {
-      loopMap.set(node.id, node);
+      loopIdToLoopDataMap.set(node.id, node);
       for (let refId of node.enclosedComponents) {
-        mapOfRefIdToLoopId.set(refId, node.id)
+        refIdToLoopIdMap.set(refId, node.id)
       }
     }
   }
-  return [loopMap, mapOfRefIdToLoopId];
+  return [loopIdToLoopDataMap, refIdToLoopIdMap];
 }

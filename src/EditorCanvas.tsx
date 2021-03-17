@@ -300,6 +300,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
       ref={canvasEl}>
       <div style={{ display: 'flex'}}>
         <Button
+          className={styles.playButton}
           name="Play"
           backgroundColor="yellowgreen"
           color="black"
@@ -307,6 +308,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
           outerStyle={{width: '25%', display: 'flex', boxShadow: 'inset 0px 0px 4px 4px rgba(54,54,54,1)'}}/>
         <Button
+          className={styles.clearButton}
           name="Clear"
           backgroundColor="coral"
           color="black"
@@ -314,6 +316,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
           outerStyle={{width: '25%', display: 'flex'}}/>
         <Button
+          className={styles.saveButton}
           name="Save"
           backgroundColor="cadetblue"
           color="black"
@@ -321,6 +324,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
           style={{ height: 'auto', borderRadius: 0, width: '100%' }}
           outerStyle={{width: '25%', display: 'flex'}}/>
         <Button
+          className={styles.loadButton}
           name="Load"
           backgroundColor="yellow"
           color="black"

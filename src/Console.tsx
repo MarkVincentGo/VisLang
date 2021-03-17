@@ -23,6 +23,7 @@ export const Console:FunctionComponent<ConsoleProps> = ({ output, width }): JSX.
   }, [])
   return (
     <Panel
+      className={styles.console}
       windowName="Console"
       backgroundColor={backgroundColor}
       style={{justifyContent: 'flex-start', width: refer - width}}>

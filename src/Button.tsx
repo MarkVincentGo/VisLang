@@ -16,6 +16,7 @@ export const ButtonContainer: FunctionComponent<ButtonContainerProps> = (
 
 interface ButtonProps {
   name: string,
+  className?: string,
   color? : string,
   backgroundColor?: string,
   hoverColor?: string,
@@ -30,6 +31,7 @@ interface ButtonProps {
 
 export const Button: FunctionComponent<ButtonProps> = (
   { name,
+    className,
     color = '#777',
     backgroundColor = 'white',
     hoverColor  = 'white',
@@ -47,22 +49,23 @@ export const Button: FunctionComponent<ButtonProps> = (
 
   const mouseEnter = (event: React.SyntheticEvent): void => {
     let target = event.currentTarget as HTMLFormElement;
-    target.style.backgroundColor = hoverColor
-    setOuterHover(true)
+    target.style.backgroundColor = hoverColor;
+    setOuterHover(true);
   }
   const mouseLeave = (event: React.SyntheticEvent): void => {
     let target = event.currentTarget as HTMLFormElement;
     target.style.backgroundColor = backgroundColor;
-    setOuterHover(false)
+    setOuterHover(false);
   }
 
   const clickDropDown = (option: string): void => {
     ddClick(option);
-    setOuterHover(false)
+    setOuterHover(false);
   }
 
   return (
     <div 
+      className={className}
       style={{position: 'relative', width: 'max-content', borderRadius: 5, ...outerStyle}}
       onMouseEnter={mouseEnter}
       onMouseLeave={mouseLeave}>
