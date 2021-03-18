@@ -42,7 +42,6 @@ export const SaveModal: FunctionComponent<SaveModalProps> = ({ onClick, saveFn }
     })
   }
 
-  console.log('rendered')
   const handleSave = (): void => {
     saveFn(inputs.nameInput)
   }

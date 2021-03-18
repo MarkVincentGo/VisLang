@@ -331,7 +331,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
         }
         return newE;
       });
-      console.log(JSON.stringify(processed))
       await axios.post('/save', { Name: name, Components: JSON.stringify(processed)})
       setSaveModal(false)
     } catch(e) {
@@ -348,7 +347,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
 
     try {
     const { data } = await axios.get(`/load/${name}`)
-    console.log(data)
     // this is for loading sessions
     if (!data.Name) {setLoadModal(false); return };
     let variables = data.Components;
@@ -412,7 +410,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     setConstants(newConst);
     setOperations(newOps);
     setEnds(newEnds);
-    console.log(variables);
     setLoadModal(false);
     } catch (e) {
       console.log(e);

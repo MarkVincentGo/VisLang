@@ -1,14 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import axios from 'axios';
-import { render, fireEvent, act, screen } from '@testing-library/react';
+import { render, fireEvent, act } from '@testing-library/react';
 import { Editor } from './Editor';
 import * as utilityFunctions from './utilityFunctions';
 
 jest.mock('axios');
 const mockInterpret = jest.fn();
-const mockGetRequest = jest.fn();
-const mockPostRequest = jest.fn();
 
 
 
@@ -259,7 +257,7 @@ describe('The Editor Component', () => {
     expect(operators.length).toBe(1)
   });
 
-  it("successfully connects two nodes with a line", async () => {
+  it("successfully connects two nodes with a line and delete the line", async () => {
     const { container, rerender } = await setUpEditorComponent();
 
     await act(async () =>
@@ -315,8 +313,21 @@ describe('The Editor Component', () => {
       width={1000}
       />)
     const canvas = container.querySelector('.canvasSvg') as Element;
-    const lines = canvas.querySelectorAll('line');
+    let lines = canvas.querySelectorAll('line');
     expect(lines.length).toBe(3);
+
+    await act(async () =>
+    {
+      fireEvent.contextMenu(lines[0]);
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      const deleteButton = container.querySelector('.dropDownOption') as Element;
+      fireEvent.click(deleteButton);
+      await new Promise(resolve => setTimeout(resolve, 0));
+    })
+
+    lines = canvas.querySelectorAll('line');
+    expect(lines.length).toBe(2);
   })
 
   it("Correctly clears canvas", async () => {
@@ -335,8 +346,8 @@ describe('The Editor Component', () => {
   });
 
   it("Correctly Saves program", async () => {
-    (jest.spyOn(utilityFunctions, 'getDraggableCoordinates') as any).mockReturnValue({})
-    (axios.post as any).mockImplementationOnce(() => Promise.resolve({ data: "Success" }))
+    jest.spyOn(utilityFunctions, 'getDraggableCoordinates').mockReturnValue({ left: 50, top: 50 });
+    (axios as any).post.mockImplementationOnce(() => Promise.resolve({ data: "Success" }))
       .mockImplementationOnce(() => Promise.resolve({ data: "Success"}))
     const { container } = await setUpEditorComponent({ appWrapper: true });
 
@@ -414,9 +425,8 @@ describe('The Editor Component', () => {
     })
     expect(axios.get).toHaveBeenCalled();
   })
-
-
 });
+
 
 const setUpEditorComponent = async ({ appWrapper = false } = {}) => {
   const { container, rerender } = render(!appWrapper ? <Editor
