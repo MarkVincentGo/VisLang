@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import styles from './Variable.module.css';
 import { Draggable } from './Draggable';
 import { DataNode } from './DataNode';
 import { IVarReference  } from './Interfaces';
@@ -17,6 +18,7 @@ export const VarReference: FunctionComponent<VarReferenceProps> = ({ data, handl
 
   return ( !data.deleted ?
     <Draggable
+      className={styles.varReferenceContainer}
       componentId={data.id}
       contextMenu={['Copy Reference', 'Delete Reference']}
       onContextMenu={e => e.preventDefault()}

@@ -4,6 +4,7 @@ import styles from './Editor.module.css';
 import ddStyles from './Button.module.css'
 import { IDataSVGLine, ILoop } from './Interfaces';
 import { LoopPrototype } from './Loop';
+import classNames from 'classnames';
 
 
 interface DrawLinesProps {
@@ -56,6 +57,7 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
 
   return (
     <svg
+      className={styles.canvasSvg}
       ref={svgBoxRef}
       viewBox={`0 0 0 0`}
       onClick={() => setRightClicked(false)}
@@ -65,7 +67,7 @@ export const DrawLines:FunctionComponent<DrawLinesProps> = ({ canvasInfo, childr
       {lines.map((el, i) => (
         <Fragment key={i.toString()}>
           <line
-            className={[`bot${el.el1}`, `top${el.el2}`, styles.line].join(' ')}
+            className={classNames(`bot${el.el1}`, `top${el.el2}`, styles.line)}
             key={i.toString()}
             x1={el.x1}
             x2={el.x2}

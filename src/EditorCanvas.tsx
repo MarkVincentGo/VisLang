@@ -253,7 +253,7 @@ export const Canvas: FunctionComponent<CanvasProps> = (
         newArgs[index] = newLine.id;
         editFunction(nodeInfo, 'args', newArgs)
       }
-      
+
       let newLines = [...linesArray, newLine];
       updateLines(newLines);
     }

@@ -3,6 +3,7 @@ export interface IConstantInfo {
   readonly id: number,
   type: string,
   value: string,
+  valueType: string,
   deleted: boolean,
   color?: string
 }

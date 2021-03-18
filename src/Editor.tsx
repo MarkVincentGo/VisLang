@@ -1,4 +1,6 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
+import styles from './Editor.module.css';
+import axios from 'axios';
 import { Constant, Variable, VarReference, Operator, End, Loop } from './Classes'
 import { IVariableInfo, IVarReference, IFunctionInfo, IDataSVGLine, IEnd, IConstantInfo, ILoop } from './Interfaces';
 import { Panel } from './Panel';
@@ -8,7 +10,6 @@ import * as R from 'ramda';
 import { getDraggableCoordinates } from './utilityFunctions';
 import { createPortal } from 'react-dom';
 import { LoadModal, SaveModal } from './SaveModal';
-import axios from 'axios';
 
 
 interface EditorProps {
@@ -308,29 +309,34 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     setOperations([]);
   }
 
-  const saveData = async (name: string): Promise<void> => {
-    let allData = [
-      ...constants.filter(c => !c.deleted),
-      ...variables.filter(v => !v.deleted),
-      ...varReferences.filter(vr => !vr.deleted),
-      ...operations.filter(op => !op.deleted),
-      ...lines,
-      ...loops,
-      ...ends.filter(end => end.args[0])
-    ];
+  const saveData = async (name: string) => {
+    try {
+      let allData = [
+        ...constants.filter(c => !c.deleted),
+        ...variables.filter(v => !v.deleted),
+        ...varReferences.filter(vr => !vr.deleted),
+        ...operations.filter(op => !op.deleted),
+        ...lines,
+        ...loops,
+        ...ends.filter(end => end.args[0])
+      ];
 
-    const processed = allData.map((e: any) =>
-    {
-      let newE = { ...e }
-      if (!e.hasOwnProperty('el1')) {
-        const { left, top } = getDraggableCoordinates(newE)
-        newE.left = left - 30;
-        newE.top = top - 83;
-      }
-      return newE;
-    })
-    await axios.post('/save', { Name: name, Components: JSON.stringify(processed)})
-    setSaveModal(false)
+      const processed = allData.map((e: any) =>
+      {
+        let newE = { ...e }
+        if (!e.hasOwnProperty('el1')) {
+          const { left, top } = getDraggableCoordinates(newE)
+          newE.left = left - 30;
+          newE.top = top - 83;
+        }
+        return newE;
+      });
+      console.log(JSON.stringify(processed))
+      await axios.post('/save', { Name: name, Components: JSON.stringify(processed)})
+      setSaveModal(false)
+    } catch(e) {
+      console.log(e)
+    }
   }
 
   const pressSave = (): void => {
@@ -340,7 +346,9 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
   const loadData = async (name: string) => {
     pressClear();
 
+    try {
     const { data } = await axios.get(`/load/${name}`)
+    console.log(data)
     // this is for loading sessions
     if (!data.Name) {setLoadModal(false); return };
     let variables = data.Components;
@@ -391,21 +399,24 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
           return el;
       }
     })
-    let newEnds = variables.filter((el: any) => el.type === 'End')
+    let newEnds = variables.filter((el: any) => el.type === 'End');
     newEnds = newEnds.map((el: any) => {
       el.func = function(a: any): any {
         return a;
       };
       return el;
-    })
-    let newLines = variables.filter((el: any) => el.hasOwnProperty('el1'))
-    setLines(newLines)
-    setVariables(newVar)
-    setConstants(newConst)
-    setOperations(newOps)
-    setEnds(newEnds)
-    console.log(variables)
-    setLoadModal(false)
+    });
+    let newLines = variables.filter((el: any) => el.hasOwnProperty('el1'));
+    setLines(newLines);
+    setVariables(newVar);
+    setConstants(newConst);
+    setOperations(newOps);
+    setEnds(newEnds);
+    console.log(variables);
+    setLoadModal(false);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   const pressLoad = () => {
@@ -426,7 +437,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
   }
 
   return (
-    <Panel windowName="Editor" style={{width: refer + width}}>
+    <Panel className={styles.editor} windowName="Editor" style={{width: refer + width}}>
       {saveModal && createPortal(
         <SaveModal onClick={() => setSaveModal(false)} saveFn={saveData}/>, 
         document.getElementsByClassName('App')[0])}
@@ -434,34 +445,41 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
         <LoadModal onClick={() => setSaveModal(false)} loadFn={loadData}/>, 
         document.getElementsByClassName('App')[0])}
       <ButtonContainer>
-        <Button 
+        <Button
+          className={styles.constantsButton} 
           name="Constant"
           ddClick={clickConstant}
           dropDown
           dropDownList={['Number', 'String', 'Boolean']}/>
         <Button 
+          className={styles.variablesButton} 
           name="Variables"
           ddClick={clickVariable}
           dropDown
           dropDownList={['Number', 'String', 'Boolean', 'Null']}/>
         <Button
+          className={styles.operationsButton} 
           name="Operations"
           ddClick={clickOperator}
           dropDown
           dropDownList={['+', '-', '*', '/', 'mod', '<', '>', '==']}
           ddStyle={{width: 110, height: 170}}/>
         <Button
+          className={styles.loopsButton} 
           name="Loops"
           dropDown
           dropDownList={['For', 'While']}
           ddClick={clickLoop}/>
         <Button 
+          className={styles.setOrderButton} 
           name="Set Order"
           onClick={clickOrder}/>
         <Button
+          className={styles.printButton} 
           name="Print"
           onClick={clickConsoleLog}/>
         <Button 
+          className={styles.endButton} 
           name="End"
           onClick={clickEnding}/>
       </ButtonContainer>

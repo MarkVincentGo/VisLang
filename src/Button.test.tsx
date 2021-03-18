@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, act, waitForElement } from '@testing-library/react';
+import { render, fireEvent, act } from '@testing-library/react';
 import { Button, ButtonContainer } from './Button';
 
 describe('The Button Container Component', () => {

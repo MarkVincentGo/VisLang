@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import styles from './Variable.module.css'
 import { Draggable } from './Draggable'
 import { IFunctionInfo } from './Interfaces';
 import { DataNode } from './DataNode';
@@ -19,6 +20,7 @@ export const Operator: FunctionComponent<OperatorProps> = ({ operator, mousedDow
   
   return ( !operator.deleted ?
     <Draggable
+      className={styles.operatorContainer}
       color={operator.color}
       activeColor="#FDAD29"
       borderColor="#FF5000"

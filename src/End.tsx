@@ -1,4 +1,5 @@
 import React, { FunctionComponent} from 'react';
+import styles from './Variable.module.css';
 import { Draggable } from './Draggable';
 import { DataNode } from './DataNode';
 
@@ -11,6 +12,7 @@ interface EndProps {
 export const End: FunctionComponent<EndProps> = ({ data, mousedDown, mousedUp }) => {
   return (
     <Draggable
+      className={styles.endContainer}
       componentId={data.id}
       activeColor="#FF7C7C"
       color="#FF6F6F"

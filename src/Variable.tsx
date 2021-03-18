@@ -85,7 +85,7 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
       case 'Boolean':
         return '#90ADFF';
       default:
-        break;
+        return '#B290FF';
     }
   }
 
@@ -104,6 +104,7 @@ export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleV
 
   return ( !data.deleted ?
     <Draggable
+      className={styles.variableContainer}
       color={colorConditions(data.valueType)}
       borderColor="goldenrod"
       onContextMenu={e => e.preventDefault()}

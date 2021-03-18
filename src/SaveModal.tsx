@@ -42,6 +42,7 @@ export const SaveModal: FunctionComponent<SaveModalProps> = ({ onClick, saveFn }
     })
   }
 
+  console.log('rendered')
   const handleSave = (): void => {
     saveFn(inputs.nameInput)
   }
@@ -56,7 +57,7 @@ export const SaveModal: FunctionComponent<SaveModalProps> = ({ onClick, saveFn }
               <div className={styles.form}>
                 <Input label="Program Name" value={inputs.nameInput} onChange={handleChange} name="nameInput"/>
                 <Input label="Password (optional)" value={inputs.passwordInput} onChange={handleChange} name="passwordInput"/>
-                <Button name="save" backgroundColor="#C3CDE6" color="black" onClick={handleSave}/>
+                <Button className={styles.saveButton} name="save" backgroundColor="#C3CDE6" color="black" onClick={handleSave}/>
               </div>
             </div>
         </div>
@@ -90,13 +91,13 @@ export const LoadModal: FunctionComponent<LoadModalProps> = ({ onClick, loadFn }
     <>
         <div className={styles.modalBackground} 
           onClick={onClick}>
-            <div className={styles.saveModal} 
+            <div className={styles.loadModal} 
               onClick={(e: React.SyntheticEvent) => e.stopPropagation()}>
               <div className={styles.title}>Load</div>
               <div className={styles.form}>
                 <Input label="Program Name" value={inputs.nameInput} onChange={handleChange} name="nameInput"/>
                 <Input label="Password" value={inputs.passwordInput} onChange={handleChange} name="passwordInput"/>
-                <Button name="save" backgroundColor="#C3CDE6" color="black" onClick={handleLoad}/>
+                <Button className={styles.loadButton} name="save" backgroundColor="#C3CDE6" color="black" onClick={handleLoad}/>
               </div>
             </div>
         </div>

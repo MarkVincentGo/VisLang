@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import styles from './Operator.module.css';
 import { IFunctionInfo, IVariableInfo, IVarReference, IConstantInfo, ILoop } from './Interfaces';
+import classNames from 'classnames';
 
 
 interface DataNodesProps {
@@ -14,14 +15,6 @@ interface DataNodesProps {
 
 export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, mousedDown, mousedUp, dragInfo, style = {} }): JSX.Element => {
   let nodePosition = position === 'top' ? {top: -4.5} : {bottom: -0.5};
-
-  const mouseEnter = (event: React.MouseEvent): void => {
-    event.stopPropagation();
-  }
-
-  const mouseLeave = (event: React.MouseEvent): void => {
-    event.stopPropagation();
-  }
 
   const mouseDown = (i: number, event: React.MouseEvent): void => {
     if (mousedDown && dragInfo) {
@@ -45,8 +38,8 @@ export const DataNode: FunctionComponent<DataNodesProps> = ({ position, nodes, m
           key={i.toString()}
           className={[styles.node, 'dataNode', 'DN', position].join(' ')}
           data-node={dragInfo.id}
-          onMouseOver={mouseEnter}
-          onMouseOut={mouseLeave}
+          onMouseOver={e => e.stopPropagation()}
+          onMouseOut={e => e.stopPropagation()}
           onMouseDown={(e) => {mouseDown(i, e)}}
           onMouseUp={(e) => mouseUp(i, e)}/>
       ))}
@@ -89,7 +82,7 @@ export const DataNodeLoop: FunctionComponent<DataNodesLoopProps> = ({ position, 
       {(new Array(nodes).fill(0)).map((el, i) => (
         <circle
           key={i.toString()}
-          className={[styles.nodeLoop, 'dataNode', 'DN', position].join(' ')}
+          className={classNames(styles.nodeLoop, 'dataNode', 'DN', position)}
           r={hover ? '4' : '3'}
           cx={cx}
           cy={cy}

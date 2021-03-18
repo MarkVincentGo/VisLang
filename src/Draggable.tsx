@@ -1,8 +1,10 @@
 import React, { FunctionComponent, useState, useRef } from 'react';
 import styles from './Draggable.module.css';
 import ddStyles from './Button.module.css'
+import classNames from 'classnames';
 
 interface DraggableProps {
+  className?: string,
   color?: string,
   activeColor?: string,
   borderColor?: string,
@@ -28,7 +30,8 @@ interface DragInfo {
 
 
 export const Draggable: FunctionComponent<DraggableProps> = (
-  { color = '#D195FF', 
+  { color = '#D195FF',
+    className,
     activeColor = '#B75BFF',
     borderColor = 'blueviolet',
     children,
@@ -77,7 +80,7 @@ export const Draggable: FunctionComponent<DraggableProps> = (
   const [rightClicked, setRightClicked] = useState(false);
   return (
     <div 
-      className={[styles.variable, active ? styles.active : '', 'draggable', 'element'].join(' ')}
+      className={classNames(styles.variable, active ? styles.active : '', 'draggable', 'element', className)}
       onMouseOver={mouseIn}
       onMouseLeave={mouseOut}
       style={{
@@ -109,7 +112,7 @@ export const Draggable: FunctionComponent<DraggableProps> = (
           ))}
           </div> 
           :
-          <></>
+          null
         }
     </div>
   )

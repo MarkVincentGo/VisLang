@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
+import styles from './Variable.module.css'
 import { InputComponent } from './Variable'
 import { Draggable } from './Draggable';
 import { IConstantInfo } from './Interfaces';
@@ -27,7 +28,7 @@ export const Constant: FunctionComponent<VariableProps> = (
       case 'Boolean':
         return '#90EDFF';
       default:
-        break;
+        return '#90C4FF';
     }
   }
 
@@ -44,6 +45,7 @@ export const Constant: FunctionComponent<VariableProps> = (
 
   return ( !data.deleted ?
     <Draggable
+      className={styles.constantContainer}
       color={colorConditions(data.valueType)}
       onContextMenu={e => e.preventDefault()}
       contextMenu={['Delete Constant']}
