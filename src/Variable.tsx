@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import styles from './Variable.module.css';
 import { Draggable } from './Draggable';
 import { IVariableInfo } from './Interfaces';
@@ -28,6 +28,13 @@ export const InputComponent: FunctionComponent<InputComponentProps> = ({value, n
     let target = event.target as HTMLInputElement;
     onChange(target.value);
   }
+
+  useEffect(() => {
+    console.log({value})
+    if (value.length) {
+      setVarConfirmed(true)
+    }
+  }, [])
 
   const pressEnter = (event: React.KeyboardEvent): void => {
     if (event.keyCode === 13) {
@@ -73,8 +80,8 @@ interface VariableProps {
 }
 
 export const Variable: FunctionComponent<VariableProps> = ({ data, edit, handleVariableDropDown, mousedDown, mousedUp }): JSX.Element => {
-  const [varName, setVarName] = useState('');
-  const [valName, setValName] = useState('');
+  const [varName, setVarName] = useState(data.name || '');
+  const [valName, setValName] = useState(data.value || '');
 
   const colorConditions = (type: string) => {
     switch (type) {

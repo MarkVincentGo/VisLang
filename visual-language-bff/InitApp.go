@@ -19,7 +19,7 @@ func InitApp() {
 	app.Get("/load/:name", func(c *fiber.Ctx) error {
 		name := c.Params("name");
 		log.Println(name)
-		program := GetProgram(mongoClient)
+		program := GetProgram(mongoClient, name)
 		return c.SendString("{\"Name\": \"" + program.Name + "\", \"Components\": " + program.Components + "}")
 	})
 

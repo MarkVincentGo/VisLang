@@ -19,6 +19,15 @@
   align-items: center;
 }
 
+.loadModal {
+  position: absolute;
+  height: 40vh;
+  width: 50vw;
+  background-color: white;
+  flex-direction: column;
+  align-items: center;
+}
+
 .title {
   font-weight: bold;
   font-size: 24px;

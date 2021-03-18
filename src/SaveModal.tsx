@@ -96,7 +96,7 @@ export const LoadModal: FunctionComponent<LoadModalProps> = ({ onClick, loadFn }
               <div className={styles.form}>
                 <Input label="Program Name" value={inputs.nameInput} onChange={handleChange} name="nameInput"/>
                 <Input label="Password" value={inputs.passwordInput} onChange={handleChange} name="passwordInput"/>
-                <Button className={styles.loadButton} name="save" backgroundColor="#C3CDE6" color="black" onClick={handleLoad}/>
+                <Button className={styles.loadButton} name="Load" backgroundColor="#C3CDE6" color="black" onClick={handleLoad}/>
               </div>
             </div>
         </div>

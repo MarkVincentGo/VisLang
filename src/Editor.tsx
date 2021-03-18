@@ -346,57 +346,69 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     pressClear();
 
     try {
-    const { data } = await axios.get(`/load/${name}`)
-    // this is for loading sessions
-    if (!data.Name) {setLoadModal(false); return };
-    let variables = data.Components;
-    let newVar = variables.filter((el: any) => {
-      return el.type === 'Assign Function'
-    });
-    let newConst = variables.filter((el: any) => el.type === 'Constant')
-    let newOps = variables.filter((el: any) => el.type === 'Function')
-    // add abstraction method for this
-    newOps = newOps.map((el: any) => {
-      switch (el.opType) {
-        case '+':
-          el.func = (a: number, b: number): number => a + b;
+      const { data } = await axios.get(`/load/${name}`)
+      // this is for loading sessions
+      if (!data.Name) {setLoadModal(false); return };
+      let variables = data.Components;
+      let newVar = variables
+        .filter((el: any) => el.type === 'Assign Function')
+        .map((el: IVariableInfo) => {
+          return { ...el, func: function(incomingVal: any) {
+            return incomingVal;
+          }}
+        });
+      let newConst = variables.filter((el: any) => el.type === 'Constant')
+      let newOps = variables.filter((el: any) => el.type === 'Function')
+      // add abstraction method for this
+      newOps = newOps.map((el: any) => {
+        switch (el.opType) {
+          case '+':
+            el.func = (a: number, b: number): number => a + b;
+            return el;
+          case '-':
+            el.func = (a: number, b: number): number => a - b;
+            return el;
+          case '*':
+            el.func = (a: number, b: number): number => a * b;
+            return el;
+          case '/':
+            el.func = (a: number, b: number): number => a / b;
+            return el;
+          case 'mod':
+            el.func = (a: number, b: number): number => a % b;
+            return el;
+          case 'Print':
+            el.func = (x: any) => { console.log(x); return x };
+            el.args = [null]
+            return el;
+          case '<':
+            el.func = (a: number | string, b: number | string): boolean => a < b;
+            return el;
+          case '>':
+            el.func = (a: number | string, b: number | string): boolean => a > b;
+            return el;  
+          case '==':
+            el.func = (a: number | string, b: number | string): boolean => a === b;
           return el;
-        case '-':
-          el.func = (a: number, b: number): number => a - b;
+          case 'Order':
+            el.args = [null, null, null];
+            el.func = (...args: any): any => args[args.length - 1];
+            el.increaseArgs = function() {el.args = [...el.args, null]};
+            el.decreaseArgs = function() {el.args = el.args.slice(0, el.args.length - 1)}
           return el;
-        case '*':
-          el.func = (a: number, b: number): number => a * b;
-          return el;
-        case '/':
-          el.func = (a: number, b: number): number => a / b;
-          return el;
-        case 'mod':
-          el.func = (a: number, b: number): number => a % b;
-          return el;
-        case 'Print':
-          el.func = (x: any) => { console.log(x); return x };
-          el.args = [null]
-          return el;
-        case '<':
-          el.func = (a: number | string, b: number | string): boolean => a < b;
-          return el;
-        case '>':
-          el.func = (a: number | string, b: number | string): boolean => a > b;
-          return el;  
-        case '==':
-          el.func = (a: number | string, b: number | string): boolean => a === b;
-        return el;
-        case 'Order':
-          el.args = [null, null, null];
-          el.func = (...args: any): any => args[args.length - 1];
-          el.increaseArgs = function() {el.args = [...el.args, null]};
-          el.decreaseArgs = function() {el.args = el.args.slice(0, el.args.length - 1)}
-        return el;
-        default:
-          el.func = (): number => 0;
-          return el;
-      }
+          default:
+            el.func = (): number => 0;
+            return el;
+        }
     })
+    let newReferences = variables.filter((el: any) => el.type === 'Reference').map((el: any) => {
+      return { ...el,
+        variableReferenced: newVar.find((e: IVariableInfo) => e.id === el.variableReferenced.id),
+        func: (scope: Map<string, any>) => {
+          return scope.get(el.variableReferenced.name);
+        }}
+    })
+    console.log(newReferences)
     let newEnds = variables.filter((el: any) => el.type === 'End');
     newEnds = newEnds.map((el: any) => {
       el.func = function(a: any): any {
@@ -407,6 +419,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     let newLines = variables.filter((el: any) => el.hasOwnProperty('el1'));
     setLines(newLines);
     setVariables(newVar);
+    setVarReferences(newReferences);
     setConstants(newConst);
     setOperations(newOps);
     setEnds(newEnds);

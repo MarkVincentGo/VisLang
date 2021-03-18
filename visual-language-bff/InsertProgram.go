@@ -32,11 +32,12 @@ func InsertProgram(client *mongo.Client, name string, components string) {
 
 
 // GetProgram ... get a program from database
-func GetProgram(client *mongo.Client) Program {
+func GetProgram(client *mongo.Client, name string) Program {
 
 	collection := client.Database("VLANG").Collection("programs")
 
-	filter := bson.M{"name": "lkj"}
+
+	filter := bson.M{"name": name}
 	
 	var program Program
 	
