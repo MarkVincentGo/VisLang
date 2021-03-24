@@ -22,7 +22,9 @@ export const VarReference: FunctionComponent<VarReferenceProps> = ({ data, handl
       componentId={data.id}
       contextMenu={['Copy Reference', 'Delete Reference']}
       onContextMenu={e => e.preventDefault()}
-      contextMenuClick={handleDropDown}>
+      contextMenuClick={handleDropDown}
+      top={data.top}
+      left={data.left}>
       {data.variableReferenced.name}
       <DataNode
         position="bottom"

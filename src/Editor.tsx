@@ -408,7 +408,6 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
           return scope.get(el.variableReferenced.name);
         }}
     })
-    console.log(newReferences)
     let newEnds = variables.filter((el: any) => el.type === 'End');
     newEnds = newEnds.map((el: any) => {
       el.func = function(a: any): any {

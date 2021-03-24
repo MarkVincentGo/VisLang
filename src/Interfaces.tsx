@@ -29,6 +29,8 @@ export interface IVarReference {
   value: any,
   type: string,
   deleted: boolean,
+  top?: number,
+  left?: number
 }
 
 export interface IFunctionInfo {
