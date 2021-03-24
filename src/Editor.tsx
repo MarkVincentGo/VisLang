@@ -334,7 +334,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
       await axios.post('/save', { Name: name, Components: JSON.stringify(processed)})
       setSaveModal(false)
     } catch(e) {
-      console.log(e)
+      console.error(e)
     }
   }
 
@@ -424,7 +424,7 @@ export const Editor: FunctionComponent<EditorProps> = ({ interpret, width }): JS
     setEnds(newEnds);
     setLoadModal(false);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 

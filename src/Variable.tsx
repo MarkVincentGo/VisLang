@@ -30,7 +30,6 @@ export const InputComponent: FunctionComponent<InputComponentProps> = ({value, n
   }
 
   useEffect(() => {
-    console.log({value})
     if (value.length) {
       setVarConfirmed(true)
     }
